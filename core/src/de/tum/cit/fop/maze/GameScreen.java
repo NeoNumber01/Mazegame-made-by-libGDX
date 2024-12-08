@@ -36,7 +36,6 @@ public class GameScreen implements Screen {
         font = game.getSkin().getFont("font");
     }
 
-
     // Screen interface methods with necessary functionality
     @Override
     public void render(float delta) {
@@ -60,16 +59,23 @@ public class GameScreen implements Screen {
         game.getSpriteBatch().begin(); // Important to call this before drawing anything
 
         // Render the text
-        font.draw(game.getSpriteBatch(), "Press ESC to go to menu", textX, textY);
+        font.draw(
+                game.getSpriteBatch(),
+                "Press ESC to go to menu",
+                textX,
+                textY
+        );
 
         // Draw the character next to the text :) / We can reuse sinusInput here
-        game.getSpriteBatch().draw(
-                game.getCharacterDownAnimation().getKeyFrame(sinusInput, true),
-                textX - 96,
-                textY - 64,
-                64,
-                128
-        );
+        game
+                .getSpriteBatch()
+                .draw(
+                        game.getCharacterDownAnimation().getKeyFrame(sinusInput, true),
+                        textX - 96,
+                        textY - 64,
+                        64,
+                        128
+                );
 
         game.getSpriteBatch().end(); // Important to call this after drawing everything
     }
@@ -89,7 +95,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-
     }
 
     @Override
@@ -99,6 +104,5 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
     }
-
     // Additional methods and logic can be added as needed for the game screen
 }

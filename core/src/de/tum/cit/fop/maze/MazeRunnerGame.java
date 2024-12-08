@@ -16,6 +16,7 @@ import games.spooky.gdx.nativefilechooser.NativeFileChooser;
  * It manages the screens and global resources like SpriteBatch and Skin.
  */
 public class MazeRunnerGame extends Game {
+
     // Screens
     private MenuScreen menuScreen;
     private GameScreen gameScreen;
@@ -49,7 +50,9 @@ public class MazeRunnerGame extends Game {
 
         // Play some background music
         // Background sound
-        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
+        Music backgroundMusic = Gdx.audio.newMusic(
+                Gdx.files.internal("background.mp3")
+        );
         backgroundMusic.setLooping(true);
         backgroundMusic.play();
 
@@ -93,7 +96,15 @@ public class MazeRunnerGame extends Game {
 
         // Add all frames to the animation
         for (int col = 0; col < animationFrames; col++) {
-            walkFrames.add(new TextureRegion(walkSheet, col * frameWidth, 0, frameWidth, frameHeight));
+            walkFrames.add(
+                    new TextureRegion(
+                            walkSheet,
+                            col * frameWidth,
+                            0,
+                            frameWidth,
+                            frameHeight
+                    )
+            );
         }
 
         characterDownAnimation = new Animation<>(0.1f, walkFrames);
