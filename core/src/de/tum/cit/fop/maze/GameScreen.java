@@ -67,12 +67,14 @@ public class GameScreen implements Screen {
     /**
      * Trigger events in the game, should only be called by render().
      */
-    private void triggerEvents() {}
+    private void triggerEvents() {
+    }
 
     /**
      * Render the game elements, should only be called by render().
      */
-    private void renderGameElements() {}
+    private void renderGameElements() {
+    }
 
     @Override
     public void resize(int width, int height) {
@@ -80,18 +82,23 @@ public class GameScreen implements Screen {
     }
 
     @Override
-    public void pause() {}
+    public void pause() {
+    }
 
     @Override
-    public void resume() {}
+    public void resume() {
+    }
 
     @Override
-    public void show() {}
+    public void show() {
+    }
 
     @Override
-    public void hide() {}
+    public void hide() {
+    }
 
     @Override
-    public void dispose() {}
+    public void dispose() {
+    }
     // Additional methods and logic can be added as needed for the game screen
 }

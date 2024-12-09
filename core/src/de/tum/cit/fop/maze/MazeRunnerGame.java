@@ -51,7 +51,7 @@ public class MazeRunnerGame extends Game {
         // Play some background music
         // Background sound
         Music backgroundMusic = Gdx.audio.newMusic(
-                Gdx.files.internal("background.mp3")
+            Gdx.files.internal("background.mp3")
         );
         backgroundMusic.setLooping(true);
         backgroundMusic.play();
@@ -97,13 +97,13 @@ public class MazeRunnerGame extends Game {
         // Add all frames to the animation
         for (int col = 0; col < animationFrames; col++) {
             walkFrames.add(
-                    new TextureRegion(
-                            walkSheet,
-                            col * frameWidth,
-                            0,
-                            frameWidth,
-                            frameHeight
-                    )
+                new TextureRegion(
+                    walkSheet,
+                    col * frameWidth,
+                    0,
+                    frameWidth,
+                    frameHeight
+                )
             );
         }
 
