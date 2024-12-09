@@ -5,7 +5,10 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
+import de.tum.cit.fop.maze.Helper.Direction;
+import de.tum.cit.fop.maze.elements.Player;
 
 /**
  * The GameScreen class is responsible for rendering the gameplay screen.
@@ -16,6 +19,8 @@ public class GameScreen implements Screen {
     private final MazeRunnerGame game;
     private final OrthographicCamera camera;
     private final BitmapFont font;
+    private final Player player;
+    private float stateTime = 0f;
 
     /**
      * Constructor for GameScreen. Sets up the camera and font.
@@ -32,11 +37,19 @@ public class GameScreen implements Screen {
 
         // Get the font from the game's skin
         font = game.getSkin().getFont("font");
+
+        // Initialize the player
+        player = new Player(
+            new Vector2(camera.position.x / 2, camera.position.y / 2),
+            game.getPlayerWalkAnimation()
+        );
     }
 
     // Screen interface methods with necessary functionality
     @Override
     public void render(float delta) {
+        stateTime += delta;
+
         handleInput();
         triggerEvents();
 
@@ -62,6 +75,33 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.goToMenu();
         }
+
+        // Player movement
+        // ignore if opposite keys are pressed
+        if (
+            Gdx.input.isKeyPressed(Input.Keys.UP) !=
+                Gdx.input.isKeyPressed(Input.Keys.DOWN)
+        ) {
+            player.move(
+                Gdx.input.isKeyPressed(Input.Keys.UP)
+                    ? Direction.UP
+                    : Direction.DOWN,
+                1f
+            );
+        }
+        // ignores diagonal movement
+        // TODO: decide go up/down or left/right by the current direction of player
+        else if (
+            Gdx.input.isKeyPressed(Input.Keys.LEFT) !=
+                Gdx.input.isKeyPressed(Input.Keys.RIGHT)
+        ) {
+            player.move(
+                Gdx.input.isKeyPressed(Input.Keys.LEFT)
+                    ? Direction.LEFT
+                    : Direction.RIGHT,
+                1f
+            );
+        }
     }
 
     /**
@@ -74,6 +114,13 @@ public class GameScreen implements Screen {
      * Render the game elements, should only be called by render().
      */
     private void renderGameElements() {
+        game
+            .getSpriteBatch()
+            .draw(
+                player.getTexture(stateTime),
+                player.getPosition().x,
+                player.getPosition().y
+            );
     }
 
     @Override
