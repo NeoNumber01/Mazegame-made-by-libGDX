@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import de.tum.cit.fop.maze.Helper.Direction;
+import de.tum.cit.fop.maze.elements.Block;
 import de.tum.cit.fop.maze.elements.Player;
 
 /**
@@ -21,6 +22,7 @@ public class GameScreen implements Screen {
     private final OrthographicCamera camera;
     private final BitmapFont font;
     private final Player player;
+    private Block testBlock;
     private float stateTime = 0f;
 
     /**
@@ -43,7 +45,9 @@ public class GameScreen implements Screen {
         player =
                 new Player(
                         new Vector2(camera.position.x / 2, camera.position.y / 2),
-                        game.getPlayerWalkAnimation());
+                        game.getResourcePack().getPlayerWalkAnimation());
+
+        testBlock = new Block(game.getResourcePack().getBlockTexture(), 0, 0);
     }
 
     // Screen interface methods with necessary functionality
@@ -94,6 +98,14 @@ public class GameScreen implements Screen {
 
     /** Render the game elements, should only be called by render(). */
     private void renderGameElements() {
+        game.getSpriteBatch()
+                .draw(
+                        testBlock.getTexture(stateTime),
+                        testBlock.getBox().x,
+                        testBlock.getBox().y,
+                        Constants.BLOCK_SIZE,
+                        Constants.BLOCK_SIZE);
+
         game.getSpriteBatch()
                 .draw(player.getTexture(stateTime), player.getPosition().x, player.getPosition().y);
     }
