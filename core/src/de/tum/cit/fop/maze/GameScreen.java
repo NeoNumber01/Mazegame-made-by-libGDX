@@ -55,7 +55,7 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         stateTime += delta;
 
-        handleInput();
+        handleInput(delta);
         triggerEvents();
 
         ScreenUtils.clear(0, 0, 0, 1); // Clear the screen
@@ -73,23 +73,44 @@ public class GameScreen implements Screen {
     }
 
     /** Handle input for the game screen, should only be called by render(). */
-    private void handleInput() {
+    private void handleInput(float delta) {
         // Check for escape key press to go back to the menu
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.goToMenu();
         }
 
+        // Camera movement
+        // Note: this is temporary implementation for testing purpose,
+        // camera should follow the player but with inertia
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+            camera.translate(0, delta * 16);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+            camera.translate(0, -delta * 16);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            camera.translate(-delta * 16, 0);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            camera.translate(delta * 16, 0);
+        }
+
         // Player movement
         // ignore if opposite keys are pressed
+        // but such handling seems unnecessary
+        // TODO: refactor
         if (Gdx.input.isKeyPressed(Input.Keys.UP) != Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            player.move(Gdx.input.isKeyPressed(Input.Keys.UP) ? Direction.UP : Direction.DOWN, 1f);
+            player.move(
+                    Gdx.input.isKeyPressed(Input.Keys.UP) ? Direction.UP : Direction.DOWN,
+                    delta * 32);
         }
         // ignores diagonal movement
         // TODO: decide go up/down or left/right by the current direction of player
         else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)
                 != Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             player.move(
-                    Gdx.input.isKeyPressed(Input.Keys.LEFT) ? Direction.LEFT : Direction.RIGHT, 1f);
+                    Gdx.input.isKeyPressed(Input.Keys.LEFT) ? Direction.LEFT : Direction.RIGHT,
+                    delta * 32);
         }
     }
 
