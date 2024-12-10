@@ -14,8 +14,8 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
- * The MenuScreen class is responsible for displaying the main menu of the game.
- * It extends the LibGDX Screen class and sets up the UI components for the menu.
+ * The MenuScreen class is responsible for displaying the main menu of the game. It extends the
+ * LibGDX Screen class and sets up the UI components for the menu.
  */
 public class MenuScreen implements Screen {
 
@@ -38,27 +38,20 @@ public class MenuScreen implements Screen {
         stage.addActor(table); // Add the table to the stage
 
         // Add a label as a title
-        table
-            .add(
-                new Label("Hello World from the Menu!", game.getSkin(), "title")
-            )
-            .padBottom(80)
-            .row();
+        table.add(new Label("Hello World from the Menu!", game.getSkin(), "title"))
+                .padBottom(80)
+                .row();
 
         // Create and add a button to go to the game screen
-        TextButton goToGameButton = new TextButton(
-            "Go To Game",
-            game.getSkin()
-        );
+        TextButton goToGameButton = new TextButton("Go To Game", game.getSkin());
         table.add(goToGameButton).width(300).row();
         goToGameButton.addListener(
-            new ChangeListener() {
-                @Override
-                public void changed(ChangeEvent event, Actor actor) {
-                    game.goToGame(); // Change to the game screen when button is pressed
-                }
-            }
-        );
+                new ChangeListener() {
+                    @Override
+                    public void changed(ChangeEvent event, Actor actor) {
+                        game.goToGame(); // Change to the game screen when button is pressed
+                    }
+                });
     }
 
     @Override
@@ -87,14 +80,11 @@ public class MenuScreen implements Screen {
 
     // The following methods are part of the Screen interface but are not used in this screen.
     @Override
-    public void pause() {
-    }
+    public void pause() {}
 
     @Override
-    public void resume() {
-    }
+    public void resume() {}
 
     @Override
-    public void hide() {
-    }
+    public void hide() {}
 }

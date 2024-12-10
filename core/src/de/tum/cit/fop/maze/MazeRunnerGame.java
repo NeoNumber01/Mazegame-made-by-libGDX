@@ -8,15 +8,17 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
+
 import de.tum.cit.fop.maze.elements.MoveAnimation;
+
 import games.spooky.gdx.nativefilechooser.NativeFileChooser;
 
 import java.util.function.BiFunction;
 import java.util.stream.IntStream;
 
 /**
- * The MazeRunnerGame class represents the core of the Maze Runner game.
- * It manages the screens and global resources like SpriteBatch and Skin.
+ * The MazeRunnerGame class represents the core of the Maze Runner game. It manages the screens and
+ * global resources like SpriteBatch and Skin.
  */
 public class MazeRunnerGame extends Game {
 
@@ -45,9 +47,7 @@ public class MazeRunnerGame extends Game {
         return playerWalkAnimation;
     }
 
-    /**
-     * Called when the game is created. Initializes the SpriteBatch and Skin.
-     */
+    /** Called when the game is created. Initializes the SpriteBatch and Skin. */
     @Override
     public void create() {
         spriteBatch = new SpriteBatch(); // Create SpriteBatch
@@ -56,18 +56,14 @@ public class MazeRunnerGame extends Game {
 
         // Play some background music
         // Background sound
-        Music backgroundMusic = Gdx.audio.newMusic(
-            Gdx.files.internal("background.mp3")
-        );
+        Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
         backgroundMusic.setLooping(true);
         backgroundMusic.play();
 
         goToMenu(); // Navigate to the menu screen
     }
 
-    /**
-     * Switches to the menu screen.
-     */
+    /** Switches to the menu screen. */
     public void goToMenu() {
         this.setScreen(new MenuScreen(this)); // Set the current screen to MenuScreen
         if (gameScreen != null) {
@@ -76,9 +72,7 @@ public class MazeRunnerGame extends Game {
         }
     }
 
-    /**
-     * Switches to the game screen.
-     */
+    /** Switches to the game screen. */
     public void goToGame() {
         this.setScreen(new GameScreen(this)); // Set the current screen to GameScreen
         if (menuScreen != null) {
@@ -87,9 +81,7 @@ public class MazeRunnerGame extends Game {
         }
     }
 
-    /**
-     * Loads the character animation from the character.png file.
-     */
+    /** Loads the character animation from the character.png file. */
     private void loadCharacterAnimation() {
         Texture walkSheet = new Texture(Gdx.files.internal("character.png"));
 
@@ -97,49 +89,40 @@ public class MazeRunnerGame extends Game {
         int frameHeight = 32;
         int animationFrames = 4;
 
-        // TODO: wrap this to a helper class so that mob textures can be loaded the same way
+        // TODO: wrap this to a helper class so that mob textures can be loaded the same
+        // way
 
-        BiFunction<Integer, Integer, TextureRegion> cutWalkSheet = (
-            row,
-            col
-        ) -> {
-            return new TextureRegion(
-                walkSheet,
-                col * frameWidth,
-                row * frameHeight,
-                frameWidth,
-                frameHeight
-            );
-        };
+        BiFunction<Integer, Integer, TextureRegion> cutWalkSheet =
+                (row, col) -> {
+                    return new TextureRegion(
+                            walkSheet,
+                            col * frameWidth,
+                            row * frameHeight,
+                            frameWidth,
+                            frameHeight);
+                };
 
         playerWalkAnimation = new MoveAnimation();
 
         for (Helper.Direction direction : Helper.Direction.values()) {
             // locate the row corresponds to the direction
             int row =
-                switch (direction) {
-                    case UP -> 2;
-                    case DOWN -> 0;
-                    case LEFT -> 3;
-                    case RIGHT -> 1;
-                };
+                    switch (direction) {
+                        case UP -> 2;
+                        case DOWN -> 0;
+                        case LEFT -> 3;
+                        case RIGHT -> 1;
+                    };
 
             Array<TextureRegion> textureArray = new Array<>();
 
-            IntStream.range(0, animationFrames).forEach(col ->
-                textureArray.add(cutWalkSheet.apply(row, col))
-            );
-            playerWalkAnimation.loadDirectionAnimation(
-                0.1f,
-                direction,
-                textureArray
-            );
+            IntStream.range(0, animationFrames)
+                    .forEach(col -> textureArray.add(cutWalkSheet.apply(row, col)));
+            playerWalkAnimation.loadDirectionAnimation(0.1f, direction, textureArray);
         }
     }
 
-    /**
-     * Cleans up resources when the game is disposed.
-     */
+    /** Cleans up resources when the game is disposed. */
     @Override
     public void dispose() {
         getScreen().hide(); // Hide the current screen

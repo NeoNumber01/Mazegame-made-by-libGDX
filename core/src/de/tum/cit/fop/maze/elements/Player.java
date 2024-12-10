@@ -2,6 +2,7 @@ package de.tum.cit.fop.maze.elements;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+
 import de.tum.cit.fop.maze.Helper.Direction;
 
 public class Player extends GameObject implements Visible {

@@ -25,7 +25,8 @@ public class Helper {
         }
 
         /**
-         * Converts the direction to array index. Useful when storing direction-specific data in an array.
+         * Converts the direction to array index. Useful when storing direction-specific data in an
+         * array.
          *
          * @return index value in [0, 3], delegated to Up, Down, Left, Right respectively
          */
