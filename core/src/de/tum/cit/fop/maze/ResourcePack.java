@@ -13,7 +13,7 @@ import java.util.stream.IntStream;
 /* load and serves art assets */
 public class ResourcePack { // Character animation
     private MoveAnimation playerWalkAnimation;
-    private TextureRegion blockTexture;
+    private TextureRegion blockTexture, blackBlockTexture;
 
     public ResourcePack() {
         loadCharacterAnimation();
@@ -24,6 +24,10 @@ public class ResourcePack { // Character animation
         return blockTexture;
     }
 
+    public TextureRegion getBlackBlockTexture() {
+        return blackBlockTexture;
+    }
+
     public MoveAnimation getPlayerWalkAnimation() {
         return playerWalkAnimation;
     }
@@ -31,7 +35,10 @@ public class ResourcePack { // Character animation
     private void loadBlockTexture() {
         Texture tilesSheet = new Texture(Gdx.files.internal("basictiles.png"));
 
-        blockTexture = new TextureRegion(tilesSheet, 16, 0, 16, 16);
+        int tileSize = 16;
+        blockTexture = new TextureRegion(tilesSheet, tileSize, 0, tileSize, tileSize);
+        blackBlockTexture =
+                new TextureRegion(tilesSheet, tileSize * 6, tileSize * 2, tileSize, tileSize);
     }
 
     private void loadCharacterAnimation() {
