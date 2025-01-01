@@ -14,6 +14,9 @@ import de.tum.cit.fop.maze.elements.Block;
 import de.tum.cit.fop.maze.elements.Maze;
 import de.tum.cit.fop.maze.elements.Player;
 
+import java.io.IOException;
+import java.util.Properties;
+
 /**
  * The GameScreen class is responsible for rendering the gameplay screen. It handles the game logic
  * and rendering of the game elements.
@@ -43,13 +46,24 @@ public class GameScreen implements Screen {
         // Get the font from the game's skin
         font = game.getSkin().getFont("font");
 
-        // Initialize the player
+        // initialize map
+
+        // TODO: pass map properties from frontend
+        Properties mapProperties = new Properties();
+        try {
+            mapProperties.load(Gdx.files.internal("maps/level-1.properties").read());
+        } catch (IOException err) {
+            mapProperties.put("0,0", "0");
+        }
+
+        maze = new Maze(game, new Vector2(0, 0), mapProperties);
+
+        // initialize player
+
         player =
                 new Player(
-                        new Vector2(camera.position.x / 2, camera.position.y / 2),
+                        maze.getEntry().getBox().getPosition(new Vector2(0f, 0f)),
                         game.getResourcePack().getPlayerWalkAnimation());
-
-        maze = new Maze(game, new Vector2(0, 0), 10, 10);
     }
 
     // Screen interface methods with necessary functionality

@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Array;
 import de.tum.cit.fop.maze.MazeRunnerGame;
 
 import java.util.Iterator;
+import java.util.Properties;
 
 /*
  * The maze that contains all blocks
@@ -17,42 +18,75 @@ public class Maze implements Iterable<Block> {
     // base position of the maze
     private final Vector2 position;
     // size of the maze, in number of blocks
-    private final int length, width;
+    private final int width;
+    private final int height;
     // this should never be exposed directly,
     // so that we can switch to other implementations, like Array<> provided by libGDX
     private final Block[][] maze;
+    private Entry entry;
 
     /**
      * Constructor for Maze. Initializes all important elements.
      *
      * @param position The base position of the maze. Should be normally (0, 0).
-     * @param length The length of the maze in number of blocks.
-     * @param width The width of the maze in number of blocks.
      */
-    public Maze(MazeRunnerGame game, Vector2 position, int length, int width) {
+    public Maze(MazeRunnerGame game, Vector2 position, Properties mapProperties) {
         this.game = game;
         this.position = position;
-        this.length = length;
-        this.width = width;
-        maze = new Block[length][width];
 
-        // TODO: read the maze from a file
-        for (int i = 0; i < length; ++i) {
-            for (int j = 0; j < width; ++j) {
-                maze[i][j] =
-                        new Path(
-                                this,
-                                game.getResourcePack().getBlockTexture(),
-                                position.x + i * blockSize,
-                                position.y + j * blockSize);
+        // properties are 0-indexed
+
+        this.width =
+                mapProperties.stringPropertyNames().stream()
+                                .map(pair -> Integer.parseInt(pair.split(",")[0]))
+                                .max(Integer::compareTo)
+                                .orElse(0)
+                        + 1;
+        this.height =
+                mapProperties.stringPropertyNames().stream()
+                                .map(pair -> Integer.parseInt(pair.split(",")[1]))
+                                .max(Integer::compareTo)
+                                .orElse(0)
+                        + 1;
+
+        maze = new Block[width][height];
+
+        for (int i = 0; i < width; ++i) {
+            for (int j = 0; j < height; ++j) {
+                String blockTypeStr = (String) mapProperties.get(i + "," + j);
+                int blockTypeCode = blockTypeStr == null ? -1 : Integer.parseInt(blockTypeStr);
+                float posX = position.x + i * blockSize, posY = position.y + j * blockSize;
+                switch (blockTypeCode) {
+                    case 0: // Wall
+                        maze[i][j] =
+                                new Wall(
+                                        this,
+                                        game.getResourcePack().getBlackBlockTexture(),
+                                        posX,
+                                        posY);
+                        break;
+                    case 1: // Entry Point
+                        maze[i][j] =
+                                new Entry(
+                                        this, game.getResourcePack().getBlockTexture(), posX, posY);
+                        entry = (Entry) maze[i][j];
+                        break;
+                    case 2: // TODO: Exit
+                        break;
+                    case 3: // TODO: Trap
+                        break;
+                    case 4: // TODO: Enemy
+                        break;
+                    case 5: // TODO: Key
+                        break;
+                }
+                // fallback: empty block rendered as path
+                if (maze[i][j] == null) {
+                    maze[i][j] =
+                            new Path(this, game.getResourcePack().getBlockTexture(), posX, posY);
+                }
             }
         }
-        maze[5][5] =
-                new Wall(
-                        this,
-                        game.getResourcePack().getBlackBlockTexture(),
-                        position.x + 5 * blockSize,
-                        position.y + 5 * blockSize);
     }
 
     public float getBlocksize() {
@@ -67,13 +101,17 @@ public class Maze implements Iterable<Block> {
         if (position.x < this.position.x || position.y < this.position.y) {
             return null;
         }
-        if (position.x >= this.position.x + length * blockSize
-                || position.y >= this.position.y + width * blockSize) {
+        if (position.x >= this.position.x + width * blockSize
+                || position.y >= this.position.y + height * blockSize) {
             return null;
         }
         int i = (int) ((position.x - this.position.x) / blockSize);
         int j = (int) ((position.y - this.position.y) / blockSize);
         return maze[i][j];
+    }
+
+    public Entry getEntry() {
+        return this.entry;
     }
 
     /* Get the blocks surrounding the given position, 5 * 5 blocks in total
@@ -104,13 +142,13 @@ public class Maze implements Iterable<Block> {
 
             @Override
             public boolean hasNext() {
-                return i < length && j < width;
+                return i < width && j < height;
             }
 
             @Override
             public Block next() {
                 Block block = maze[i][j];
-                if (++j == width) {
+                if (++j == height) {
                     j = 0;
                     ++i;
                 }
