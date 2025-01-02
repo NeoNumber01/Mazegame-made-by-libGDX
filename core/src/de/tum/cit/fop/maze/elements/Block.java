@@ -2,39 +2,48 @@ package de.tum.cit.fop.maze.elements;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 
-public class Block extends GameObject implements Visible {
+public abstract class Block extends GameObject implements Visible {
     private final Maze maze;
 
     private final TextureRegion texture;
-    private final Rectangle box;
+    private final Rectangle rect; // visual object and hitbox aligns
 
-    private final boolean walkable;
+    private final boolean obstacle;
 
     /**
-     * Creates a new block with the given texture at the given position.
+     * Creates a new block with the given texture at the given position
      *
-     * @param texture the texture of the block
-     * @param x the position of the block on the x-axis
-     * @param y the position of the block on the y-axis
+     * @param maze the maze it belongs to
+     * @param texture texture of the block, normally static
+     * @param position position of the block
+     * @param obstacle if a block is an obstacle, it cannot be walked on
      */
-    public Block(Maze maze, TextureRegion texture, float x, float y, boolean walkable) {
+    public Block(Maze maze, TextureRegion texture, Vector2 position, boolean obstacle) {
+        super(maze.game);
         this.maze = maze;
         this.texture = texture;
-        this.box = new Rectangle(x, y, maze.getBlocksize(), maze.getBlocksize());
-        this.walkable = walkable;
+        this.rect = new Rectangle(position.x, position.y, maze.getBlocksize(), maze.getBlocksize());
+        this.obstacle = obstacle;
     }
 
-    public Rectangle getBox() {
-        return box;
+    public Vector2 getPosition() {
+        return new Vector2(rect.x, rect.y);
     }
 
-    public boolean isWalkable() {
-        return walkable;
+    public boolean isObstacle() {
+        return obstacle;
     }
 
     @Override
-    public TextureRegion getTexture(float stateTime) {
-        return texture;
+    public void render() {
+        super.game
+                .getSpriteBatch()
+                .draw(texture, rect.x, rect.y, maze.getBlocksize(), maze.getBlocksize());
+    }
+
+    public boolean overlaps(Rectangle other) {
+        return rect.overlaps(other);
     }
 }

@@ -1,7 +1,6 @@
 package de.tum.cit.fop.maze.elements;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-
 public interface Visible {
-    TextureRegion getTexture(float stateTime);
+    /** Send a draw call to render itself */
+    public void render();
 }

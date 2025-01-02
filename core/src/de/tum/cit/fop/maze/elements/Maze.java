@@ -11,8 +11,7 @@ import java.util.Properties;
 /*
  * The maze that contains all blocks
  */
-public class Maze implements Iterable<Block> {
-    private final MazeRunnerGame game;
+public class Maze extends GameObject implements Iterable<Block>, Visible {
 
     private final float blockSize = 32f;
     // base position of the maze
@@ -31,7 +30,7 @@ public class Maze implements Iterable<Block> {
      * @param position The base position of the maze. Should be normally (0, 0).
      */
     public Maze(MazeRunnerGame game, Vector2 position, Properties mapProperties) {
-        this.game = game;
+        super(game);
         this.position = position;
 
         // properties are 0-indexed
@@ -55,20 +54,14 @@ public class Maze implements Iterable<Block> {
             for (int j = 0; j < height; ++j) {
                 String blockTypeStr = (String) mapProperties.get(i + "," + j);
                 int blockTypeCode = blockTypeStr == null ? -1 : Integer.parseInt(blockTypeStr);
-                float posX = position.x + i * blockSize, posY = position.y + j * blockSize;
+                Vector2 pos = new Vector2(position.x + i * blockSize, position.y + j * blockSize);
                 switch (blockTypeCode) {
                     case 0: // Wall
                         maze[i][j] =
-                                new Wall(
-                                        this,
-                                        game.getResourcePack().getBlackBlockTexture(),
-                                        posX,
-                                        posY);
+                                new Wall(this, game.getResourcePack().getBlackBlockTexture(), pos);
                         break;
                     case 1: // Entry Point
-                        maze[i][j] =
-                                new Entry(
-                                        this, game.getResourcePack().getBlockTexture(), posX, posY);
+                        maze[i][j] = new Entry(this, game.getResourcePack().getBlockTexture(), pos);
                         entry = (Entry) maze[i][j];
                         break;
                     case 2: // TODO: Exit
@@ -82,10 +75,16 @@ public class Maze implements Iterable<Block> {
                 }
                 // fallback: empty block rendered as path
                 if (maze[i][j] == null) {
-                    maze[i][j] =
-                            new Path(this, game.getResourcePack().getBlockTexture(), posX, posY);
+                    maze[i][j] = new Path(this, game.getResourcePack().getBlockTexture(), pos);
                 }
             }
+        }
+    }
+
+    @Override
+    public void render() {
+        for (Block block : this) {
+            block.render();
         }
     }
 

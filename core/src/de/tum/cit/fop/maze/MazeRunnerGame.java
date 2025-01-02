@@ -57,7 +57,8 @@ public class MazeRunnerGame extends Game {
 
     /** Switches to the menu screen. */
     public void goToMenu() {
-        this.setScreen(new MenuScreen(this)); // Set the current screen to MenuScreen
+        menuScreen = new MenuScreen(this);
+        this.setScreen(menuScreen); // Set the current screen to MenuScreen
         if (gameScreen != null) {
             gameScreen.dispose(); // Dispose the game screen if it exists
             gameScreen = null;
@@ -66,7 +67,8 @@ public class MazeRunnerGame extends Game {
 
     /** Switches to the game screen. */
     public void goToGame() {
-        this.setScreen(new GameScreen(this)); // Set the current screen to GameScreen
+        gameScreen = new GameScreen(this);
+        this.setScreen(gameScreen); // Set the current screen to GameScreen
         if (menuScreen != null) {
             menuScreen.dispose(); // Dispose the menu screen if it exists
             menuScreen = null;
@@ -89,5 +91,9 @@ public class MazeRunnerGame extends Game {
 
     public SpriteBatch getSpriteBatch() {
         return spriteBatch;
+    }
+
+    public float getStateTime() {
+        return gameScreen.getStateTime();
     }
 }

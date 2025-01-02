@@ -1,49 +1,46 @@
 package de.tum.cit.fop.maze.elements;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import de.tum.cit.fop.maze.Helper;
 import de.tum.cit.fop.maze.Helper.Direction;
+import de.tum.cit.fop.maze.MazeRunnerGame;
 
-public class Player extends GameObject implements Visible {
+public class Player extends Entity {
 
-    private final float width = 16f;
-    private final float height = 32f; // match with ResourcePack
-    private final MoveAnimation walkAnimation;
-    private final Rectangle box;
-    private final float boxSize = 16f;
+    // TODO: REFACTORING!
+
+    private final MoveAnimation walkAnimation; // TODO: add run animation etc.
+    private Vector2 position;
     private Direction direction;
 
-    public Player(Vector2 position, MoveAnimation walkAnimation) {
-        this.walkAnimation = walkAnimation;
+    public Player(MazeRunnerGame game, Vector2 position) {
+        // TextureRegion cut from assets is 16x32
+        // However, actual visible part 16x22 in walk animation, which we define as the hitbox size
+        // of player
+        super(game, position, new Vector2(16f, 22f), new Vector2(0f, -5f));
+        walkAnimation = game.getResourcePack().getPlayerWalkAnimation();
         direction = Direction.DOWN;
-
-        box = new Rectangle(position.x, position.y, boxSize, boxSize);
-    }
-
-    public float getBoxSize() {
-        return boxSize;
-    }
-
-    public void setDirection(Direction direction) {
-        this.direction = direction;
-    }
-
-    public Rectangle getBox() {
-        return box;
-    }
-
-    public float getWidth() {
-        return width;
-    }
-
-    public float getHeight() {
-        return height;
     }
 
     @Override
-    public TextureRegion getTexture(float stateTime) {
-        return walkAnimation.getTexture(direction, stateTime);
+    public void performMovement(Vector2 delta) {
+        direction = Helper.directionToVector2(delta);
+        super.performMovement(delta);
+    }
+
+    @Override
+    public void render() {
+        TextureRegion texture = walkAnimation.getTexture(direction, super.game.getStateTime());
+        Vector2 visualPosition = super.getVisualPosition();
+        super.game
+                .getSpriteBatch()
+                .draw(
+                        texture,
+                        visualPosition.x,
+                        visualPosition.y,
+                        texture.getRegionWidth(),
+                        texture.getRegionHeight());
     }
 }

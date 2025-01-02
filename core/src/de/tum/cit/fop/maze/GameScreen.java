@@ -60,10 +60,11 @@ public class GameScreen implements Screen {
 
         // initialize player
 
-        player =
-                new Player(
-                        maze.getEntry().getBox().getPosition(new Vector2(0f, 0f)),
-                        game.getResourcePack().getPlayerWalkAnimation());
+        player = new Player(game, maze.getEntry().getPosition());
+    }
+
+    public float getStateTime() {
+        return stateTime;
     }
 
     // Screen interface methods with necessary functionality
@@ -149,43 +150,37 @@ public class GameScreen implements Screen {
         if (deltaPos.len() > 0) {
             // movement on X and Y axis should be handled separately,
             // this avoids the extremely complex handling when moving while being stuck to the wall
-            Vector2 currentPos = new Vector2(player.getBox().getX(), player.getBox().getY());
+            Vector2 currentPos = player.getPosition();
+            // nextBoxX emulates player's movement on X-axis, nextBoxY ditto.
             Rectangle
                     nextBoxX =
                             new Rectangle(
                                     currentPos.x + deltaPos.x,
                                     currentPos.y,
-                                    player.getBoxSize(),
-                                    player.getBoxSize()),
+                                    player.getSize().x,
+                                    player.getSize().y),
                     nextBoxY =
                             new Rectangle(
                                     currentPos.x,
                                     currentPos.y + deltaPos.y,
-                                    player.getBoxSize(),
-                                    player.getBoxSize());
+                                    player.getSize().x,
+                                    player.getSize().y);
             Array<Block> blocks = maze.getSurroundBlocks(currentPos);
 
             for (Block block : blocks) {
-                if (!block.isWalkable() && block.getBox().overlaps(nextBoxX)) {
+                if (block.isObstacle() && block.overlaps(nextBoxX)) {
                     deltaPos.x = 0;
                     break;
                 }
             }
             for (Block block : blocks) {
-                if (!block.isWalkable() && block.getBox().overlaps(nextBoxY)) {
+                if (block.isObstacle() && block.overlaps(nextBoxY)) {
                     deltaPos.y = 0;
                     break;
                 }
             }
 
-            if (deltaPos.y != 0) {
-                player.setDirection(deltaPos.y > 0 ? Helper.Direction.UP : Helper.Direction.DOWN);
-            } else if (deltaPos.x != 0) {
-                player.setDirection(
-                        deltaPos.x > 0 ? Helper.Direction.RIGHT : Helper.Direction.LEFT);
-            }
-
-            player.getBox().setPosition(currentPos.x + deltaPos.x, currentPos.y + deltaPos.y);
+            player.performMovement(deltaPos);
         }
     }
 
@@ -195,26 +190,12 @@ public class GameScreen implements Screen {
     /** Render the game elements, should only be called by render(). */
     private void renderGameElements() {
         // Layer 1: Maze blocks
-        for (Block block : maze) {
-            game.getSpriteBatch()
-                    .draw(
-                            block.getTexture(stateTime),
-                            block.getBox().x,
-                            block.getBox().y,
-                            maze.getBlocksize(),
-                            maze.getBlocksize());
-        }
+        maze.render();
 
         // Layer 2: Entities
 
         // Layer 3: Player
-        game.getSpriteBatch()
-                .draw(
-                        player.getTexture(stateTime),
-                        player.getBox().x,
-                        player.getBox().y - 8f,
-                        player.getWidth(),
-                        player.getHeight());
+        player.render();
     }
 
     @Override
