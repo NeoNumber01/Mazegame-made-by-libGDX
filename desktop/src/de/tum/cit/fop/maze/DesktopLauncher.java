@@ -26,8 +26,11 @@ public class DesktopLauncher {
         // Set the window size to 80% of the screen width and height
         config.setWindowedMode(
                 Math.round(0.8f * displayMode.width), Math.round(0.8f * displayMode.height));
+
+        // Vsync should be enough to limit FPS.
+        // FPS lower that monitor refresh rate causes flicker on moving textures
         config.useVsync(true); // Enable vertical sync
-        config.setForegroundFPS(60); // Set the foreground frames per second
+        //        config.setForegroundFPS(60); // Set the foreground frames per second
 
         // Launch the game
         new Lwjgl3Application(new MazeRunnerGame(new DesktopFileChooser()), config);
