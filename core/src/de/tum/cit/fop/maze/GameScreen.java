@@ -3,7 +3,6 @@ package de.tum.cit.fop.maze;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -24,7 +23,7 @@ import java.util.Properties;
 public class GameScreen implements Screen {
 
     private final MazeRunnerGame game;
-    private final OrthographicCamera camera;
+    private final MazeRunnerCamera camera;
     private final BitmapFont font;
     private final Player player;
     private final Maze maze;
@@ -37,11 +36,6 @@ public class GameScreen implements Screen {
      */
     public GameScreen(MazeRunnerGame game) {
         this.game = game;
-
-        // Create and configure the camera for the game view
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false);
-        camera.zoom = 0.75f;
 
         // Get the font from the game's skin
         font = game.getSkin().getFont("font");
@@ -59,8 +53,10 @@ public class GameScreen implements Screen {
         maze = new Maze(game, new Vector2(0, 0), mapProperties);
 
         // initialize player
-
         player = new Player(game, maze.getEntry().getPosition());
+
+        // Create and configure the camera for the game view
+        camera = new MazeRunnerCamera(game, player.getPosition());
     }
 
     public float getStateTime() {
@@ -77,10 +73,7 @@ public class GameScreen implements Screen {
 
         ScreenUtils.clear(0, 0, 0, 1); // Clear the screen
 
-        camera.update(); // Update the camera
-
-        // Set up and begin drawing with the sprite batch
-        game.getSpriteBatch().setProjectionMatrix(camera.combined);
+        camera.refresh();
 
         game.getSpriteBatch().begin(); // Important to call this before drawing anything
 
@@ -95,42 +88,6 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.goToMenu();
         }
-
-        // Camera movement
-        // Note: this is temporary implementation for testing purpose,
-        // camera should follow the player but with inertia
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            camera.translate(0, delta * 64);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            camera.translate(0, -delta * 64);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            camera.translate(-delta * 64, 0);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            camera.translate(delta * 64, 0);
-        }
-
-        // Player movement
-        // ignore if opposite keys are pressed
-        // but such handling seems unnecessary
-        // TODO: refactor
-        //        if (Gdx.input.isKeyPressed(Input.Keys.UP) !=
-        // Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-        //            player.move(
-        //                    Gdx.input.isKeyPressed(Input.Keys.UP) ? Direction.UP : Direction.DOWN,
-        //                    delta * 64);
-        //        }
-        //        // ignores diagonal movement
-        //        // TODO: decide go up/down or left/right by the current direction of player
-        //        else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)
-        //                != Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-        //            player.move(
-        //                    Gdx.input.isKeyPressed(Input.Keys.LEFT) ? Direction.LEFT :
-        // Direction.RIGHT,
-        //                    delta * 64);
-        //        }
 
         Vector2 deltaPos = new Vector2();
         float deltaDist = 64 * delta;
@@ -181,6 +138,7 @@ public class GameScreen implements Screen {
             }
 
             player.performMovement(deltaPos);
+            camera.moveTowards(player.getPosition());
         }
     }
 
@@ -200,7 +158,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        camera.setToOrtho(false);
+        camera.resize();
     }
 
     @Override
