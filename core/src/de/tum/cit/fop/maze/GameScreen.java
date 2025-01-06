@@ -17,8 +17,8 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
- * The GameScreen class is responsible for rendering the gameplay screen.
- * It handles the game logic and rendering of the game elements.
+ * The GameScreen class is responsible for rendering the gameplay screen. It handles the game logic
+ * and rendering of the game elements.
  */
 public class GameScreen implements Screen {
 
@@ -57,13 +57,12 @@ public class GameScreen implements Screen {
         camera = new MazeRunnerCamera(game, player.getPosition());
     }
 
+    public boolean isPaused() {
+        return paused;
+    }
 
     public void setPaused(boolean paused) {
         this.paused = paused;
-    }
-
-    public boolean isPaused() {
-        return paused;
     }
 
     public float getStateTime() {
@@ -77,7 +76,6 @@ public class GameScreen implements Screen {
         if (!paused) {
             stateTime += delta;
         }
-
 
         if (!paused) {
             handleInput(delta);
@@ -105,7 +103,7 @@ public class GameScreen implements Screen {
         }
 
         Vector2 deltaPos = new Vector2();
-        float deltaDist = 64 * delta;
+        float deltaDist = player.getMoveDistance(delta);
 
         // 按键移动
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
@@ -125,18 +123,18 @@ public class GameScreen implements Screen {
         if (deltaPos.len() > 0) {
             Vector2 currentPos = player.getPosition();
             Rectangle
-                nextBoxX =
-                new Rectangle(
-                    currentPos.x + deltaPos.x,
-                    currentPos.y,
-                    player.getSize().x,
-                    player.getSize().y),
-                nextBoxY =
-                    new Rectangle(
-                        currentPos.x,
-                        currentPos.y + deltaPos.y,
-                        player.getSize().x,
-                        player.getSize().y);
+                    nextBoxX =
+                            new Rectangle(
+                                    currentPos.x + deltaPos.x,
+                                    currentPos.y,
+                                    player.getSize().x,
+                                    player.getSize().y),
+                    nextBoxY =
+                            new Rectangle(
+                                    currentPos.x,
+                                    currentPos.y + deltaPos.y,
+                                    player.getSize().x,
+                                    player.getSize().y);
 
             Array<Block> blocks = maze.getSurroundBlocks(currentPos);
 
@@ -159,9 +157,7 @@ public class GameScreen implements Screen {
     }
 
     /** Trigger events in the game, should only be called by render() when not paused. */
-    private void triggerEvents() {
-
-    }
+    private void triggerEvents() {}
 
     /** Render the game elements, should only be called by render(). */
     private void renderGameElements() {
@@ -185,9 +181,7 @@ public class GameScreen implements Screen {
     }
 
     @Override
-    public void resume() {
-
-    }
+    public void resume() {}
 
     @Override
     public void show() {}

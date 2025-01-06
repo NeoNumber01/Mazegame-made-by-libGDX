@@ -23,7 +23,6 @@ public class MoveAnimation {
     }
 
     public MoveAnimation() {}
-    ;
 
     /**
      * An alternative way to load the animation for a specific direction
