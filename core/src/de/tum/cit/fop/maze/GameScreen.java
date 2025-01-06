@@ -17,8 +17,8 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
- * The GameScreen class is responsible for rendering the gameplay screen. It handles the game logic
- * and rendering of the game elements.
+ * The GameScreen class is responsible for rendering the gameplay screen.
+ * It handles the game logic and rendering of the game elements.
  */
 public class GameScreen implements Screen {
 
@@ -28,6 +28,9 @@ public class GameScreen implements Screen {
     private final Player player;
     private final Maze maze;
     private float stateTime = 0f;
+
+    // 新增：用于控制是否暂停
+    private boolean paused = false;
 
     /**
      * Constructor for GameScreen. Initializes all important elements.
@@ -41,13 +44,13 @@ public class GameScreen implements Screen {
         font = game.getSkin().getFont("font");
 
         // initialize map
-
-        // TODO: pass map properties from frontend
         Properties mapProperties = new Properties();
         try {
             mapProperties.load(Gdx.files.internal("maps/level-1.properties").read());
         } catch (IOException err) {
+            // 如果加载失败，给一个简易默认地图
             mapProperties.put("0,0", "0");
+            mapProperties.put("1,0", "1");
         }
 
         maze = new Maze(game, new Vector2(0, 0), mapProperties);
@@ -59,6 +62,15 @@ public class GameScreen implements Screen {
         camera = new MazeRunnerCamera(game, player.getPosition());
     }
 
+    /** 设置游戏是否暂停 */
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
+
+    public boolean isPaused() {
+        return paused;
+    }
+
     public float getStateTime() {
         return stateTime;
     }
@@ -66,10 +78,16 @@ public class GameScreen implements Screen {
     // Screen interface methods with necessary functionality
     @Override
     public void render(float delta) {
-        stateTime += delta;
+        // 如果没暂停，才累加时间，用于动画等
+        if (!paused) {
+            stateTime += delta;
+        }
 
-        handleInput(delta);
-        triggerEvents();
+        // 如果游戏未暂停，才处理输入和逻辑更新
+        if (!paused) {
+            handleInput(delta);
+            triggerEvents();
+        }
 
         ScreenUtils.clear(0, 0, 0, 1); // Clear the screen
 
@@ -77,21 +95,25 @@ public class GameScreen implements Screen {
 
         game.getSpriteBatch().begin(); // Important to call this before drawing anything
 
+        // 渲染游戏元素(玩家、地图等)
         renderGameElements();
 
         game.getSpriteBatch().end(); // Important to call this after drawing everything
     }
 
-    /** Handle input for the game screen, should only be called by render(). */
+    /** Handle input for the game screen, should only be called by render() when not paused. */
     private void handleInput(float delta) {
         // Check for escape key press to go back to the menu
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            game.goToMenu();
+            // 这里不直接退出游戏，而是暂停并切到菜单
+            game.goToMenu(true);
+            return;
         }
 
         Vector2 deltaPos = new Vector2();
         float deltaDist = 64 * delta;
 
+        // 按键移动
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
             deltaPos.y += deltaDist;
         }
@@ -104,24 +126,24 @@ public class GameScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             deltaPos.x += deltaDist;
         }
+
+        // 简易的碰撞检测
         if (deltaPos.len() > 0) {
-            // movement on X and Y axis should be handled separately,
-            // this avoids the extremely complex handling when moving while being stuck to the wall
             Vector2 currentPos = player.getPosition();
-            // nextBoxX emulates player's movement on X-axis, nextBoxY ditto.
             Rectangle
-                    nextBoxX =
-                            new Rectangle(
-                                    currentPos.x + deltaPos.x,
-                                    currentPos.y,
-                                    player.getSize().x,
-                                    player.getSize().y),
-                    nextBoxY =
-                            new Rectangle(
-                                    currentPos.x,
-                                    currentPos.y + deltaPos.y,
-                                    player.getSize().x,
-                                    player.getSize().y);
+                nextBoxX =
+                new Rectangle(
+                    currentPos.x + deltaPos.x,
+                    currentPos.y,
+                    player.getSize().x,
+                    player.getSize().y),
+                nextBoxY =
+                    new Rectangle(
+                        currentPos.x,
+                        currentPos.y + deltaPos.y,
+                        player.getSize().x,
+                        player.getSize().y);
+
             Array<Block> blocks = maze.getSurroundBlocks(currentPos);
 
             for (Block block : blocks) {
@@ -142,15 +164,17 @@ public class GameScreen implements Screen {
         }
     }
 
-    /** Trigger events in the game, should only be called by render(). */
-    private void triggerEvents() {}
+    /** Trigger events in the game, should only be called by render() when not paused. */
+    private void triggerEvents() {
+        // 这里可以处理各种事件、机关、NPC互动等
+    }
 
     /** Render the game elements, should only be called by render(). */
     private void renderGameElements() {
         // Layer 1: Maze blocks
         maze.render();
 
-        // Layer 2: Entities
+        // Layer 2: Entities (后续若有敌人或NPC可以放这里)
 
         // Layer 3: Player
         player.render();
@@ -162,10 +186,16 @@ public class GameScreen implements Screen {
     }
 
     @Override
-    public void pause() {}
+    public void pause() {
+        // 当 LibGDX 发生 APP 切换时也会调用
+        this.paused = true;
+    }
 
     @Override
-    public void resume() {}
+    public void resume() {
+        // 从后台切回前台
+        // 这里是否继续保持暂停取决于需求
+    }
 
     @Override
     public void show() {}
@@ -174,6 +204,7 @@ public class GameScreen implements Screen {
     public void hide() {}
 
     @Override
-    public void dispose() {}
-    // Additional methods and logic can be added as needed for the game screen
+    public void dispose() {
+        // 释放资源
+    }
 }
