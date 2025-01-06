@@ -29,7 +29,7 @@ public class GameScreen implements Screen {
     private final Maze maze;
     private float stateTime = 0f;
 
-    // 新增：用于控制是否暂停
+    // 是否暂停
     private boolean paused = false;
 
     /**
@@ -48,21 +48,16 @@ public class GameScreen implements Screen {
         try {
             mapProperties.load(Gdx.files.internal("maps/level-1.properties").read());
         } catch (IOException err) {
-            // 如果加载失败，给一个简易默认地图
             mapProperties.put("0,0", "0");
             mapProperties.put("1,0", "1");
         }
 
         maze = new Maze(game, new Vector2(0, 0), mapProperties);
-
-        // initialize player
         player = new Player(game, maze.getEntry().getPosition());
-
-        // Create and configure the camera for the game view
         camera = new MazeRunnerCamera(game, player.getPosition());
     }
 
-    /** 设置游戏是否暂停 */
+   //shifou zantinh
     public void setPaused(boolean paused) {
         this.paused = paused;
     }
@@ -78,12 +73,12 @@ public class GameScreen implements Screen {
     // Screen interface methods with necessary functionality
     @Override
     public void render(float delta) {
-        // 如果没暂停，才累加时间，用于动画等
+        //zanting
         if (!paused) {
             stateTime += delta;
         }
 
-        // 如果游戏未暂停，才处理输入和逻辑更新
+        //mei zanting
         if (!paused) {
             handleInput(delta);
             triggerEvents();
@@ -93,12 +88,11 @@ public class GameScreen implements Screen {
 
         camera.refresh();
 
-        game.getSpriteBatch().begin(); // Important to call this before drawing anything
+        game.getSpriteBatch().begin();
 
-        // 渲染游戏元素(玩家、地图等)
         renderGameElements();
 
-        game.getSpriteBatch().end(); // Important to call this after drawing everything
+        game.getSpriteBatch().end();
     }
 
     /** Handle input for the game screen, should only be called by render() when not paused. */
@@ -166,7 +160,7 @@ public class GameScreen implements Screen {
 
     /** Trigger events in the game, should only be called by render() when not paused. */
     private void triggerEvents() {
-        // 这里可以处理各种事件、机关、NPC互动等
+
     }
 
     /** Render the game elements, should only be called by render(). */
@@ -174,7 +168,7 @@ public class GameScreen implements Screen {
         // Layer 1: Maze blocks
         maze.render();
 
-        // Layer 2: Entities (后续若有敌人或NPC可以放这里)
+        // Layer 2: Entities
 
         // Layer 3: Player
         player.render();
@@ -187,14 +181,12 @@ public class GameScreen implements Screen {
 
     @Override
     public void pause() {
-        // 当 LibGDX 发生 APP 切换时也会调用
         this.paused = true;
     }
 
     @Override
     public void resume() {
-        // 从后台切回前台
-        // 这里是否继续保持暂停取决于需求
+
     }
 
     @Override

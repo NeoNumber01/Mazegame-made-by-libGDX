@@ -26,7 +26,7 @@ public class MazeRunnerGame extends Game {
     private ResourcePack resourcePack;
     private Music backgroundMusic;
 
-    // 标记游戏是否处于暂停状态
+    // 是否暂停
     private boolean paused;
 
     /**
@@ -59,12 +59,7 @@ public class MazeRunnerGame extends Game {
         goToMenu(false);
     }
 
-    /**
-     * 切换至主菜单。
-     *
-     * @param pause 是否处于“暂停”模式。如果 true，则不 dispose GameScreen，保留以便恢复。
-     *              如果 false，则表示新开游戏或真正退出游戏，此时可以 dispose 原有 GameScreen。
-     */
+  //回主菜单
     public void goToMenu(boolean pause) {
         // 如果是暂停，则仅暂停游戏，不dispose
         if (pause) {
@@ -98,10 +93,7 @@ public class MazeRunnerGame extends Game {
         }
     }
 
-    /**
-     * 开始新游戏。会强制dispose掉旧的 gameScreen，重新创建。
-     * 调用后会自动进入游戏界面。
-     */
+   //新游戏
     public void startNewGame() {
         if (gameScreen != null) {
             gameScreen.dispose();
@@ -117,15 +109,13 @@ public class MazeRunnerGame extends Game {
         }
     }
 
-    /** 游戏暂停（角色、敌人停止移动） */
+//游戏暂停与恢复
     public void pauseGame() {
         paused = true;
         if (gameScreen != null) {
             gameScreen.setPaused(true);
         }
     }
-
-    /** 游戏恢复 */
     public void resumeGame() {
         paused = false;
         if (gameScreen != null) {
