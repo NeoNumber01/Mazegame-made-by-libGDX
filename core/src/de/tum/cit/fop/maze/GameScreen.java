@@ -57,7 +57,7 @@ public class GameScreen implements Screen {
         camera = new MazeRunnerCamera(game, player.getPosition());
     }
 
-   //shifou zantinh
+
     public void setPaused(boolean paused) {
         this.paused = paused;
     }
@@ -73,12 +73,12 @@ public class GameScreen implements Screen {
     // Screen interface methods with necessary functionality
     @Override
     public void render(float delta) {
-        //zanting
+
         if (!paused) {
             stateTime += delta;
         }
 
-        //mei zanting
+
         if (!paused) {
             handleInput(delta);
             triggerEvents();

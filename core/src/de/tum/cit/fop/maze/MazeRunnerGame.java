@@ -28,7 +28,7 @@ public class MazeRunnerGame extends Game {
 
     // 是否暂停
     private boolean paused;
-
+    private float volume = 0.5f;
     /**
      * Constructor for MazeRunnerGame.
      *
@@ -53,24 +53,63 @@ public class MazeRunnerGame extends Game {
         // Play some background music
         backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
         backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(volume);
         backgroundMusic.play();
 
         // 一启动就显示菜单
         goToMenu(false);
     }
-
-  //回主菜单
+    //停止音乐
+    public void stopMusic() {
+        if (backgroundMusic != null && backgroundMusic.isPlaying()) {
+            backgroundMusic.stop();
+        }
+    }
+    //暂停音乐
+    public void pauseMusic() {
+        if (backgroundMusic != null && backgroundMusic.isPlaying()) {
+            backgroundMusic.pause();
+        }
+    }
+    //回复音乐
+    public void resumeMusic() {
+        if (backgroundMusic != null && !backgroundMusic.isPlaying()) {
+            backgroundMusic.play();
+        }
+    }
+//切换音乐
+public void switchMusic(String filePath) {
+    stopMusic();
+    backgroundMusic.dispose();
+    backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal(filePath));
+    backgroundMusic.setLooping(true);
+    backgroundMusic.play();
+}
+    public void setVolume(float newVolume) {
+        this.volume = Math.max(0.0f, Math.min(newVolume, 1.0f)); // 限制在 [0, 1]
+        if (backgroundMusic != null) {
+            backgroundMusic.setVolume(this.volume);
+        }
+    }
+    public float getVolume() {
+        return this.volume;
+    }
+    //回主菜单
     public void goToMenu(boolean pause) {
+
         // 如果是暂停，则仅暂停游戏，不dispose
         if (pause) {
-            pauseGame(); // 设置 paused = true
+            pauseGame();// 设置 paused = true
+            pauseMusic();
         } else {
+
             // 不处于暂停模式，说明要么是刚启动，要么是要真正结束当前游戏
             // 可以安全 dispose 原有 gameScreen
             if (gameScreen != null) {
                 gameScreen.dispose();
                 gameScreen = null;
             }
+            // switchMusic("background.mp3");
         }
 
         // 切换到主菜单
@@ -101,6 +140,7 @@ public class MazeRunnerGame extends Game {
         }
         gameScreen = new GameScreen(this);
         resumeGame();
+
         setScreen(gameScreen);
 
         if (menuScreen != null) {
@@ -139,6 +179,10 @@ public class MazeRunnerGame extends Game {
         if (backgroundMusic != null) {
             backgroundMusic.dispose();
         }
+        if (backgroundMusic != null) {
+            backgroundMusic.dispose();  // 释放音乐资源
+        }
+        super.dispose();
     }
 
     // Getter methods
