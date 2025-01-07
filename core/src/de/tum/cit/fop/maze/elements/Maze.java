@@ -11,7 +11,7 @@ import java.util.Properties;
 /*
  * The maze that contains all blocks
  */
-public class Maze extends GameObject implements Iterable<Block>, Visible {
+public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
 
     private final float blockSize = 32f;
     // base position of the maze
@@ -22,8 +22,8 @@ public class Maze extends GameObject implements Iterable<Block>, Visible {
     // this should never be exposed directly,
     // so that we can switch to other implementations, like Array<> provided by libGDX
     private final Block[][] maze;
+    private final Array<Entity> entities;
     private Entry entry;
-    private Array<Entity> entities;
 
     /**
      * Constructor for Maze. Initializes all important elements.
@@ -84,17 +84,18 @@ public class Maze extends GameObject implements Iterable<Block>, Visible {
         }
     }
 
+    public Array<Entity> getEntities() {
+        return entities;
+    }
+
     @Override
     public void render() {
-        for (Block block : this) {
-            block.render();
-        }
-        for (Entity entity : entities) {
-            entity.render();
+        for (MazeObject obj : this) {
+            obj.render();
         }
     }
 
-    public float getBlocksize() {
+    public float getBlockSize() {
         return blockSize;
     }
 
@@ -139,25 +140,42 @@ public class Maze extends GameObject implements Iterable<Block>, Visible {
         return blocks;
     }
 
+    //    public Vector2 getPossibleDisplacement(Entity currentEntity, Vector2 desiredDisplacement)
+    // {
+    //        // check the feasibility on x- and y-axis separately, this avoids the extremely
+    // complex
+    //        // handling when moving with collision happening on the other axis
+    //        Vector2 position = currentEntity.getPosition();
+    //    }
+
     @Override
-    public Iterator<Block> iterator() {
-        return new Iterator<Block>() {
+    public Iterator<MazeObject> iterator() {
+        return new Iterator<>() {
+            boolean isBlock = true;
             private int i = 0;
             private int j = 0;
 
             @Override
             public boolean hasNext() {
-                return i < width && j < height;
+                return isBlock ? (i < width && j < height) : (i < entities.size);
             }
 
             @Override
-            public Block next() {
-                Block block = maze[i][j];
-                if (++j == height) {
-                    j = 0;
-                    ++i;
+            public MazeObject next() {
+                if (isBlock) {
+                    Block block = maze[i][j];
+                    if (++j == height) {
+                        j = 0;
+                        ++i;
+                    }
+                    if (i >= width) { // reuse index var to enum entities
+                        i = 0;
+                        isBlock = false;
+                    }
+                    return block;
+                } else {
+                    return entities.get(i++);
                 }
-                return block;
             }
         };
     }
