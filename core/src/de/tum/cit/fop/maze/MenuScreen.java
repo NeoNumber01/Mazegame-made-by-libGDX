@@ -152,18 +152,44 @@ public class MenuScreen implements Screen {
         };
 
         // 文字说明
-        loadMapDialog.text("Choose one of the following maps:");
+        loadMapDialog.text("Choose one of the following maps:").padBottom(20);
+
+        Table buttonTable = new Table();
+        buttonTable.defaults().width(300).padBottom(20);
+        String[] mapNames = {"Map 1", "Map 2", "Map 3", "Map 4", "Map 5"};
+        String[] mapPaths = {
+            "maps/level-1.properties",
+            "maps/level-2.properties",
+            "maps/level-3.properties",
+            "maps/level-4.properties",
+            "maps/level-5.properties"
+        };
+        for (int i = 0; i < mapNames.length; i++) {
+            String mapName = mapNames[i];
+            String mapPath = mapPaths[i];
+            TextButton mapButton = new TextButton(mapName, game.getSkin());
+            buttonTable.add(mapButton).width(300).padBottom(20).row();
+            final String selectedMapPath = mapPath;
+            mapButton.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    game.startNewGame(selectedMapPath);
+                    loadMapDialog.hide(); // 关闭对话框
+                }
+            });
+        }
+        loadMapDialog.getContentTable().add(buttonTable).row();
 
         // 在对话框的 button(...) 里传递第三个参数作为“返回值”，在 result() 方法里拿
-        loadMapDialog.button("Map 1", "maps/level-1.properties");
-        loadMapDialog.button("Map 2", "maps/level-2.properties");
-        loadMapDialog.button("Map 3", "maps/level-3.properties");
-        loadMapDialog.button("Map 4", "maps/level-4.properties");
-        loadMapDialog.button("Map 5", "maps/level-5.properties");
-        // 取消
-        loadMapDialog.button("Cancel", null);
-
-        // 显示对话框
+//        loadMapDialog.button("Map 1", "maps/level-1.properties");
+//        loadMapDialog.button("Map 2", "maps/level-2.properties");
+//        loadMapDialog.button("Map 3", "maps/level-3.properties");
+//        loadMapDialog.button("Map 4", "maps/level-4.properties");
+//        loadMapDialog.button("Map 5", "maps/level-5.properties");
+       // 取消
+        loadMapDialog.button("Cancel", game.getSkin());
+//
+       // 显示对话框
         loadMapDialog.show(stage);
     }
 
