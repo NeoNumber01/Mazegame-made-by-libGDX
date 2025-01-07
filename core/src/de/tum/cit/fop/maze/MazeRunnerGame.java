@@ -161,6 +161,7 @@ public void switchMusic(String filePath) {
         if (gameScreen != null) {
             gameScreen.setPaused(false);
         }
+        resumeMusic();
     }
 
     public boolean isGamePaused() {
