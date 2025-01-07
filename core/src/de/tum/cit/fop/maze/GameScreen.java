@@ -4,12 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-import de.tum.cit.fop.maze.elements.Block;
 import de.tum.cit.fop.maze.elements.Maze;
 import de.tum.cit.fop.maze.elements.Player;
 
@@ -40,7 +37,8 @@ public class GameScreen implements Screen {
     public GameScreen(MazeRunnerGame game) {
         this(game, "maps/level-1.properties");
     }
-    public GameScreen(MazeRunnerGame game,String mapFilePath) {
+
+    public GameScreen(MazeRunnerGame game, String mapFilePath) {
         this.game = game;
 
         // Get the font from the game's skin
@@ -108,7 +106,6 @@ public class GameScreen implements Screen {
         Vector2 deltaPos = new Vector2();
         float deltaDist = player.getMoveDistance(delta);
 
-        // 按键移动
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
             deltaPos.y += deltaDist;
         }
@@ -122,41 +119,8 @@ public class GameScreen implements Screen {
             deltaPos.x += deltaDist;
         }
 
-        // 简易的碰撞检测
-        if (deltaPos.len() > 0) {
-            Vector2 currentPos = player.getPosition();
-            Rectangle
-                    nextBoxX =
-                            new Rectangle(
-                                    currentPos.x + deltaPos.x,
-                                    currentPos.y,
-                                    player.getSize().x,
-                                    player.getSize().y),
-                    nextBoxY =
-                            new Rectangle(
-                                    currentPos.x,
-                                    currentPos.y + deltaPos.y,
-                                    player.getSize().x,
-                                    player.getSize().y);
-
-            Array<Block> blocks = maze.getSurroundBlocks(currentPos);
-
-            for (Block block : blocks) {
-                if (block.isObstacle() && block.overlaps(nextBoxX)) {
-                    deltaPos.x = 0;
-                    break;
-                }
-            }
-            for (Block block : blocks) {
-                if (block.isObstacle() && block.overlaps(nextBoxY)) {
-                    deltaPos.y = 0;
-                    break;
-                }
-            }
-
-            player.performMovement(deltaPos);
-            camera.moveTowards(player.getPosition());
-        }
+        player.performDisplacement(deltaPos);
+        camera.moveTowards(player.getPosition());
     }
 
     /** Trigger events in the game, should only be called by render() when not paused. */
@@ -164,13 +128,7 @@ public class GameScreen implements Screen {
 
     /** Render the game elements, should only be called by render(). */
     private void renderGameElements() {
-        // Layer 1: Maze blocks
         maze.render();
-
-        // Layer 2: Entities
-
-        // Layer 3: Player
-        player.render();
     }
 
     @Override

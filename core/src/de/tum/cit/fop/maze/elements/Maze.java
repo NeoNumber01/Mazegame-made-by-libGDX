@@ -140,14 +140,6 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
         return blocks;
     }
 
-    //    public Vector2 getPossibleDisplacement(Entity currentEntity, Vector2 desiredDisplacement)
-    // {
-    //        // check the feasibility on x- and y-axis separately, this avoids the extremely
-    // complex
-    //        // handling when moving with collision happening on the other axis
-    //        Vector2 position = currentEntity.getPosition();
-    //    }
-
     @Override
     public Iterator<MazeObject> iterator() {
         return new Iterator<>() {

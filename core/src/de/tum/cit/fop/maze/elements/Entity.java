@@ -14,8 +14,7 @@ public abstract class Entity extends MazeObject implements Move {
         direction = Helper.Direction.DOWN;
     }
 
-    @Override
-    public void performMovement(Vector2 delta) {
+    public void performForceDisplacement(Vector2 delta) {
         direction = Helper.Vector2Direction(delta);
         super.displace(delta);
     }
@@ -29,5 +28,19 @@ public abstract class Entity extends MazeObject implements Move {
             }
         }
         return false;
+    }
+
+    @Override
+    public void performDisplacement(Vector2 displacement) {
+        // check the feasibility on x- and y-axis separately, this avoids the extremely complex
+        // handling when moving with collision happening on the other axis
+        Vector2 projectionX = new Vector2(displacement.x, 0f),
+                projectionY = new Vector2(0f, displacement.y);
+        if (!checkCollide(getPosition().add(projectionX))) {
+            performForceDisplacement(projectionX);
+        }
+        if (!checkCollide(getPosition().add(projectionY))) {
+            performForceDisplacement(projectionY);
+        }
     }
 }

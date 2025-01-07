@@ -2,17 +2,25 @@ package de.tum.cit.fop.maze.elements;
 
 import com.badlogic.gdx.math.Vector2;
 
+import de.tum.cit.fop.maze.Helper;
+
+import java.awt.*;
+
 public interface Move {
     float globalSpeedFactor = 64f;
 
     /**
-     * Perform movement without checking collision
+     * Perform movement, with collision considered
      *
      * @param delta vector denoting the distance and direction of the movement
      */
-    void performMovement(Vector2 delta);
+    void performDisplacement(Vector2 delta);
 
-    /** Returns the distance to move on x- or y-axis. */
+    default void performDisplacement(float deltaTime, Helper.Direction direction) {
+        performDisplacement(direction.toVector2(getMoveDistance(deltaTime)));
+    }
+
+    /** Returns the default distance to move on x- or y-axis. */
     default float getMoveDistance(float deltaTime) {
         return globalSpeedFactor * deltaTime;
     }

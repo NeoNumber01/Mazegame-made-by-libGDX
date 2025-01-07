@@ -20,9 +20,7 @@ public abstract class Block extends MazeObject {
         super(
                 maze,
                 position,
-                obstacle
-                        ? new Vector2(maze.getBlockSize(), maze.getBlockSize())
-                        : new Vector2(0f, 0f),
+                new Vector2(maze.getBlockSize(), maze.getBlockSize()),
                 new Vector2(0f, 0f));
         this.texture = texture;
         this.obstacle = obstacle;
