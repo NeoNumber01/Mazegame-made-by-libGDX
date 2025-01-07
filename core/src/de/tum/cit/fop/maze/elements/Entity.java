@@ -36,10 +36,10 @@ public abstract class Entity extends MazeObject implements Move {
         // handling when moving with collision happening on the other axis
         Vector2 projectionX = new Vector2(displacement.x, 0f),
                 projectionY = new Vector2(0f, displacement.y);
-        if (!checkCollide(getPosition().add(projectionX))) {
+        if (projectionX.len() > 0 && !checkCollide(getPosition().add(projectionX))) {
             performForceDisplacement(projectionX);
         }
-        if (!checkCollide(getPosition().add(projectionY))) {
+        if (projectionY.len() > 0 && !checkCollide(getPosition().add(projectionY))) {
             performForceDisplacement(projectionY);
         }
     }
