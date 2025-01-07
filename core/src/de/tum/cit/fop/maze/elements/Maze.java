@@ -23,6 +23,7 @@ public class Maze extends GameObject implements Iterable<Block>, Visible {
     // so that we can switch to other implementations, like Array<> provided by libGDX
     private final Block[][] maze;
     private Entry entry;
+    private Array<Entity> entities;
 
     /**
      * Constructor for Maze. Initializes all important elements.
@@ -49,6 +50,7 @@ public class Maze extends GameObject implements Iterable<Block>, Visible {
                         + 1;
 
         maze = new Block[width][height];
+        entities = new Array<>();
 
         for (int i = 0; i < width; ++i) {
             for (int j = 0; j < height; ++j) {
@@ -69,6 +71,7 @@ public class Maze extends GameObject implements Iterable<Block>, Visible {
                     case 3: // TODO: Trap
                         break;
                     case 4: // TODO: Enemy
+                        entities.add(new Skeleton(this, pos));
                         break;
                     case 5: // TODO: Key
                         break;
@@ -85,6 +88,9 @@ public class Maze extends GameObject implements Iterable<Block>, Visible {
     public void render() {
         for (Block block : this) {
             block.render();
+        }
+        for (Entity entity : entities) {
+            entity.render();
         }
     }
 

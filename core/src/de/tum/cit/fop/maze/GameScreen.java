@@ -56,7 +56,7 @@ public class GameScreen implements Screen {
         }
 
         maze = new Maze(game, new Vector2(0, 0), mapProperties);
-        player = new Player(game, maze.getEntry().getPosition());
+        player = new Player(maze, maze.getEntry().getPosition());
         camera = new MazeRunnerCamera(game, player.getPosition());
     }
 

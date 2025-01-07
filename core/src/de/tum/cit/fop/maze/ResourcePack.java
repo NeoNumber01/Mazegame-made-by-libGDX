@@ -11,13 +11,18 @@ import java.util.function.Function;
 
 /* load and serves art assets */
 public class ResourcePack { // Character animation
-    private MoveAnimation playerWalkAnimation;
-    private MoveAnimation playerSprintAnimation;
+    private MoveAnimation playerWalkAnimation, playerSprintAnimation;
+    private MoveAnimation SkeletonMoveAnimation;
     private TextureRegion blockTexture, blackBlockTexture;
 
     public ResourcePack() {
         loadPlayerAnimation();
+        loadMobTexture();
         loadBlockTexture();
+    }
+
+    public MoveAnimation getSkeletonMoveAnimation() {
+        return SkeletonMoveAnimation;
     }
 
     public MoveAnimation getPlayerSprintAnimation() {
@@ -86,6 +91,37 @@ public class ResourcePack { // Character animation
                     direction,
                     loadTextureArray(
                             walkSheet,
+                            new PixelVector(144, row * size.y),
+                            size,
+                            new PixelVector(size.x, 0),
+                            frameCount));
+        }
+    }
+
+    private void loadMobTexture() {
+        Texture origin = new Texture(Gdx.files.internal("mobs.png"));
+
+        PixelVector size = new PixelVector(16, 16);
+        int frameCount = 3;
+
+        Function<Helper.Direction, Integer> getRowNumber =
+                dir ->
+                        switch (dir) {
+                            case UP -> 3;
+                            case DOWN -> 0;
+                            case LEFT -> 1;
+                            case RIGHT -> 2;
+                        };
+
+        SkeletonMoveAnimation = new MoveAnimation();
+
+        for (Helper.Direction direction : Helper.Direction.values()) {
+            int row = getRowNumber.apply(direction);
+            SkeletonMoveAnimation.loadDirectionAnimation(
+                    0.1f,
+                    direction,
+                    loadTextureArray(
+                            origin,
                             new PixelVector(144, row * size.y),
                             size,
                             new PixelVector(size.x, 0),
