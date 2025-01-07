@@ -69,6 +69,15 @@ public class MenuScreen implements Screen {
                 game.startNewGame();
             }
         });
+        //'load new Map"按钮
+        TextButton loadMapButton = new TextButton("Load New Map", game.getSkin());
+        table.add(loadMapButton).width(300).padBottom(20).row();
+        loadMapButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+
+            }
+        });
         //音量调节
         // Volume Button
         TextButton volumeButton = new TextButton("Volume", game.getSkin());
