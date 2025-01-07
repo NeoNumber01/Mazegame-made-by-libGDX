@@ -38,6 +38,9 @@ public class GameScreen implements Screen {
      * @param game The main game class, used to access global resources and methods.
      */
     public GameScreen(MazeRunnerGame game) {
+        this(game, "maps/level-1.properties");
+    }
+    public GameScreen(MazeRunnerGame game,String mapFilePath) {
         this.game = game;
 
         // Get the font from the game's skin
@@ -46,7 +49,7 @@ public class GameScreen implements Screen {
         // initialize map
         Properties mapProperties = new Properties();
         try {
-            mapProperties.load(Gdx.files.internal("maps/level-1.properties").read());
+            mapProperties.load(Gdx.files.internal(mapFilePath).read());
         } catch (IOException err) {
             mapProperties.put("0,0", "0");
             mapProperties.put("1,0", "1");

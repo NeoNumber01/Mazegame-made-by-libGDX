@@ -29,6 +29,9 @@ public class MazeRunnerGame extends Game {
     // 是否暂停
     private boolean paused;
     private float volume = 0.5f;
+
+    //地图
+    private static final String DEFAULT_MAP_PATH = "maps/level-1.properties";
     /**
      * Constructor for MazeRunnerGame.
      *
@@ -133,12 +136,16 @@ public void switchMusic(String filePath) {
     }
 
    //新游戏
-    public void startNewGame() {
+   public void startNewGame() {
+       startNewGame(DEFAULT_MAP_PATH);
+   }
+
+    public void startNewGame(String mapFilePath) {
         if (gameScreen != null) {
             gameScreen.dispose();
             gameScreen = null;
         }
-        gameScreen = new GameScreen(this);
+        gameScreen = new GameScreen(this,mapFilePath);
         resumeGame();
 
         setScreen(gameScreen);

@@ -75,7 +75,7 @@ public class MenuScreen implements Screen {
         loadMapButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-
+                showLoadMapDialog();
             }
         });
         //音量调节
@@ -130,6 +130,41 @@ public class MenuScreen implements Screen {
         volumeDialog.getContentTable().add(dialogContent).row();
         volumeDialog.button("Close", true);
         volumeDialog.show(stage);
+    }
+    /**
+     * 选择地图
+     */
+    private void showLoadMapDialog() {
+        // 创建对话框
+        Dialog loadMapDialog = new Dialog("Select a Map", game.getSkin()) {
+            @Override
+            protected void result(Object object) {
+                // 当点击对话框的按钮后会调用
+                // object 就是 button(...) 方法里传进去的返回值
+                if (object instanceof String) {
+                    // 假设我们在 button 里传的就是地图路径
+                    String mapFilePath = (String) object;
+                    game.startNewGame(mapFilePath);
+                }
+                // 关闭对话框
+                this.hide();
+            }
+        };
+
+        // 文字说明
+        loadMapDialog.text("Choose one of the following maps:");
+
+        // 在对话框的 button(...) 里传递第三个参数作为“返回值”，在 result() 方法里拿
+        loadMapDialog.button("Map 1", "maps/level-1.properties");
+        //loadMapDialog.button("Map 2", "maps/level-2.properties");
+        loadMapDialog.button("Map 3", "maps/level-3.properties");
+        loadMapDialog.button("Map 4", "maps/level-4.properties");
+        loadMapDialog.button("Map 5", "maps/level-5.properties");
+        // 取消
+        loadMapDialog.button("Cancel", null);
+
+        // 显示对话框
+        loadMapDialog.show(stage);
     }
 
     @Override
