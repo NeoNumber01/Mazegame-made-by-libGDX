@@ -156,7 +156,7 @@ public class MenuScreen implements Screen {
 
         // 在对话框的 button(...) 里传递第三个参数作为“返回值”，在 result() 方法里拿
         loadMapDialog.button("Map 1", "maps/level-1.properties");
-        //loadMapDialog.button("Map 2", "maps/level-2.properties");
+        loadMapDialog.button("Map 2", "maps/level-2.properties");
         loadMapDialog.button("Map 3", "maps/level-3.properties");
         loadMapDialog.button("Map 4", "maps/level-4.properties");
         loadMapDialog.button("Map 5", "maps/level-5.properties");
