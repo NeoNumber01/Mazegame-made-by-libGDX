@@ -13,5 +13,7 @@ public interface Move {
     void performMovement(Vector2 delta);
 
     /** Returns the distance to move on x- or y-axis. */
-    float getMoveDistance(float deltaTime);
+    default float getMoveDistance(float deltaTime) {
+        return globalSpeedFactor * deltaTime;
+    }
 }

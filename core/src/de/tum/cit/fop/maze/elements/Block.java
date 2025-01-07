@@ -4,9 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-public abstract class Block extends GameObject implements Visible {
-    private final Maze maze;
-
+public abstract class Block extends MazeObject implements Visible {
     private final TextureRegion texture;
     private final Rectangle rect; // visual object and hitbox aligns
 
@@ -21,8 +19,7 @@ public abstract class Block extends GameObject implements Visible {
      * @param obstacle if a block is an obstacle, it cannot be walked on
      */
     public Block(Maze maze, TextureRegion texture, Vector2 position, boolean obstacle) {
-        super(maze.game);
-        this.maze = maze;
+        super(maze);
         this.texture = texture;
         this.rect = new Rectangle(position.x, position.y, maze.getBlocksize(), maze.getBlocksize());
         this.obstacle = obstacle;

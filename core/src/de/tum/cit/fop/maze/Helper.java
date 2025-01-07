@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Helper {
 
-    public static Direction directionToVector2(Vector2 vec) {
+    public static Direction Vector2Direction(Vector2 vec) {
         if (vec.x != 0) return vec.x > 0 ? Direction.RIGHT : Direction.LEFT;
         if (vec.y != 0) return vec.y > 0 ? Direction.UP : Direction.DOWN;
         return Direction.DOWN;
