@@ -72,6 +72,7 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
                         entry = (Entry) maze[i][j];
                         break;
                     case 2: // TODO: Exit
+                        maze[i][j] = new Exit(this, game.getResourcePack().getBlockTexture(), pos);
                         break;
                     case 3: // TODO: Trap
                         break;
@@ -125,26 +126,6 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
         return this.entry;
     }
 
-    /* Get the blocks surrounding the given position, 5 * 5 blocks in total
-     * @param position The position of the center block
-     * @return An array of blocks surrounding the given position
-     */
-    public Array<Block> getSurroundBlocks(Vector2 position) {
-        Array<Block> blocks = new Array<Block>();
-        for (int i = -2; i <= 2; ++i) {
-            for (int j = -2; j <= 2; ++j) {
-                Block block =
-                        getBlock(
-                                new Vector2(
-                                        position.x + i * blockSize, position.y + j * blockSize));
-                if (block != null) {
-                    blocks.add(block);
-                }
-            }
-        }
-        return blocks;
-    }
-
     @Override
     public Iterator<MazeObject> iterator() {
         return new Iterator<>() {
@@ -175,5 +156,12 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
                 }
             }
         };
+    }
+
+    @Override
+    public void onFrame(float deltaTime) {
+        for (MazeObject obj : this) {
+            obj.onFrame(deltaTime);
+        }
     }
 }

@@ -19,4 +19,13 @@ public abstract class Mob extends Entity {
     public void render() {
         renderTexture(moveAnimation.getTexture(super.direction, super.game.getStateTime()));
     }
+
+    @Override
+    public void onCollision(MazeObject other) {
+        if (other instanceof Player) {
+            ((Player) other).modifyHealth(-10f);
+        }
+    }
+
+    public void handleAI() {}
 }

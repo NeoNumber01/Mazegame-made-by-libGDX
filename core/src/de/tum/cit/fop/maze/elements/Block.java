@@ -46,4 +46,7 @@ public abstract class Block extends MazeObject {
     public boolean overlaps(Rectangle other) {
         return obstacle && super.overlaps(other);
     }
+
+    /** Triggers event when other object arrives this block. */
+    public void onArrival(MazeObject other) {}
 }
