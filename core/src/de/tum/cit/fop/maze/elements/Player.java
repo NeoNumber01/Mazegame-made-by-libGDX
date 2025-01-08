@@ -5,10 +5,11 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-public class Player extends Entity {
+public class Player extends Entity implements Health {
 
     private final MoveAnimation walkAnimation, sprintAnimation;
     private Vector2 position;
+    private float maxHealth, health, lastHitTimestamp;
 
     public Player(Maze maze, Vector2 position) {
         // TextureRegion cut from assets is 16x32
@@ -18,6 +19,7 @@ public class Player extends Entity {
         maze.getEntities().add(this);
         walkAnimation = game.getResourcePack().getPlayerWalkAnimation();
         sprintAnimation = game.getResourcePack().getPlayerSprintAnimation();
+        health = maxHealth = 100f;
     }
 
     @Override
@@ -35,5 +37,28 @@ public class Player extends Entity {
     @Override
     public float getMoveDistance(float deltaTime) {
         return globalSpeedFactor * deltaTime * (isSprinting() ? 1.5f : 1f);
+    }
+
+    @Override
+    public void modifyHealth(float delta) {
+        if (delta < 0) {
+            if (game.getStateTime() - lastHitTimestamp < 1) {
+                return;
+            } else {
+                lastHitTimestamp = game.getStateTime();
+            }
+        }
+        System.out.printf("Time=%f, Health=%f\n", game.getStateTime(), health);
+
+        health += delta;
+        if (health > maxHealth) health = maxHealth;
+        if (health <= 0) {
+            onEmptyHealth();
+        }
+    }
+
+    @Override
+    public void onEmptyHealth() {
+        // TODO: end game
     }
 }

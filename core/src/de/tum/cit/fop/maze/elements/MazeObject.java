@@ -21,6 +21,10 @@ public abstract class MazeObject extends GameObject implements Visible, Collisio
         return new Vector2(hitbox.x, hitbox.y);
     }
 
+    public Rectangle getHitbox() {
+        return hitbox;
+    }
+
     /** Returns the position where the texture should be rendered at. */
     public Vector2 getVisualPosition() {
         return getPosition().add(visualOffset);
