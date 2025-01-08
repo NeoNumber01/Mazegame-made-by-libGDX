@@ -9,6 +9,7 @@ import de.tum.cit.fop.maze.Helper;
 /** A game object, which can move, has a hitbox, and animation. */
 public abstract class Entity extends MazeObject implements Move {
     protected Helper.Direction direction;
+    protected Block currentBlock;
 
     public Entity(Maze maze, Vector2 position, Vector2 size, Vector2 visualOffset) {
         super(maze, position, size, visualOffset);
@@ -74,5 +75,12 @@ public abstract class Entity extends MazeObject implements Move {
 
         // post displacement hook
         getAdjacent(getHitbox()).forEach(x -> x.onCollision(this));
+
+        // arrival hook
+        Block newBlock = maze.getBlock(getCenter());
+        if (newBlock != null && currentBlock != newBlock) {
+            currentBlock = newBlock;
+            newBlock.onArrival(this);
+        }
     }
 }

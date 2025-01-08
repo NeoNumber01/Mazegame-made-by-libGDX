@@ -17,8 +17,13 @@ public abstract class MazeObject extends GameObject implements Visible, Collisio
         this.visualOffset = visualOffset;
     }
 
+    /** Returns the position of the hitbox */
     public Vector2 getPosition() {
         return new Vector2(hitbox.x, hitbox.y);
+    }
+
+    public Vector2 getCenter() {
+        return new Vector2(hitbox.x + hitbox.width / 2, hitbox.y + hitbox.height / 2);
     }
 
     public Rectangle getHitbox() {
