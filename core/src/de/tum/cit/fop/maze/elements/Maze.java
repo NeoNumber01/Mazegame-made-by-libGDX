@@ -152,4 +152,11 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
             }
         };
     }
+
+    @Override
+    public void onFrame(float deltaTime) {
+        for (MazeObject obj : this) {
+            obj.onFrame(deltaTime);
+        }
+    }
 }

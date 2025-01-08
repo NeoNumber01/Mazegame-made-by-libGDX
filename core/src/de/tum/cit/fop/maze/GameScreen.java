@@ -80,7 +80,7 @@ public class GameScreen implements Screen {
 
         if (!paused) {
             handleInput(delta);
-            triggerEvents();
+            triggerEvents(delta);
         }
 
         ScreenUtils.clear(0, 0, 0, 1); // Clear the screen
@@ -124,7 +124,9 @@ public class GameScreen implements Screen {
     }
 
     /** Trigger events in the game, should only be called by render() when not paused. */
-    private void triggerEvents() {}
+    private void triggerEvents(float delta) {
+        maze.onFrame(delta);
+    }
 
     /** Render the game elements, should only be called by render(). */
     private void renderGameElements() {

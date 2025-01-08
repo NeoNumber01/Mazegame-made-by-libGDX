@@ -26,4 +26,6 @@ public abstract class Mob extends Entity {
             ((Player) other).modifyHealth(-10f);
         }
     }
+
+    public void handleAI() {}
 }
