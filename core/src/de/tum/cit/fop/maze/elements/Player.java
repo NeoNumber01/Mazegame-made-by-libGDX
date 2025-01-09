@@ -4,14 +4,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import de.tum.cit.fop.maze.MazeRunnerGame;
 
 public class Player extends Entity implements Health {
 
     private final MoveAnimation walkAnimation, sprintAnimation;
     private Vector2 position;
     private float maxHealth, health, lastHitTimestamp;
+    private MazeRunnerGame game;
 
-    public Player(Maze maze, Vector2 position) {
+
+
+    public Player(MazeRunnerGame game,Maze maze, Vector2 position) {
         // TextureRegion cut from assets is 16x32
         // However, actual visible part 16x22 in walk animation, which we define as the hitbox size
         // of player
@@ -20,6 +24,7 @@ public class Player extends Entity implements Health {
         walkAnimation = game.getResourcePack().getPlayerWalkAnimation();
         sprintAnimation = game.getResourcePack().getPlayerSprintAnimation();
         health = maxHealth = 100f;
+        this.game = game;
     }
 
     @Override
@@ -60,5 +65,8 @@ public class Player extends Entity implements Health {
     @Override
     public void onEmptyHealth() {
         // TODO: end game
+    }
+    public MazeRunnerGame getGame() {
+        return game;
     }
 }

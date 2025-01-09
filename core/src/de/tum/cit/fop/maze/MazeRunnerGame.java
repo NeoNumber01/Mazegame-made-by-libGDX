@@ -26,6 +26,13 @@ public class MazeRunnerGame extends Game {
     private ResourcePack resourcePack;
     private Music backgroundMusic;
 
+    //time recording
+    private long startTime; // Record game start time
+    private long pausedTime;
+    // Time recorded when the game is paused
+
+    private boolean timerStarted; // Flag to indicate if the timer has started
+
     // 是否暂停
     private boolean paused;
     private float volume = 0.5f;
@@ -103,6 +110,7 @@ public void switchMusic(String filePath) {
         // 如果是暂停，则仅暂停游戏，不dispose
         if (pause) {
             pauseGame();// 设置 paused = true
+            timerStarted = false; // Stop the timer
             pauseMusic();
         } else {
 
@@ -118,6 +126,9 @@ public void switchMusic(String filePath) {
         // 切换到主菜单
         menuScreen = new MenuScreen(this, pause);
         setScreen(menuScreen);
+    }
+    public void goToMenu() {
+        goToMenu(false); // Call the existing goToMenu method with pause set to false
     }
 
     /** 真正切换到游戏界面，如果已存在 gameScreen，就resume；否则新建一个。 */
@@ -137,10 +148,19 @@ public void switchMusic(String filePath) {
 
    //新游戏
    public void startNewGame() {
+       paused = false; // Reset the paused flag
+       pausedTime = 0; // Reset paused time
+       timerStarted = false; // Reset the timer flag
        startNewGame(DEFAULT_MAP_PATH);
    }
 
     public void startNewGame(String mapFilePath) {
+
+        // Record the start time when the game begins
+        startTime = System.currentTimeMillis();
+
+        paused = false; // Game is not paused
+
         if (gameScreen != null) {
             gameScreen.dispose();
             gameScreen = null;
@@ -158,17 +178,28 @@ public void switchMusic(String filePath) {
 
 //游戏暂停与恢复
     public void pauseGame() {
-        paused = true;
+        if (!paused && timerStarted) { // Only pause if the timer has started
+            pausedTime = System.currentTimeMillis() - startTime; // Record the elapsed time
+            paused = true;
+            timerStarted = false; // Stop the timer
+        }
+
         if (gameScreen != null) {
             gameScreen.setPaused(true);
         }
     }
     public void resumeGame() {
-        paused = false;
-        if (gameScreen != null) {
-            gameScreen.setPaused(false);
+        if (paused) {
+            startTime = System.currentTimeMillis() - pausedTime; // Adjust start time
+            paused = false;
+            timerStarted = true; // Restart the timer
         }
-        resumeMusic();
+
+        if (gameScreen != null) {
+            gameScreen.setPaused(false); // Resume the game screen
+        }
+
+        resumeMusic(); // Resume background music
     }
 
     public boolean isGamePaused() {
@@ -207,5 +238,51 @@ public void switchMusic(String filePath) {
             return gameScreen.getStateTime();
         }
         return 0f;
+    }
+
+    /** Start the timer when the player enters the map */
+    public void startTimer() {
+        if (!timerStarted) { // Only start the timer if it hasn't started yet
+            startTime = System.currentTimeMillis(); // Record the start time
+            timerStarted = true; // Set the flag to indicate the timer has started
+        }
+    }
+
+
+    /** Returns the elapsed time since the game started in milliseconds */
+    public long getElapsedTime() {
+        if (!timerStarted) {
+            return 0; // If timer hasn't started, return 0
+        }
+        if (paused) {
+            return pausedTime; // If the game is paused, return the recorded paused time
+        }
+        return System.currentTimeMillis() - startTime;
+    }
+
+    /** Calculate score based on elapsed time in milliseconds */
+    public int calculateScore(long elapsedTime) {
+        long elapsedSeconds = elapsedTime / 1000; // Convert milliseconds to seconds
+        int maxScore = 10000;
+        int minScore = 100;
+        int minTime = 100;  // 100 seconds or less gives max score
+        int maxTime = 3600; // 3600 seconds or more gives min score
+        int scoreRange = maxScore - minScore;
+        int timeRange = maxTime - minTime;
+
+        // If elapsed time is 100 seconds or less, return max score
+        if (elapsedSeconds <= minTime) {
+            return maxScore;
+        }
+
+        // If elapsed time is 3600 seconds or more, return min score
+        if (elapsedSeconds >= maxTime) {
+            return minScore;
+        }
+
+        // Calculate score using linear interpolation
+        int score = maxScore - (int) (((double) (elapsedSeconds - minTime) / timeRange) * scoreRange);
+
+        return score;
     }
 }
