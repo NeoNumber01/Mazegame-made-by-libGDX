@@ -54,7 +54,7 @@ public class GameScreen implements Screen {
         }
 
         maze = new Maze(game, new Vector2(0, 0), mapProperties);
-        player = new Player(game,maze, maze.getEntry().getPosition());
+        player = new Player(game, maze, maze.getEntry().getPosition());
         camera = new MazeRunnerCamera(game, player.getPosition());
     }
 
@@ -121,6 +121,13 @@ public class GameScreen implements Screen {
 
         player.performDisplacement(deltaPos);
         camera.moveTowards(player.getPosition());
+
+        if (Gdx.input.isKeyPressed(Input.Keys.Z)) {
+            camera.zoom(delta, 1f);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.X)) {
+            camera.zoom(delta, -1f);
+        }
     }
 
     /** Trigger events in the game, should only be called by render() when not paused. */

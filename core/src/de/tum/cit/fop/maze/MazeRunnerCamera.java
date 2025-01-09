@@ -44,4 +44,12 @@ public class MazeRunnerCamera {
         camera.setToOrtho(false, viewPointWidth, getViewPointHeight());
         moveTowards(originalPos);
     }
+
+    public void zoom(float deltaTime, float scaleMultiplier) {
+        camera.zoom += 0.1f * deltaTime * scaleMultiplier;
+    }
+
+    public void resetZoom() {
+        camera.zoom = 1f;
+    }
 }
