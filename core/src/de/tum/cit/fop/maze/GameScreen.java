@@ -264,22 +264,12 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        // 重新创建资源
-        shapeRenderer = new ShapeRenderer();
-        createGradientTexture();
+
     }
 
     @Override
     public void hide() {
-        // 释放资源
-        if (shapeRenderer != null) {
-            shapeRenderer.dispose();
-            shapeRenderer = null;
-        }
-        if (gradientTexture != null) {
-            gradientTexture.dispose();
-            gradientTexture = null;
-        }
+
     }
 
     @Override
