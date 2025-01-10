@@ -8,11 +8,9 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import de.tum.cit.fop.maze.elements.Maze;
@@ -187,7 +185,7 @@ public class GameScreen implements Screen {
         batch.begin();
 
         // 在圆心放置渐变纹理
-        // 建议给纹理一个比 circleRadius 稍大的尺寸，如 300×300，
+        // 建议给纹理一个比 circleRadius 稍大的尺寸
         // 以保证边缘有足够的渐变空间
         float gradientSize = 600; // 可自行调大或小
         batch.draw(
@@ -263,14 +261,10 @@ public class GameScreen implements Screen {
     public void resume() {}
 
     @Override
-    public void show() {
-
-    }
+    public void show() {}
 
     @Override
-    public void hide() {
-
-    }
+    public void hide() {}
 
     @Override
     public void dispose() {
