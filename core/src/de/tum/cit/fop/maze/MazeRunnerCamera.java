@@ -3,6 +3,7 @@ package de.tum.cit.fop.maze;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 public class MazeRunnerCamera {
     private final MazeRunnerGame game;
@@ -24,7 +25,8 @@ public class MazeRunnerCamera {
     }
 
     public void moveTowards(Vector2 targetPosition) {
-        Vector2 delta = targetPosition.sub(new Vector2(camera.position.x, camera.position.y));
+        Vector2 currentPos = new Vector2(camera.position.x, camera.position.y);
+        Vector2 delta = targetPosition.sub(currentPos);
         // currently always centers the player, but more complex mechanics can be implemented here
         // if needed
         camera.translate(delta);
@@ -51,5 +53,13 @@ public class MazeRunnerCamera {
 
     public void resetZoom() {
         camera.zoom = 1f;
+    }
+
+    public Vector3 project(Vector3 position) {
+        return camera.project(position);
+    }
+
+    public OrthographicCamera getCamera() {
+        return camera;
     }
 }
