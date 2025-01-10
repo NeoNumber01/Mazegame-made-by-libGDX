@@ -9,36 +9,31 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import games.spooky.gdx.nativefilechooser.NativeFileChooser;
 
 /**
- * The MazeRunnerGame class represents the core of the Maze Runner game.
- * It manages the screens and global resources like SpriteBatch and Skin.
+ * The MazeRunnerGame class represents the core of the Maze Runner game. It manages the screens and
+ * global resources like SpriteBatch and Skin.
  */
 public class MazeRunnerGame extends Game {
 
+    // 地图
+    private static final String DEFAULT_MAP_PATH = "maps/level-1.properties";
     // Screens
     private MenuScreen menuScreen;
     private GameScreen gameScreen;
-
     // Sprite Batch for rendering
     private SpriteBatch spriteBatch;
-
     // UI Skin
     private Skin skin;
     private ResourcePack resourcePack;
     private Music backgroundMusic;
-
-    //time recording
+    // time recording
     private long startTime; // Record game start time
-    private long pausedTime;
     // Time recorded when the game is paused
-
+    private long pausedTime;
     private boolean timerStarted; // Flag to indicate if the timer has started
-
     // 是否暂停
     private boolean paused;
     private float volume = 0.5f;
 
-    //地图
-    private static final String DEFAULT_MAP_PATH = "maps/level-1.properties";
     /**
      * Constructor for MazeRunnerGame.
      *
@@ -69,47 +64,54 @@ public class MazeRunnerGame extends Game {
         // 一启动就显示菜单
         goToMenu(false);
     }
-    //停止音乐
+
+    // 停止音乐
     public void stopMusic() {
         if (backgroundMusic != null && backgroundMusic.isPlaying()) {
             backgroundMusic.stop();
         }
     }
-    //暂停音乐
+
+    // 暂停音乐
     public void pauseMusic() {
         if (backgroundMusic != null && backgroundMusic.isPlaying()) {
             backgroundMusic.pause();
         }
     }
-    //回复音乐
+
+    // 回复音乐
     public void resumeMusic() {
         if (backgroundMusic != null && !backgroundMusic.isPlaying()) {
             backgroundMusic.play();
         }
     }
-//切换音乐
-public void switchMusic(String filePath) {
-    stopMusic();
-    backgroundMusic.dispose();
-    backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal(filePath));
-    backgroundMusic.setLooping(true);
-    backgroundMusic.play();
-}
+
+    // 切换音乐
+    public void switchMusic(String filePath) {
+        stopMusic();
+        backgroundMusic.dispose();
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal(filePath));
+        backgroundMusic.setLooping(true);
+        backgroundMusic.play();
+    }
+
+    public float getVolume() {
+        return this.volume;
+    }
+
     public void setVolume(float newVolume) {
         this.volume = Math.max(0.0f, Math.min(newVolume, 1.0f)); // 限制在 [0, 1]
         if (backgroundMusic != null) {
             backgroundMusic.setVolume(this.volume);
         }
     }
-    public float getVolume() {
-        return this.volume;
-    }
-    //回主菜单
+
+    // 回主菜单
     public void goToMenu(boolean pause) {
 
         // 如果是暂停，则仅暂停游戏，不dispose
         if (pause) {
-            pauseGame();// 设置 paused = true
+            pauseGame(); // 设置 paused = true
             timerStarted = false; // Stop the timer
             pauseMusic();
         } else {
@@ -127,6 +129,7 @@ public void switchMusic(String filePath) {
         menuScreen = new MenuScreen(this, pause);
         setScreen(menuScreen);
     }
+
     public void goToMenu() {
         goToMenu(false); // Call the existing goToMenu method with pause set to false
     }
@@ -146,13 +149,13 @@ public void switchMusic(String filePath) {
         }
     }
 
-   //新游戏
-   public void startNewGame() {
-       paused = false; // Reset the paused flag
-       pausedTime = 0; // Reset paused time
-       timerStarted = false; // Reset the timer flag
-       startNewGame(DEFAULT_MAP_PATH);
-   }
+    // 新游戏
+    public void startNewGame() {
+        paused = false; // Reset the paused flag
+        pausedTime = 0; // Reset paused time
+        timerStarted = false; // Reset the timer flag
+        startNewGame(DEFAULT_MAP_PATH);
+    }
 
     public void startNewGame(String mapFilePath) {
 
@@ -165,7 +168,7 @@ public void switchMusic(String filePath) {
             gameScreen.dispose();
             gameScreen = null;
         }
-        gameScreen = new GameScreen(this,mapFilePath);
+        gameScreen = new GameScreen(this, mapFilePath);
         resumeGame();
 
         setScreen(gameScreen);
@@ -176,7 +179,7 @@ public void switchMusic(String filePath) {
         }
     }
 
-//游戏暂停与恢复
+    // 游戏暂停与恢复
     public void pauseGame() {
         if (!paused && timerStarted) { // Only pause if the timer has started
             pausedTime = System.currentTimeMillis() - startTime; // Record the elapsed time
@@ -188,6 +191,7 @@ public void switchMusic(String filePath) {
             gameScreen.setPaused(true);
         }
     }
+
     public void resumeGame() {
         if (paused) {
             startTime = System.currentTimeMillis() - pausedTime; // Adjust start time
@@ -219,7 +223,7 @@ public void switchMusic(String filePath) {
             backgroundMusic.dispose();
         }
         if (backgroundMusic != null) {
-            backgroundMusic.dispose();  // 释放音乐资源
+            backgroundMusic.dispose(); // 释放音乐资源
         }
         super.dispose();
     }
@@ -248,7 +252,6 @@ public void switchMusic(String filePath) {
         }
     }
 
-
     /** Returns the elapsed time since the game started in milliseconds */
     public long getElapsedTime() {
         if (!timerStarted) {
@@ -265,7 +268,7 @@ public void switchMusic(String filePath) {
         long elapsedSeconds = elapsedTime / 1000; // Convert milliseconds to seconds
         int maxScore = 10000;
         int minScore = 100;
-        int minTime = 100;  // 100 seconds or less gives max score
+        int minTime = 100; // 100 seconds or less gives max score
         int maxTime = 3600; // 3600 seconds or more gives min score
         int scoreRange = maxScore - minScore;
         int timeRange = maxTime - minTime;
@@ -281,7 +284,8 @@ public void switchMusic(String filePath) {
         }
 
         // Calculate score using linear interpolation
-        int score = maxScore - (int) (((double) (elapsedSeconds - minTime) / timeRange) * scoreRange);
+        int score =
+                maxScore - (int) (((double) (elapsedSeconds - minTime) / timeRange) * scoreRange);
 
         return score;
     }

@@ -1,16 +1,16 @@
 package de.tum.cit.fop.maze;
 
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class EndScreen implements Screen {
 
@@ -18,7 +18,7 @@ public class EndScreen implements Screen {
     private final Stage stage;
     private final int score;
 
-    public EndScreen(MazeRunnerGame game,int score) {
+    public EndScreen(MazeRunnerGame game, int score) {
         this.game = game;
         this.score = score;
 
@@ -34,24 +34,24 @@ public class EndScreen implements Screen {
         stage.addActor(table);
 
         // Add "Game Completed" message label
-        Label messageLabel = new Label("Congratulations! You completed the game!", game.getSkin(), "title");
+        Label messageLabel =
+                new Label("Congratulations! You completed the game!", game.getSkin(), "title");
         table.add(messageLabel).padBottom(50).center().row();
 
         // Display the score
         Label scoreLabel = new Label("Your Score: " + score, game.getSkin());
         table.add(scoreLabel).padBottom(50).center().row();
 
-
         // Add "Return to Menu" button
         TextButton returnButton = new TextButton("Return to Menu", game.getSkin());
         table.add(returnButton).width(300).padBottom(20).center().row();
         returnButton.addListener(
-            new ChangeListener() {
-                @Override
-                public void changed(ChangeEvent event, Actor actor) {
-                    game.goToMenu(); // Return to the main menu
-                }
-            });
+                new ChangeListener() {
+                    @Override
+                    public void changed(ChangeEvent event, Actor actor) {
+                        game.goToMenu(); // Return to the main menu
+                    }
+                });
     }
 
     @Override
