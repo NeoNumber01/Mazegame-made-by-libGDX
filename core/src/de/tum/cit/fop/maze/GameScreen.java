@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import de.tum.cit.fop.maze.elements.Maze;
@@ -30,9 +29,8 @@ public class GameScreen implements Screen {
     private final BitmapFont font;
     private final Player player;
     private final Maze maze;
+    private final SpriteBatch batch;
     private float stateTime = 0f;
-
-    private SpriteBatch batch;
     private FrameBuffer fogBuffer;
     private Texture lightTexture;
 
@@ -73,11 +71,16 @@ public class GameScreen implements Screen {
     }
 
     private void createFogBuffer() {
-        fogBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+        fogBuffer =
+                new FrameBuffer(
+                        Pixmap.Format.RGBA8888,
+                        Gdx.graphics.getWidth(),
+                        Gdx.graphics.getHeight(),
+                        false);
     }
 
     private void createLightTexture() {
-        int size = 512;
+        int size = 128;
         Pixmap pixmap = new Pixmap(size, size, Pixmap.Format.RGBA8888);
         pixmap.setBlending(Pixmap.Blending.None);
 
@@ -93,8 +96,6 @@ public class GameScreen implements Screen {
         lightTexture = new Texture(pixmap);
         pixmap.dispose();
     }
-
-
 
     public boolean isPaused() {
         return paused;
@@ -130,30 +131,6 @@ public class GameScreen implements Screen {
         renderGameElements();
 
         game.getSpriteBatch().end();
-
-
-        // 绘制战争迷雾
-        fogBuffer.begin();
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        // 计算屏幕中心位置
-        float centerX = Gdx.graphics.getWidth() / 2f;
-        float centerY = Gdx.graphics.getHeight() / 2f;
-
-        // 在屏幕中央绘制光照
-        batch.begin();
-        batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        batch.draw(lightTexture, centerX - lightTexture.getWidth() / 2f, centerY - lightTexture.getHeight() / 2f);
-        batch.end();
-        fogBuffer.end();
-
-        // 将战争迷雾绘制到屏幕
-        batch.begin();
-        batch.setBlendFunction(GL20.GL_DST_COLOR, GL20.GL_ZERO);
-        batch.draw(fogBuffer.getColorBufferTexture(), 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        batch.end();
     }
 
     /** Handle input for the game screen, should only be called by render() when not paused. */
@@ -199,13 +176,41 @@ public class GameScreen implements Screen {
 
     /** Render the game elements, should only be called by render(). */
     private void renderGameElements() {
+
+        // 绘制战争迷雾
+        fogBuffer.begin();
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        batch.setProjectionMatrix(camera.getCamera().combined);
+
+        // 计算屏幕中心位置
+        float centerX = player.getPosition().x;
+        float centerY = player.getPosition().y;
+
+        // 在屏幕中央绘制光照
+        batch.begin();
+        //        batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        //        batch.setBlendFunction(GL20.GL_DST_COLOR, GL20.GL_ZERO);
+
+        fogBuffer.end();
+
+        // 将战争迷雾绘制到屏幕
+
+        float w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight();
+        batch.draw(fogBuffer.getColorBufferTexture(), centerX - w / 2, centerY - h / 2, w, h);
+        batch.draw(
+                lightTexture,
+                centerX - lightTexture.getWidth() / 2f,
+                centerY - lightTexture.getHeight() / 2f);
+        batch.end();
         maze.render();
     }
 
     @Override
     public void resize(int width, int height) {
         camera.resize();
-        }
+    }
 
     @Override
     public void pause() {
