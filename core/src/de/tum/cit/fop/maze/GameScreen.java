@@ -9,7 +9,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import de.tum.cit.fop.maze.elements.Maze;
@@ -29,13 +32,16 @@ public class GameScreen implements Screen {
     private final BitmapFont font;
     private final Player player;
     private final Maze maze;
-    private final SpriteBatch batch;
     private float stateTime = 0f;
-    private FrameBuffer fogBuffer;
-    private Texture lightTexture;
+
+
+    private ShapeRenderer shapeRenderer;// 专门用来往 FBO 上绘制的 SpriteBatch
+    private Texture gradientTexture;//用来做圆形渐变纹理
+
 
     // 是否暂停
     private boolean paused = false;
+
 
     /**
      * Constructor for GameScreen. Initializes all important elements.
@@ -65,36 +71,9 @@ public class GameScreen implements Screen {
         player = new Player(game, maze, maze.getEntry().getPosition());
         camera = new MazeRunnerCamera(game, player.getPosition());
 
-        batch = new SpriteBatch();
-        createFogBuffer();
-        createLightTexture();
-    }
-
-    private void createFogBuffer() {
-        fogBuffer =
-                new FrameBuffer(
-                        Pixmap.Format.RGBA8888,
-                        Gdx.graphics.getWidth(),
-                        Gdx.graphics.getHeight(),
-                        false);
-    }
-
-    private void createLightTexture() {
-        int size = 128;
-        Pixmap pixmap = new Pixmap(size, size, Pixmap.Format.RGBA8888);
-        pixmap.setBlending(Pixmap.Blending.None);
-
-        for (int y = 0; y < size; y++) {
-            for (int x = 0; x < size; x++) {
-                float distance = Vector2.dst(x, y, size / 2f, size / 2f);
-                float alpha = Math.max(0, 1 - (distance / (size / 2f)));
-                pixmap.setColor(1, 1, 1, alpha);
-                pixmap.drawPixel(x, y);
-            }
-        }
-
-        lightTexture = new Texture(pixmap);
-        pixmap.dispose();
+        shapeRenderer = new ShapeRenderer();
+        // 创建渐变纹理
+        createGradientTexture();
     }
 
     public boolean isPaused() {
@@ -109,7 +88,37 @@ public class GameScreen implements Screen {
         return stateTime;
     }
 
-    // Screen interface methods with necessary functionality
+    //创建圆形渐变纹理
+    private void createGradientTexture() {
+        int size = 1024;
+        Pixmap pix = new Pixmap(size, size, Pixmap.Format.RGBA8888);
+
+        // 圆心在 (size/2, size/2)
+        float center = size / 2f;
+
+        for (int y = 0; y < size; y++) {
+            for (int x = 0; x < size; x++) {
+                float dx = x - center;
+                float dy = y - center;
+                float dist = (float)Math.sqrt(dx*dx + dy*dy);
+
+                // dist=0 =>中心, dist>center =>边缘
+                float t = dist / center; // 0..1
+
+                if (t > 1f) t = 1f;      // 超过边缘就算1
+
+                // 希望中心=0(透明), 边缘=1(不透明黑)
+                float alpha = t;
+
+                // 设置颜色(黑 + alpha)
+                pix.setColor(0, 0, 0, alpha);
+                pix.drawPixel(x,y);
+            }
+        }
+        gradientTexture = new Texture(pix);
+        pix.dispose();
+    }
+
     @Override
     public void render(float delta) {
 
@@ -131,6 +140,67 @@ public class GameScreen implements Screen {
         renderGameElements();
 
         game.getSpriteBatch().end();
+
+        // 使用 Stencil 做“圆形区域可见、外部不透明黑”
+        Gdx.gl.glEnable(GL20.GL_STENCIL_TEST);
+        Gdx.gl.glClearStencil(0);
+        Gdx.gl.glClear(GL20.GL_STENCIL_BUFFER_BIT);
+
+        // 写圆形 stencil=1
+        Gdx.gl.glColorMask(false,false,false,false);
+        Gdx.gl.glStencilFunc(GL20.GL_ALWAYS, 1, 0xFF);
+        Gdx.gl.glStencilOp(GL20.GL_KEEP, GL20.GL_KEEP, GL20.GL_REPLACE);
+
+        shapeRenderer.setProjectionMatrix(
+            new Matrix4().setToOrtho2D(0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight())
+        );
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        float cx = Gdx.graphics.getWidth()/2f;
+        float cy = Gdx.graphics.getHeight()/2f;
+        float circleRadius = 300; // 圆形半径
+        shapeRenderer.circle(cx, cy, circleRadius);
+        shapeRenderer.end();
+
+        // 在 stencil=0 的地方画黑幕
+        Gdx.gl.glColorMask(true,true,true,true);
+        Gdx.gl.glStencilFunc(GL20.GL_EQUAL, 0, 0xFF);
+        Gdx.gl.glStencilOp(GL20.GL_KEEP, GL20.GL_KEEP, GL20.GL_KEEP);
+
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(0,0,0,1f); // 不透明黑
+        shapeRenderer.rect(0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        shapeRenderer.end();
+
+        // 现在给“圆形区域(stencil=1)”叠加一张渐变纹理
+        Gdx.gl.glStencilFunc(GL20.GL_EQUAL, 1, 0xFF);
+        Gdx.gl.glStencilOp(GL20.GL_KEEP, GL20.GL_KEEP, GL20.GL_KEEP);
+
+        // 注意：别关 stencil，需要它来限制只在圆形内画渐变
+        // 我们用 spriteBatch 绘制纹理
+        SpriteBatch batch = game.getSpriteBatch();
+        batch.setProjectionMatrix(
+            new Matrix4().setToOrtho2D(0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight())
+        );
+        batch.begin();
+
+        // 在圆心放置渐变纹理
+        // 建议给纹理一个比 circleRadius 稍大的尺寸，如 300×300，
+        // 以保证边缘有足够的渐变空间
+        float gradientSize = 600; // 可自行调大或小
+        batch.draw(
+            gradientTexture,
+            cx - gradientSize/2f,
+            cy - gradientSize/2f,
+            gradientSize,
+            gradientSize
+        );
+        batch.end();
+
+        // 关闭 Stencil
+        Gdx.gl.glDisable(GL20.GL_STENCIL_TEST);
     }
 
     /** Handle input for the game screen, should only be called by render() when not paused. */
@@ -176,34 +246,6 @@ public class GameScreen implements Screen {
 
     /** Render the game elements, should only be called by render(). */
     private void renderGameElements() {
-
-        // 绘制战争迷雾
-        fogBuffer.begin();
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        batch.setProjectionMatrix(camera.getCamera().combined);
-
-        // 计算屏幕中心位置
-        float centerX = player.getPosition().x;
-        float centerY = player.getPosition().y;
-
-        // 在屏幕中央绘制光照
-        batch.begin();
-        //        batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        //        batch.setBlendFunction(GL20.GL_DST_COLOR, GL20.GL_ZERO);
-
-        fogBuffer.end();
-
-        // 将战争迷雾绘制到屏幕
-
-        float w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight();
-        batch.draw(fogBuffer.getColorBufferTexture(), centerX - w / 2, centerY - h / 2, w, h);
-        batch.draw(
-                lightTexture,
-                centerX - lightTexture.getWidth() / 2f,
-                centerY - lightTexture.getHeight() / 2f);
-        batch.end();
         maze.render();
     }
 
@@ -221,10 +263,24 @@ public class GameScreen implements Screen {
     public void resume() {}
 
     @Override
-    public void show() {}
+    public void show() {
+        // 重新创建资源
+        shapeRenderer = new ShapeRenderer();
+        createGradientTexture();
+    }
 
     @Override
-    public void hide() {}
+    public void hide() {
+        // 释放资源
+        if (shapeRenderer != null) {
+            shapeRenderer.dispose();
+            shapeRenderer = null;
+        }
+        if (gradientTexture != null) {
+            gradientTexture.dispose();
+            gradientTexture = null;
+        }
+    }
 
     @Override
     public void dispose() {
