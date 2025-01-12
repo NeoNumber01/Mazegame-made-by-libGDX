@@ -13,7 +13,13 @@ public class Exit extends Path {
 
     @Override
     public void onArrival(MazeObject other) {
+
         if (other instanceof Player) {
+            Player player = (Player) other;
+            if (!player.hasKey()) {
+                System.out.println("You haven't got the key");
+                return;
+            }
             System.out.println("Player arrived at the exit!");
             MazeRunnerGame game = ((Player) other).getGame(); // Get the main game object
 

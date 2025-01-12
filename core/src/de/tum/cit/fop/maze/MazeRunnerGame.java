@@ -289,4 +289,6 @@ public class MazeRunnerGame extends Game {
 
         return score;
     }
+
+
 }

@@ -75,6 +75,7 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
                         entities.add(new Skeleton(this, pos));
                         break;
                     case 5: // TODO: Key
+                        maze[i][j] = new Key(this, game.getResourcePack().getKeyTexture(), pos);
                         break;
                 }
                 // fallback: empty block rendered as path
@@ -158,5 +159,12 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
         for (MazeObject obj : this) {
             obj.onFrame(deltaTime);
         }
+    }
+    public Vector2 getPosition() {
+        return position;
+    }
+
+    public void setBlock(int i, int j, Block block) {
+        maze[i][j] = block;
     }
 }

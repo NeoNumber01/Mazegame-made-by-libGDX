@@ -13,12 +13,13 @@ import java.util.function.Function;
 public class ResourcePack { // Character animation
     private MoveAnimation playerWalkAnimation, playerSprintAnimation;
     private MoveAnimation SkeletonMoveAnimation;
-    private TextureRegion blockTexture, blackBlockTexture;
+    private TextureRegion blockTexture, blackBlockTexture,keyTexture;
 
     public ResourcePack() {
         loadPlayerAnimation();
         loadMobTexture();
         loadBlockTexture();
+        loadKeyTexture();
     }
 
     public MoveAnimation getSkeletonMoveAnimation() {
@@ -128,7 +129,14 @@ public class ResourcePack { // Character animation
                             frameCount));
         }
     }
-
+    private void loadKeyTexture() {
+        Texture keySheet = new Texture(Gdx.files.internal("Key.png"));
+        // 该资源是16x16
+        keyTexture = new TextureRegion(keySheet, 0, 0, 256, 256);
+    }
+    public TextureRegion getKeyTexture() {
+        return keyTexture;
+    }
     /**
      * Loads a consecutive set of textures of the same size
      *
@@ -136,8 +144,7 @@ public class ResourcePack { // Character animation
      * @param position base position to start
      * @param size size of individual texture
      * @param offset movement to the position of next frame
-     * @param count number of frames to be loaded in total
-     * @return desired textures
+     * @param count number of frames to be loaded in total    * @return desired textures
      */
     private Array<TextureRegion> loadTextureArray(
             Texture origin, PixelVector position, PixelVector size, PixelVector offset, int count) {

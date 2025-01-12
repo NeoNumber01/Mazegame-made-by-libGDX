@@ -13,6 +13,7 @@ public class Player extends Entity implements Health {
     private Vector2 position;
     private float maxHealth, health, lastHitTimestamp;
     private MazeRunnerGame game;
+    private boolean hasKey;
 
     public Player(MazeRunnerGame game, Maze maze, Vector2 position) {
         // TextureRegion cut from assets is 16x32
@@ -24,6 +25,7 @@ public class Player extends Entity implements Health {
         sprintAnimation = game.getResourcePack().getPlayerSprintAnimation();
         health = maxHealth = 100f;
         this.game = game;
+        this.hasKey = false;
     }
 
     @Override
@@ -69,4 +71,12 @@ public class Player extends Entity implements Health {
     public MazeRunnerGame getGame() {
         return game;
     }
-}
+
+    public boolean hasKey() {
+        return hasKey;
+    }
+
+    public void setHasKey(boolean hasKey) {
+        this.hasKey = hasKey;
+    }
+    }
