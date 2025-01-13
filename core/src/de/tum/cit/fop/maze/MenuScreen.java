@@ -74,7 +74,7 @@ public class MenuScreen implements Screen {
                         showLoadMapDialog();
                     }
                 });
-        // 音量调节
+
         // Volume Button
         TextButton volumeButton = new TextButton("Volume", game.getSkin());
         table.add(volumeButton).width(300).padBottom(20).row();
@@ -82,7 +82,7 @@ public class MenuScreen implements Screen {
                 new ChangeListener() {
                     @Override
                     public void changed(ChangeEvent event, Actor actor) {
-                        // 打开音量控制面板
+
                         showVolumeDialog();
                     }
                 });
@@ -134,7 +134,7 @@ public class MenuScreen implements Screen {
 
     /** 选择地图 */
     private void showLoadMapDialog() {
-        // 创建对话框
+
         Dialog loadMapDialog =
                 new Dialog("Select a Map", game.getSkin()) {
                     @Override
@@ -146,12 +146,11 @@ public class MenuScreen implements Screen {
                             String mapFilePath = (String) object;
                             game.startNewGame(mapFilePath);
                         }
-                        // 关闭对话框
+
                         this.hide();
                     }
                 };
 
-        // 文字说明
         loadMapDialog.text("Choose one of the following maps:").padBottom(20);
 
         Table buttonTable = new Table();
@@ -176,28 +175,17 @@ public class MenuScreen implements Screen {
                         @Override
                         public void changed(ChangeEvent event, Actor actor) {
                             game.startNewGame(selectedMapPath);
-                            loadMapDialog.hide(); // 关闭对话框
+                            loadMapDialog.hide();
                         }
                     });
         }
         loadMapDialog.getContentTable().add(buttonTable).row();
-
-        // 在对话框的 button(...) 里传递第三个参数作为“返回值”，在 result() 方法里拿
-        //        loadMapDialog.button("Map 1", "maps/level-1.properties");
-        //        loadMapDialog.button("Map 2", "maps/level-2.properties");
-        //        loadMapDialog.button("Map 3", "maps/level-3.properties");
-        //        loadMapDialog.button("Map 4", "maps/level-4.properties");
-        //        loadMapDialog.button("Map 5", "maps/level-5.properties");
-        // 取消
         loadMapDialog.button("Cancel", game.getSkin());
-        //
-        // 显示对话框
         loadMapDialog.show(stage);
     }
 
     @Override
     public void show() {
-        // 设置此Screen时会调用，设置输入处理器
         Gdx.input.setInputProcessor(stage);
     }
 
@@ -220,9 +208,7 @@ public class MenuScreen implements Screen {
     public void resume() {}
 
     @Override
-    public void hide() {
-        // 切换到别的Screen
-    }
+    public void hide() {}
 
     @Override
     public void dispose() {
