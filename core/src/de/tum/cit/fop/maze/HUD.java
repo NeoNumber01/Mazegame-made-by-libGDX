@@ -1,6 +1,6 @@
 package de.tum.cit.fop.maze;
 
-
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -22,7 +22,13 @@ public class HUD {
 
     public HUD(SpriteBatch spriteBatch) {
         // 设置视口和舞台
-        viewport = new FitViewport(800, 600); // 替换为游戏的实际分辨率
+        float viewportWidth = 800f;
+        viewport =
+                new FitViewport(
+                        viewportWidth,
+                        viewportWidth
+                                * Gdx.graphics.getHeight()
+                                / Gdx.graphics.getWidth()); // 替换为游戏的实际分辨率
         stage = new Stage(viewport, spriteBatch);
 
         // 创建字体样式
