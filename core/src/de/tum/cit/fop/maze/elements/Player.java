@@ -5,14 +5,17 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
+import de.tum.cit.fop.maze.GameOverScreen;
 import de.tum.cit.fop.maze.MazeRunnerGame;
 
 public class Player extends Entity implements Health {
 
     private final MoveAnimation walkAnimation, sprintAnimation;
+    private final float maxHealth;
+    private final MazeRunnerGame game;
     private Vector2 position;
-    private float maxHealth, health, lastHitTimestamp;
-    private MazeRunnerGame game;
+    private float health;
+    private float lastHitTimestamp;
     private boolean hasKey;
 
     public Player(MazeRunnerGame game, Maze maze, Vector2 position) {
@@ -54,7 +57,7 @@ public class Player extends Entity implements Health {
                 lastHitTimestamp = game.getStateTime();
             }
         }
-        System.out.printf("Time=%f, Health=%f\n", game.getStateTime(), health);
+        System.out.printf("Time=%f, Health=%f\n", game.getStateTime(), health - 10);
 
         health += delta;
         if (health > maxHealth) health = maxHealth;
@@ -66,6 +69,8 @@ public class Player extends Entity implements Health {
     @Override
     public void onEmptyHealth() {
         // TODO: end game
+        System.out.println("Player has died!");
+        game.setScreen(new GameOverScreen(game)); // 切换到 GameOverScreen
     }
 
     public MazeRunnerGame getGame() {

@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import de.tum.cit.fop.maze.elements.Exit;
 import de.tum.cit.fop.maze.elements.Player;
+
 import games.spooky.gdx.nativefilechooser.NativeFileChooser;
 
 /**
@@ -293,10 +294,9 @@ public class MazeRunnerGame extends Game {
 
         return score;
     }
+
     public void resumeFromExit(Player player, Exit exit) {
         setScreen(gameScreen); // 切换回游戏界面
         gameScreen.restorePlayerState(player, exit); // 恢复玩家位置和状态
     }
-
-
 }

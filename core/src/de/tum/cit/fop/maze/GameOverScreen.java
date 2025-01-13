@@ -3,6 +3,7 @@ package de.tum.cit.fop.maze;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -10,47 +11,49 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
-import de.tum.cit.fop.maze.elements.Exit;
-import de.tum.cit.fop.maze.elements.Player;
-
-public class NoKeyScreen implements Screen {
+public class GameOverScreen implements Screen {
 
     private final MazeRunnerGame game;
     private final Stage stage;
-    private final Player player;
-    private final Exit exit;
 
-    public NoKeyScreen(MazeRunnerGame game, Player player, Exit exit) {
+    public GameOverScreen(MazeRunnerGame game) {
         this.game = game;
-        this.player = player;
-        this.exit = exit;
 
-        // 设置舞台和视口
-        stage = new Stage(new ScreenViewport(), game.getSpriteBatch());
+        var camera = new OrthographicCamera();
+        camera.zoom = 1.5f; // Set camera zoom for a closer view
+
+        Viewport viewport = new ScreenViewport(camera);
+        stage = new Stage(viewport, game.getSpriteBatch());
         Gdx.input.setInputProcessor(stage);
 
-        // 创建 UI 表格
         Table table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
 
-        // 添加提示信息
-        Label messageLabel =
-                new Label("You don't have enough keys to exit!", game.getSkin(), "title");
-        table.add(messageLabel).padBottom(50).center().row();
+        // Title: "Game Over"
+        table.add(new Label("You Are Dead!", game.getSkin(), "title")).padBottom(80).row();
 
-        // 添加 "Return to Game" 按钮
-        TextButton returnButton = new TextButton("Return to Game", game.getSkin());
-        table.add(returnButton).width(300).padBottom(20).center().row();
-
-        // 设置按钮监听器
-        returnButton.addListener(
+        // Restart Button
+        TextButton restartButton = new TextButton("Restart Game", game.getSkin());
+        table.add(restartButton).width(300).padBottom(20).row();
+        restartButton.addListener(
                 new ChangeListener() {
                     @Override
                     public void changed(ChangeEvent event, Actor actor) {
-                        // 恢复游戏状态并返回游戏界面
-                        game.resumeFromExit(player, exit);
+                        game.startNewGame(); // Restart the game
+                    }
+                });
+
+        // Exit Button
+        TextButton exitButton = new TextButton("Exit to Menu", game.getSkin());
+        table.add(exitButton).width(300).row();
+        exitButton.addListener(
+                new ChangeListener() {
+                    @Override
+                    public void changed(ChangeEvent event, Actor actor) {
+                        game.goToMenu(); // Return to the main menu
                     }
                 });
     }
