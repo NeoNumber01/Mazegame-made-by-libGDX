@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import de.tum.cit.fop.maze.elements.Exit;
 import de.tum.cit.fop.maze.elements.Maze;
 import de.tum.cit.fop.maze.elements.Player;
+import de.tum.cit.fop.maze.HUD;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -32,7 +33,7 @@ public class GameScreen implements Screen {
     private final Player player;
     private final Maze maze;
     private float stateTime = 0f;
-
+    private final HUD hud;
 
     private ShapeRenderer shapeRenderer;// 专门用来往 FBO 上绘制的 SpriteBatch
     private Texture gradientTexture;//用来做圆形渐变纹理
@@ -53,7 +54,7 @@ public class GameScreen implements Screen {
 
     public GameScreen(MazeRunnerGame game, String mapFilePath) {
         this.game = game;
-
+        hud = new HUD(game.getSpriteBatch());
         // Get the font from the game's skin
         font = game.getSkin().getFont("font");
 
@@ -123,9 +124,7 @@ public class GameScreen implements Screen {
 
         if (!paused) {
             stateTime += delta;
-        }
 
-        if (!paused) {
             handleInput(delta);
             triggerEvents(delta);
         }
@@ -139,6 +138,7 @@ public class GameScreen implements Screen {
         renderGameElements();
 
         game.getSpriteBatch().end();
+
 
         // 使用 Stencil 做“圆形区域可见、外部不透明黑”
         Gdx.gl.glEnable(GL20.GL_STENCIL_TEST);
@@ -200,6 +200,8 @@ public class GameScreen implements Screen {
 
         // 关闭 Stencil
         Gdx.gl.glDisable(GL20.GL_STENCIL_TEST);
+        hud.update((int) player.getHealth(), player.hasKey());
+        hud.render();
     }
 
     /** Handle input for the game screen, should only be called by render() when not paused. */

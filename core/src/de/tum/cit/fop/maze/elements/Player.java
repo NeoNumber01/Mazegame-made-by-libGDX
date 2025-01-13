@@ -84,4 +84,8 @@ public class Player extends Entity implements Health {
     public void setHasKey(boolean hasKey) {
         this.hasKey = hasKey;
     }
+
+    public float getHealth() {
+        return health;
+    }
 }
