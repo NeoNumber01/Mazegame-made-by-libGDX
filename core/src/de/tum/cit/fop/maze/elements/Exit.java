@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import de.tum.cit.fop.maze.EndScreen;
 import de.tum.cit.fop.maze.MazeRunnerGame;
+import de.tum.cit.fop.maze.NoKeyScreen;
 
 public class Exit extends Path {
     public Exit(Maze maze, TextureRegion texture, Vector2 position) {
@@ -18,6 +19,7 @@ public class Exit extends Path {
             Player player = (Player) other;
             if (!player.hasKey()) {
                 System.out.println("You haven't got the key");
+                player.getGame().setScreen(new NoKeyScreen(player.getGame(), player,this));
                 return;
             }
             System.out.println("Player arrived at the exit!");

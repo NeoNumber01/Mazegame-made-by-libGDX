@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import de.tum.cit.fop.maze.elements.Exit;
 import de.tum.cit.fop.maze.elements.Maze;
 import de.tum.cit.fop.maze.elements.Player;
 
@@ -269,5 +270,14 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         // 释放资源
+    }
+    public void restorePlayerState(Player player, Exit exit) {
+        // 获取出口的位置
+        Vector2 exitPosition = exit.getPosition();
+
+        // 设置玩家的 hitbox 位置为出口的位置
+        player.getHitbox().setPosition(exitPosition.x, exitPosition.y);
+
+        setPaused(false); // 确保游戏未暂停
     }
 }

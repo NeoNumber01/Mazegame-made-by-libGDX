@@ -6,6 +6,8 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
+import de.tum.cit.fop.maze.elements.Exit;
+import de.tum.cit.fop.maze.elements.Player;
 import games.spooky.gdx.nativefilechooser.NativeFileChooser;
 
 /**
@@ -33,6 +35,8 @@ public class MazeRunnerGame extends Game {
     // 是否暂停
     private boolean paused;
     private float volume = 0.5f;
+
+    private Player player;
 
     /**
      * Constructor for MazeRunnerGame.
@@ -288,6 +292,10 @@ public class MazeRunnerGame extends Game {
                 maxScore - (int) (((double) (elapsedSeconds - minTime) / timeRange) * scoreRange);
 
         return score;
+    }
+    public void resumeFromExit(Player player, Exit exit) {
+        setScreen(gameScreen); // 切换回游戏界面
+        gameScreen.restorePlayerState(player, exit); // 恢复玩家位置和状态
     }
 
 
