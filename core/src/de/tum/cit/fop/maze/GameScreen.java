@@ -253,6 +253,7 @@ public class GameScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         camera.resize();
+        hud.resize(width, height);
     }
 
     @Override

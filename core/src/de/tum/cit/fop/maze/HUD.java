@@ -93,9 +93,13 @@ public class HUD {
         stage.draw(); // 绘制 HUD
     }
 
-    public void resize() {
-        camera.setToOrtho(false, viewPointWidth, getViewPointHeight());
+    public void resize(int width, int height) {
+        viewport.update(width, height, true); // 更新视口
+        camera.setToOrtho(false, viewPointWidth, getViewPointHeight()); // 更新摄像机
+        stage.getViewport().update(width, height, true); // 更新舞台视口
     }
+
+
 
     public void dispose() {
         stage.dispose();
