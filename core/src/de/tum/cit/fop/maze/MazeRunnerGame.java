@@ -35,7 +35,7 @@ public class MazeRunnerGame extends Game {
     private boolean timerStarted; // Flag to indicate if the timer has started
     // 是否暂停
     private boolean paused;
-    private float volume = 0.5f;
+    private float volume = 0.05f;
 
     private Player player;
 

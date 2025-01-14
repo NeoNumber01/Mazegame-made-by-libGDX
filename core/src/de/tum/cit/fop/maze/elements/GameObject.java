@@ -11,4 +11,7 @@ public abstract class GameObject {
 
     /** Handles per-frame logic of the object. */
     public void onFrame(float deltaTime) {}
+    public MazeRunnerGame getGame() {
+        return game;
+    }
 }

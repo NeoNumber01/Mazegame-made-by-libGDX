@@ -2,6 +2,7 @@ package de.tum.cit.fop.maze;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -13,14 +14,16 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public class HUD {
     public Stage stage;
     private Viewport viewport;
-
+    private final OrthographicCamera camera;
     private int health;
     private boolean hasKey;
 
     private Label healthLabel;
     private Label keyStatusLabel;
+    private final float viewPointWidth = 1024f;
 
     public HUD(SpriteBatch spriteBatch) {
+        camera = new OrthographicCamera(viewPointWidth, getViewPointHeight());
         // 设置视口和舞台
         float viewportWidth = 800f;
         viewport =
@@ -62,8 +65,16 @@ public class HUD {
         keyStatusLabel.setText("Key: " + (hasKey ? "Collected" : "Not Collected"));
     }
 
+    private float getViewPointHeight() {
+        return viewPointWidth * Gdx.graphics.getHeight() / Gdx.graphics.getWidth();
+    }
+
     public void render() {
         stage.draw(); // 绘制 HUD
+    }
+
+    public void resize() {
+        camera.setToOrtho(false, viewPointWidth, getViewPointHeight());
     }
 
     public void dispose() {

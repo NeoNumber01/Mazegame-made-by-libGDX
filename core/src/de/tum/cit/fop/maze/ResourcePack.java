@@ -13,13 +13,14 @@ import java.util.function.Function;
 public class ResourcePack { // Character animation
     private MoveAnimation playerWalkAnimation, playerSprintAnimation;
     private MoveAnimation SkeletonMoveAnimation;
-    private TextureRegion blockTexture, blackBlockTexture,keyTexture;
+    private TextureRegion blockTexture, blackBlockTexture,keyTexture,livesTexture;
 
     public ResourcePack() {
         loadPlayerAnimation();
         loadMobTexture();
         loadBlockTexture();
         loadKeyTexture();
+        loadLivesTexture();
     }
 
     public MoveAnimation getSkeletonMoveAnimation() {
@@ -134,9 +135,24 @@ public class ResourcePack { // Character animation
         // 该资源是16x16
         keyTexture = new TextureRegion(keySheet, 0, 0, 256, 256);
     }
+    private void loadLivesTexture() {
+        Texture livesSheet = new Texture(Gdx.files.internal("Lives.png"));
+
+        // Replace these dimensions with the actual width and height of your uploaded image
+        int width = livesSheet.getWidth();
+        int height = livesSheet.getHeight();
+
+        livesTexture = new TextureRegion(livesSheet, 0, 0, width, height);
+    }
+
     public TextureRegion getKeyTexture() {
         return keyTexture;
     }
+
+    public TextureRegion getLivesTexture() {
+        return livesTexture;
+    }
+
     /**
      * Loads a consecutive set of textures of the same size
      *
@@ -159,6 +175,7 @@ public class ResourcePack { // Character animation
         }
         return result;
     }
+
 
     public record PixelVector(int x, int y) {}
 }

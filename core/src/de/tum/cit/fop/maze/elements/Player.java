@@ -73,6 +73,8 @@ public class Player extends Entity implements Health {
         game.setScreen(new GameOverScreen(game)); // 切换到 GameOverScreen
     }
 
+
+
     public MazeRunnerGame getGame() {
         return game;
     }
