@@ -79,7 +79,7 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
                         break;
                     case 6://TODO: Lives
 
-                        entities.add(new Lives (this, game.getResourcePack().getLivesTexture(), pos));
+                        entities.add(new Lives (this, game.getResourcePack().getFullHeartTexture(), pos));
 
                 }
                 // fallback: empty block rendered as path

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -22,7 +23,8 @@ public class HUD {
 
     private Label keyStatusLabel;
     private Table livesTable;
-    private final Texture livesTexture;
+    private TextureRegion fullHeartTexture;
+    private TextureRegion halfHeartTexture;
     private final float viewPointWidth = 1024f;
 
     public HUD(SpriteBatch spriteBatch) {
@@ -34,54 +36,63 @@ public class HUD {
         );
         stage = new Stage(viewport, spriteBatch);
 
-        // 加载生命图标纹理
-        livesTexture = new Texture(Gdx.files.internal("Lives.png"));
+        // Load heart textures
+        fullHeartTexture = new TextureRegion(new Texture(Gdx.files.internal("Lives.png")));
+        halfHeartTexture = new TextureRegion(new Texture(Gdx.files.internal("halfLives.png")));
 
-        // 创建显示生命图标的表格
+        // Create table for displaying hearts
         livesTable = new Table();
         livesTable.top();
-        livesTable.setFillParent(false); // 防止填充整个屏幕
+        livesTable.setFillParent(false); // Prevent table from filling the entire screen
 
-        // 初始化钥匙状态标签
-        BitmapFont font = new BitmapFont(); // 默认字体
+        // Initialize key status label
+        BitmapFont font = new BitmapFont(); // Default font
         Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
         keyStatusLabel = new Label("Key: Not Collected", labelStyle);
 
-        // 主布局表格
+        // Main layout table
         Table mainTable = new Table();
         mainTable.top();
         mainTable.setFillParent(true);
 
-        // 添加 Lives 表格和钥匙状态标签到主表格
-        mainTable.add(livesTable).expandX().padTop(10); // 生命图标
+        // Add lives table and key status label to main table
+        mainTable.add(livesTable).expandX().padTop(10); // Heart icons
         mainTable.row();
-        mainTable.add(keyStatusLabel).expandX().padTop(10); // 钥匙状态
+        mainTable.add(keyStatusLabel).expandX().padTop(10); // Key status
 
-        // 将主表格添加到舞台
+        // Add main table to the stage
         stage.addActor(mainTable);
 
-        // 初始化健康值显示
-        updateLivesDisplay(100); // 默认满血
+        // Initialize health display
+        updateLivesDisplay(100); // Default to full health
     }
 
     public void update(int health, boolean hasKey) {
         this.health = health;
         this.hasKey = hasKey;
 
-        // 更新生命显示
+        // Update lives display
         updateLivesDisplay(health);
 
-        // 更新钥匙状态
+        // Update key status
         keyStatusLabel.setText("Key: " + (hasKey ? "Collected" : "Not Collected"));
     }
 
     private void updateLivesDisplay(int health) {
-        livesTable.clear(); // 清空表格内容
+        livesTable.clear(); // Clear table contents
+        int fullHearts = health / 20; // Number of full hearts
+        boolean hasHalfHeart = (health % 20) >= 10; // Whether to display a half-heart
 
-        int numberOfLives = health / 20; // 每 20 点健康值显示一个图标
-        for (int i = 0; i < numberOfLives; i++) {
-            Image lifeImage = new Image(livesTexture);
-            livesTable.add(lifeImage).pad(2); // 添加图标并设置间距
+        // Display full hearts
+        for (int i = 0; i < fullHearts; i++) {
+            Image fullHeart = new Image(fullHeartTexture);
+            livesTable.add(fullHeart).pad(2); // Add full heart with padding
+        }
+
+        // Display half-heart
+        if (hasHalfHeart) {
+            Image halfHeart = new Image(halfHeartTexture);
+            livesTable.add(halfHeart).pad(2); // Add half heart with padding
         }
     }
 
@@ -90,19 +101,18 @@ public class HUD {
     }
 
     public void render() {
-        stage.draw(); // 绘制 HUD
+        stage.draw(); // Render the HUD
     }
 
     public void resize(int width, int height) {
-        viewport.update(width, height, true); // 更新视口
-        camera.setToOrtho(false, viewPointWidth, getViewPointHeight()); // 更新摄像机
-        stage.getViewport().update(width, height, true); // 更新舞台视口
+        viewport.update(width, height, true); // Update viewport
+        camera.setToOrtho(false, viewPointWidth, getViewPointHeight()); // Update camera
+        stage.getViewport().update(width, height, true); // Update stage viewport
     }
-
-
 
     public void dispose() {
         stage.dispose();
-        livesTexture.dispose(); // 释放纹理资源
+        fullHeartTexture.getTexture().dispose(); // Release full heart texture resource
+        halfHeartTexture.getTexture().dispose(); // Release half heart texture resource
     }
 }

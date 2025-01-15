@@ -20,9 +20,10 @@ public class Lives extends InteractiveElements {
     public void render() {
         // 确保纹理和位置正确渲染
         maze.getGame().getSpriteBatch().draw(
-            maze.getGame().getResourcePack().getLivesTexture(),
+            maze.getGame().getResourcePack().getFullHeartTexture(),
             position.x, position.y,
             maze.getBlockSize(), maze.getBlockSize()
+
         );
     }
 
