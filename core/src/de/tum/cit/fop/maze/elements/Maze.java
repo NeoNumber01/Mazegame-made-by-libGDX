@@ -86,6 +86,10 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
                                 new Lightning(
                                         this, game.getResourcePack().getLightingTexture(), pos));
                         break;
+                    case 8: // Shield
+                        entities.add(new Shield(this, game.getResourcePack().getShieldTexture(), pos));
+                        break;
+
                 }
                 // fallback: empty block rendered as path
                 if (maze[i][j] == null) {

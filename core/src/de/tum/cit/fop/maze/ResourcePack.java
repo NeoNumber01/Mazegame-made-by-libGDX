@@ -13,7 +13,7 @@ import java.util.function.Function;
 public class ResourcePack { // Character animation
     private MoveAnimation playerWalkAnimation, playerSprintAnimation;
     private MoveAnimation SkeletonMoveAnimation;
-    private TextureRegion blockTexture, blackBlockTexture, keyTexture, fullHeartTexture, halfHeartTexture,lightningTexture;
+    private TextureRegion blockTexture, blackBlockTexture, keyTexture, fullHeartTexture, halfHeartTexture,lightningTexture,shieldTexture;
 
     public ResourcePack() {
         loadPlayerAnimation();
@@ -22,6 +22,7 @@ public class ResourcePack { // Character animation
         loadKeyTexture();
         loadHeartTextures();
         loadLightningTexture();
+        loadShieldTexture();
     }
 
     public MoveAnimation getSkeletonMoveAnimation() {
@@ -164,7 +165,13 @@ public class ResourcePack { // Character animation
     public TextureRegion getHalfHeartTexture() {
         return halfHeartTexture;
     }
-
+    private void loadShieldTexture() {
+        Texture shieldSheet = new Texture(Gdx.files.internal("Armor.png"));
+        shieldTexture = new TextureRegion(shieldSheet, 0, 0, 16, 16);
+    }
+    public TextureRegion getShieldTexture() {
+        return shieldTexture;
+    }
     /**
      * Loads a consecutive set of textures of the same size
      *

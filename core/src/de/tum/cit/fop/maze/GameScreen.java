@@ -199,7 +199,7 @@ public class GameScreen implements Screen {
 
         // 关闭 Stencil
         Gdx.gl.glDisable(GL20.GL_STENCIL_TEST);
-        hud.update((int) player.getHealth(), player.hasKey(), player.getSpeedFactor());
+        hud.update((int) player.getHealth(), player.hasKey(), player.getSpeedFactor(),player.hasShield());
         hud.render();
 
     }

@@ -20,8 +20,9 @@ public class HUD {
     private final OrthographicCamera camera;
     private int health;
     private boolean hasKey;
-
+    private boolean hasShield;
     private Label keyStatusLabel;
+    private Label shieldStatusLabel;
     private Table livesTable;
     private Label speedLabel;
     private TextureRegion fullHeartTexture;
@@ -30,7 +31,7 @@ public class HUD {
 
     public HUD(SpriteBatch spriteBatch) {
         camera = new OrthographicCamera(viewPointWidth, getViewPointHeight());
-        float viewportWidth = 800f;
+        float viewportWidth = 1200f;
         viewport =
                 new FitViewport(
                         viewportWidth,
@@ -51,6 +52,7 @@ public class HUD {
         Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
         keyStatusLabel = new Label("Key: Not Collected", labelStyle);
         speedLabel = new Label("Speed: 0.0", labelStyle);
+        shieldStatusLabel = new Label("Shield: Inactive", labelStyle);
         // Main layout table
         Table mainTable = new Table();
         mainTable.top();
@@ -61,6 +63,8 @@ public class HUD {
         mainTable.row();
         mainTable.add(keyStatusLabel).expandX().padTop(10); // Key status
         mainTable.row();
+        mainTable.add(shieldStatusLabel).expandX().padTop(10);
+        mainTable.row();
         mainTable.add(speedLabel).expandX().padTop(10);
         // Add main table to the stage
         stage.addActor(mainTable);
@@ -69,15 +73,16 @@ public class HUD {
         updateLivesDisplay(100); // Default to full health
     }
 
-    public void update(int health, boolean hasKey, float speed) {
+    public void update(int health, boolean hasKey, float speed,boolean hasShield) {
         this.health = health;
         this.hasKey = hasKey;
-
+        this.hasShield = hasShield;
         // Update lives display
         updateLivesDisplay(health);
 
         // Update key status
         keyStatusLabel.setText("Key: " + (hasKey ? "Collected" : "Not Collected"));
+        shieldStatusLabel.setText("Shield: " + (hasShield ? "Active" : "Inactive"));
         speedLabel.setText(String.format("Speed: %.1f", speed));
     }
 
