@@ -13,7 +13,7 @@ import java.util.function.Function;
 public class ResourcePack { // Character animation
     private MoveAnimation playerWalkAnimation, playerSprintAnimation;
     private MoveAnimation SkeletonMoveAnimation;
-    private TextureRegion blockTexture, blackBlockTexture, keyTexture, fullHeartTexture, halfHeartTexture;
+    private TextureRegion blockTexture, blackBlockTexture, keyTexture, fullHeartTexture, halfHeartTexture,lightningTexture;
 
     public ResourcePack() {
         loadPlayerAnimation();
@@ -21,6 +21,7 @@ public class ResourcePack { // Character animation
         loadBlockTexture();
         loadKeyTexture();
         loadHeartTextures();
+        loadLightningTexture();
     }
 
     public MoveAnimation getSkeletonMoveAnimation() {
@@ -153,6 +154,13 @@ public class ResourcePack { // Character animation
         return fullHeartTexture;
     }
 
+    private void  loadLightningTexture(){
+        Texture LightningSheet = new Texture(Gdx.files.internal("Lightning.png"));
+        lightningTexture = new TextureRegion(LightningSheet, 0, 0, 16, 16);
+    }
+    public TextureRegion getLightingTexture() {
+        return lightningTexture;
+    }
     public TextureRegion getHalfHeartTexture() {
         return halfHeartTexture;
     }

@@ -77,10 +77,15 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
                     case 5: // TODO: Key
                         maze[i][j] = new Key(this, game.getResourcePack().getKeyTexture(), pos);
                         break;
-                    case 6://TODO: Lives
-
-                        entities.add(new Lives (this, game.getResourcePack().getFullHeartTexture(), pos));
-
+                    case 6: // TODO: Lives
+                        entities.add(
+                                new Lives(this, game.getResourcePack().getFullHeartTexture(), pos));
+                        break;
+                    case 7: // lIGHTING
+                        entities.add(
+                                new Lightning(
+                                        this, game.getResourcePack().getLightingTexture(), pos));
+                        break;
                 }
                 // fallback: empty block rendered as path
                 if (maze[i][j] == null) {
@@ -164,6 +169,7 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
             obj.onFrame(deltaTime);
         }
     }
+
     public Vector2 getPosition() {
         return position;
     }

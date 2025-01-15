@@ -16,7 +16,6 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import de.tum.cit.fop.maze.elements.Exit;
 import de.tum.cit.fop.maze.elements.Maze;
 import de.tum.cit.fop.maze.elements.Player;
-import de.tum.cit.fop.maze.HUD;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -200,8 +199,9 @@ public class GameScreen implements Screen {
 
         // 关闭 Stencil
         Gdx.gl.glDisable(GL20.GL_STENCIL_TEST);
-        hud.update((int) player.getHealth(), player.hasKey());
+        hud.update((int) player.getHealth(), player.hasKey(), player.getSpeedFactor());
         hud.render();
+
     }
 
     /** Handle input for the game screen, should only be called by render() when not paused. */

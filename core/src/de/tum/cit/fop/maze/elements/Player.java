@@ -17,6 +17,7 @@ public class Player extends Entity implements Health {
     private float health;
     private float lastHitTimestamp;
     private boolean hasKey;
+    private float speedFactor = 64f;
 
     public Player(MazeRunnerGame game, Maze maze, Vector2 position) {
         // TextureRegion cut from assets is 16x32
@@ -29,7 +30,7 @@ public class Player extends Entity implements Health {
         health = maxHealth = 100f;
         this.game = game;
         this.hasKey = false;
-    }
+        }
 
     @Override
     public void render() {
@@ -50,30 +51,44 @@ public class Player extends Entity implements Health {
 
     @Override
     public void modifyHealth(float delta) {
+        // 如果是扣血（delta < 0），才执行冷却检查
         if (delta < 0) {
             if (game.getStateTime() - lastHitTimestamp < 1) {
+
                 return;
             } else {
                 lastHitTimestamp = game.getStateTime();
             }
         }
-        System.out.printf("Time=%f, Health=%f\n", game.getStateTime(), health - 10);
 
+        // 日志输出：查看当前时间、改变前的血量以及改变值
+        System.out.printf(
+            "Time=%f, Health Before=%f, Delta=%f\n",
+            game.getStateTime(), health, delta
+        );
+
+        // 更新血量
         health += delta;
-        if (health > maxHealth) health = maxHealth;
+
+        // 不允许超过最大血量
+        if (health > maxHealth) {
+            health = maxHealth;
+        }
+
+        // 低于或等于 0，玩家死亡逻辑
         if (health <= 0) {
             onEmptyHealth();
         }
-    }
 
+        // 日志输出：查看更新后的血量
+        System.out.printf("Health After=%f\n", health);
+    }
     @Override
     public void onEmptyHealth() {
         // TODO: end game
         System.out.println("Player has died!");
         game.setScreen(new GameOverScreen(game)); // 切换到 GameOverScreen
     }
-
-
 
     public MazeRunnerGame getGame() {
         return game;
@@ -89,5 +104,13 @@ public class Player extends Entity implements Health {
 
     public float getHealth() {
         return health;
+    }
+
+    public float getSpeedFactor() {
+        return speedFactor;
+    }
+
+    public void setSpeedFactor(float speedFactor) {
+        this.speedFactor = speedFactor;
     }
 }

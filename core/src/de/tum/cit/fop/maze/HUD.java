@@ -23,6 +23,7 @@ public class HUD {
 
     private Label keyStatusLabel;
     private Table livesTable;
+    private Label speedLabel;
     private TextureRegion fullHeartTexture;
     private TextureRegion halfHeartTexture;
     private final float viewPointWidth = 1024f;
@@ -30,10 +31,10 @@ public class HUD {
     public HUD(SpriteBatch spriteBatch) {
         camera = new OrthographicCamera(viewPointWidth, getViewPointHeight());
         float viewportWidth = 800f;
-        viewport = new FitViewport(
-            viewportWidth,
-            viewportWidth * Gdx.graphics.getHeight() / Gdx.graphics.getWidth()
-        );
+        viewport =
+                new FitViewport(
+                        viewportWidth,
+                        viewportWidth * Gdx.graphics.getHeight() / Gdx.graphics.getWidth());
         stage = new Stage(viewport, spriteBatch);
 
         // Load heart textures
@@ -49,7 +50,7 @@ public class HUD {
         BitmapFont font = new BitmapFont(); // Default font
         Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
         keyStatusLabel = new Label("Key: Not Collected", labelStyle);
-
+        speedLabel = new Label("Speed: 0.0", labelStyle);
         // Main layout table
         Table mainTable = new Table();
         mainTable.top();
@@ -59,7 +60,8 @@ public class HUD {
         mainTable.add(livesTable).expandX().padTop(10); // Heart icons
         mainTable.row();
         mainTable.add(keyStatusLabel).expandX().padTop(10); // Key status
-
+        mainTable.row();
+        mainTable.add(speedLabel).expandX().padTop(10);
         // Add main table to the stage
         stage.addActor(mainTable);
 
@@ -67,7 +69,7 @@ public class HUD {
         updateLivesDisplay(100); // Default to full health
     }
 
-    public void update(int health, boolean hasKey) {
+    public void update(int health, boolean hasKey, float speed) {
         this.health = health;
         this.hasKey = hasKey;
 
@@ -76,6 +78,7 @@ public class HUD {
 
         // Update key status
         keyStatusLabel.setText("Key: " + (hasKey ? "Collected" : "Not Collected"));
+        speedLabel.setText(String.format("Speed: %.1f", speed));
     }
 
     private void updateLivesDisplay(int health) {
