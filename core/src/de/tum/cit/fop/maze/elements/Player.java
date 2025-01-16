@@ -13,14 +13,15 @@ public class Player extends Entity implements Health {
     private final MoveAnimation walkAnimation, sprintAnimation;
     private final float maxHealth;
     private final MazeRunnerGame game;
+    private final float shieldDuration = 30f;
     private Vector2 position;
     private float health;
     private float lastHitTimestamp;
     private boolean hasKey;
     private float speedFactor = 64f;
     private boolean hasShield = false;
-    private float shieldDuration = 30f;
     private float shieldStartTime = 0f;
+
     public Player(MazeRunnerGame game, Maze maze, Vector2 position) {
         // TextureRegion cut from assets is 16x32
         // However, actual visible part 16x22 in walk animation, which we define as the hitbox size
@@ -32,7 +33,7 @@ public class Player extends Entity implements Health {
         health = maxHealth = 100f;
         this.game = game;
         this.hasKey = false;
-        }
+    }
 
     @Override
     public void render() {
@@ -54,7 +55,7 @@ public class Player extends Entity implements Health {
     @Override
     public void modifyHealth(float delta) {
         // 如果是扣血（delta < 0），才执行冷却检查
-        if (delta < 0 ) {
+        if (delta < 0) {
             if (game.getStateTime() - lastHitTimestamp < 1) {
 
                 return;
@@ -72,7 +73,6 @@ public class Player extends Entity implements Health {
             deactivateShield();
         }
 
-
         // 更新血量
         health += delta;
 
@@ -87,28 +87,28 @@ public class Player extends Entity implements Health {
         }
         // 日志输出：查看当前时间、改变前的血量以及改变值
         System.out.printf(
-            "Time=%f, Health Before=%f, Delta=%f\n",
-            game.getStateTime(), health, delta
-        );
+                "Time=%f, Health Before=%f, Delta=%f\n", game.getStateTime(), health, delta);
         // 日志输出：查看更新后的血量
         System.out.printf("Health After=%f\n", health);
     }
+
     @Override
     public void onEmptyHealth() {
         // TODO: end game
         System.out.println("Player has died!");
         game.setScreen(new GameOverScreen(game)); // 切换到 GameOverScreen
     }
-//Shield
-public void activateShield() {
-    this.hasShield = true;
-    this.shieldStartTime = game.getStateTime();
 
-}
+    // Shield
+    public void activateShield() {
+        this.hasShield = true;
+        this.shieldStartTime = game.getStateTime();
+    }
+
     private void deactivateShield() {
         this.hasShield = false;
-
     }
+
     public MazeRunnerGame getGame() {
         return game;
     }
@@ -128,11 +128,12 @@ public void activateShield() {
     public float getSpeedFactor() {
         return speedFactor;
     }
-    public boolean hasShield() {
-        return this.hasShield;
-    }
 
     public void setSpeedFactor(float speedFactor) {
         this.speedFactor = speedFactor;
+    }
+
+    public boolean hasShield() {
+        return this.hasShield;
     }
 }

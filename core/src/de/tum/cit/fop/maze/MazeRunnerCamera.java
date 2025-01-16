@@ -2,7 +2,6 @@ package de.tum.cit.fop.maze;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
@@ -11,8 +10,8 @@ public class MazeRunnerCamera {
     private final OrthographicCamera camera;
     private final float viewPointWidth = 1024f;
     // 定义缩放的最小值和最大值
-    private final float minZoom = 0.5f;  // 最小缩放比例
-    private final float maxZoom = 1.1f;  // 最大缩放比例
+    private final float minZoom = 0.5f; // 最小缩放比例
+    private final float maxZoom = 1.1f; // 最大缩放比例
 
     public MazeRunnerCamera(MazeRunnerGame game, Vector2 initialPosition) {
         this.game = game;

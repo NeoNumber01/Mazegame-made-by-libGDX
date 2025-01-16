@@ -14,7 +14,7 @@ public class Entry extends Path {
     public void onArrival(MazeObject other) {
         if (other instanceof Player) {
             System.out.println("Player entered the map!");
-            MazeRunnerGame game = ((Player) other).getGame(); // Get the main game object
+            MazeRunnerGame game = other.getGame(); // Get the main game object
             game.startTimer(); // Start the timer when the player enters the map
         }
     }

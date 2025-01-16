@@ -31,16 +31,13 @@ public class GameScreen implements Screen {
     private final BitmapFont font;
     private final Player player;
     private final Maze maze;
-    private float stateTime = 0f;
     private final HUD hud;
-
-    private ShapeRenderer shapeRenderer;// 专门用来往 FBO 上绘制的 SpriteBatch
-    private Texture gradientTexture;//用来做圆形渐变纹理
-
+    private final ShapeRenderer shapeRenderer; // 专门用来往 FBO 上绘制的 SpriteBatch
+    private float stateTime = 0f;
+    private Texture gradientTexture; // 用来做圆形渐变纹理
 
     // 是否暂停
     private boolean paused = false;
-
 
     /**
      * Constructor for GameScreen. Initializes all important elements.
@@ -87,7 +84,7 @@ public class GameScreen implements Screen {
         return stateTime;
     }
 
-    //创建圆形渐变纹理
+    // 创建圆形渐变纹理
     private void createGradientTexture() {
         int size = 1024;
         Pixmap pix = new Pixmap(size, size, Pixmap.Format.RGBA8888);
@@ -99,19 +96,19 @@ public class GameScreen implements Screen {
             for (int x = 0; x < size; x++) {
                 float dx = x - center;
                 float dy = y - center;
-                float dist = (float)Math.sqrt(dx*dx + dy*dy);
+                float dist = (float) Math.sqrt(dx * dx + dy * dy);
 
                 // dist=0 =>中心, dist>center =>边缘
                 float t = dist / center; // 0..1
 
-                if (t > 1f) t = 1f;      // 超过边缘就算1
+                if (t > 1f) t = 1f; // 超过边缘就算1
 
                 // 希望中心=0(透明), 边缘=1(不透明黑)
                 float alpha = t;
 
                 // 设置颜色(黑 + alpha)
                 pix.setColor(0, 0, 0, alpha);
-                pix.drawPixel(x,y);
+                pix.drawPixel(x, y);
             }
         }
         gradientTexture = new Texture(pix);
@@ -138,29 +135,28 @@ public class GameScreen implements Screen {
 
         game.getSpriteBatch().end();
 
-
         // 使用 Stencil 做“圆形区域可见、外部不透明黑”
         Gdx.gl.glEnable(GL20.GL_STENCIL_TEST);
         Gdx.gl.glClearStencil(0);
         Gdx.gl.glClear(GL20.GL_STENCIL_BUFFER_BIT);
 
         // 写圆形 stencil=1
-        Gdx.gl.glColorMask(false,false,false,false);
+        Gdx.gl.glColorMask(false, false, false, false);
         Gdx.gl.glStencilFunc(GL20.GL_ALWAYS, 1, 0xFF);
         Gdx.gl.glStencilOp(GL20.GL_KEEP, GL20.GL_KEEP, GL20.GL_REPLACE);
 
         shapeRenderer.setProjectionMatrix(
-            new Matrix4().setToOrtho2D(0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight())
-        );
+                new Matrix4()
+                        .setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        float cx = Gdx.graphics.getWidth()/2f;
-        float cy = Gdx.graphics.getHeight()/2f;
+        float cx = Gdx.graphics.getWidth() / 2f;
+        float cy = Gdx.graphics.getHeight() / 2f;
         float circleRadius = 300; // 圆形半径
         shapeRenderer.circle(cx, cy, circleRadius);
         shapeRenderer.end();
 
         // 在 stencil=0 的地方画黑幕
-        Gdx.gl.glColorMask(true,true,true,true);
+        Gdx.gl.glColorMask(true, true, true, true);
         Gdx.gl.glStencilFunc(GL20.GL_EQUAL, 0, 0xFF);
         Gdx.gl.glStencilOp(GL20.GL_KEEP, GL20.GL_KEEP, GL20.GL_KEEP);
 
@@ -168,8 +164,8 @@ public class GameScreen implements Screen {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(0,0,0,1f); // 不透明黑
-        shapeRenderer.rect(0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        shapeRenderer.setColor(0, 0, 0, 1f); // 不透明黑
+        shapeRenderer.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         shapeRenderer.end();
 
         // 现在给“圆形区域(stencil=1)”叠加一张渐变纹理
@@ -180,8 +176,8 @@ public class GameScreen implements Screen {
         // 我们用 spriteBatch 绘制纹理
         SpriteBatch batch = game.getSpriteBatch();
         batch.setProjectionMatrix(
-            new Matrix4().setToOrtho2D(0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight())
-        );
+                new Matrix4()
+                        .setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         batch.begin();
 
         // 在圆心放置渐变纹理
@@ -189,19 +185,21 @@ public class GameScreen implements Screen {
         // 以保证边缘有足够的渐变空间
         float gradientSize = 600; // 可自行调大或小
         batch.draw(
-            gradientTexture,
-            cx - gradientSize/2f,
-            cy - gradientSize/2f,
-            gradientSize,
-            gradientSize
-        );
+                gradientTexture,
+                cx - gradientSize / 2f,
+                cy - gradientSize / 2f,
+                gradientSize,
+                gradientSize);
         batch.end();
 
         // 关闭 Stencil
         Gdx.gl.glDisable(GL20.GL_STENCIL_TEST);
-        hud.update((int) player.getHealth(), player.hasKey(), player.getSpeedFactor(),player.hasShield());
+        hud.update(
+                (int) player.getHealth(),
+                player.hasKey(),
+                player.getSpeedFactor(),
+                player.hasShield());
         hud.render();
-
     }
 
     /** Handle input for the game screen, should only be called by render() when not paused. */
@@ -274,6 +272,7 @@ public class GameScreen implements Screen {
     public void dispose() {
         // 释放资源
     }
+
     public void restorePlayerState(Player player, Exit exit) {
         // 获取出口的位置
         Vector2 exitPosition = exit.getPosition();

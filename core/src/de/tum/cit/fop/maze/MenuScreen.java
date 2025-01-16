@@ -20,7 +20,7 @@ public class MenuScreen implements Screen {
 
     private final MazeRunnerGame game;
     private final Stage stage;
-    private boolean pauseMode;
+    private final boolean pauseMode;
 
     public MenuScreen(MazeRunnerGame game, boolean pauseMode) {
         this.game = game;
@@ -141,9 +141,8 @@ public class MenuScreen implements Screen {
                     protected void result(Object object) {
                         // 当点击对话框的按钮后会调用
                         // object 就是 button(...) 方法里传进去的返回值
-                        if (object instanceof String) {
+                        if (object instanceof String mapFilePath) {
                             // 假设我们在 button 里传的就是地图路径
-                            String mapFilePath = (String) object;
                             game.startNewGame(mapFilePath);
                         }
 

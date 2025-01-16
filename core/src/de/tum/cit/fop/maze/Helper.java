@@ -21,7 +21,7 @@ public class Helper {
         };
     }
 
-    public static enum Direction {
+    public enum Direction {
         UP,
         DOWN,
         LEFT,

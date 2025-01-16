@@ -15,19 +15,19 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class HUD {
-    public Stage stage;
-    private Viewport viewport;
     private final OrthographicCamera camera;
+    private final float viewPointWidth = 1024f;
+    private final Viewport viewport;
+    private final Label keyStatusLabel;
+    private final Label shieldStatusLabel;
+    private final Table livesTable;
+    private final Label speedLabel;
+    private final TextureRegion fullHeartTexture;
+    private final TextureRegion halfHeartTexture;
+    public Stage stage;
     private int health;
     private boolean hasKey;
     private boolean hasShield;
-    private Label keyStatusLabel;
-    private Label shieldStatusLabel;
-    private Table livesTable;
-    private Label speedLabel;
-    private TextureRegion fullHeartTexture;
-    private TextureRegion halfHeartTexture;
-    private final float viewPointWidth = 1024f;
 
     public HUD(SpriteBatch spriteBatch) {
         camera = new OrthographicCamera(viewPointWidth, getViewPointHeight());
@@ -73,7 +73,7 @@ public class HUD {
         updateLivesDisplay(100); // Default to full health
     }
 
-    public void update(int health, boolean hasKey, float speed,boolean hasShield) {
+    public void update(int health, boolean hasKey, float speed, boolean hasShield) {
         this.health = health;
         this.hasKey = hasKey;
         this.hasShield = hasShield;

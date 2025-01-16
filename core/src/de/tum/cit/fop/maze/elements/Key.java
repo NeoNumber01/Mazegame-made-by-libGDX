@@ -1,16 +1,18 @@
 package de.tum.cit.fop.maze.elements;
+
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+
 public class Key extends Block {
-    public Key(Maze maze, TextureRegion texture, Vector2 position){
+    public Key(Maze maze, TextureRegion texture, Vector2 position) {
         super(maze, texture, position, false);
     }
+
     @Override
     public void onArrival(MazeObject other) {
         if (other instanceof Player player) {
             player.setHasKey(true);
-            //TODO：播放音效
-
+            // TODO：播放音效
 
             Vector2 pos = getPosition();
             int i = (int) ((pos.x - maze.getPosition().x) / maze.getBlockSize());
@@ -19,5 +21,4 @@ public class Key extends Block {
             maze.setBlock(i, j, new Path(maze, game.getResourcePack().getBlockTexture(), pos));
         }
     }
-
 }

@@ -1,9 +1,8 @@
 package de.tum.cit.fop.maze.elements;
 
 import com.badlogic.gdx.math.Vector2;
-import de.tum.cit.fop.maze.Helper;
 
-import javax.lang.model.util.Elements;
+import de.tum.cit.fop.maze.Helper;
 
 public abstract class InteractiveElements extends Entity {
 
@@ -12,10 +11,7 @@ public abstract class InteractiveElements extends Entity {
     }
 
     @Override
-    public void render() {
-
-
-    }
+    public void render() {}
 
     @Override
     public void onCollision(MazeObject other) {

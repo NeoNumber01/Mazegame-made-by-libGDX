@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 public class Shield extends InteractiveElements {
-    private Vector2 position;
+    private final Vector2 position;
 
     public Shield(Maze maze, TextureRegion texture, Vector2 position) {
         super(maze, position, new Vector2(32, 32), new Vector2(0, 0));
@@ -13,11 +13,14 @@ public class Shield extends InteractiveElements {
 
     @Override
     public void render() {
-        maze.getGame().getSpriteBatch().draw(
-            maze.getGame().getResourcePack().getShieldTexture(),
-            position.x, position.y,
-            maze.getBlockSize(), maze.getBlockSize()
-        );
+        maze.getGame()
+                .getSpriteBatch()
+                .draw(
+                        maze.getGame().getResourcePack().getShieldTexture(),
+                        position.x,
+                        position.y,
+                        maze.getBlockSize(),
+                        maze.getBlockSize());
     }
 
     @Override

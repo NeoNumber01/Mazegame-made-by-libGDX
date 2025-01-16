@@ -2,5 +2,5 @@ package de.tum.cit.fop.maze.elements;
 
 public interface Visible {
     /** Send a draw call to render itself */
-    public void render();
+    void render();
 }

@@ -4,8 +4,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 public class Lives extends InteractiveElements {
+    private final Vector2 position;
     private int lives;
-    private Vector2 position;
 
     public Lives(Maze maze, TextureRegion texture, Vector2 position) {
         super(maze, position, new Vector2(32, 32), new Vector2(0, 0));
