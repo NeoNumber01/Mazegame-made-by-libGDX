@@ -7,6 +7,7 @@ import de.tum.cit.fop.maze.MazeRunnerGame;
 
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.function.BiFunction;
 
 /*
  * The maze that contains all blocks
@@ -35,29 +36,32 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
         super(game);
         this.position = position;
 
-        // properties are 0-indexed
-
+        // properties are 0-indexed, thus +1
+        // invisible border blocks are created, thus furthur +2
         this.width =
                 mapProperties.stringPropertyNames().stream()
                                 .map(pair -> Integer.parseInt(pair.split(",")[0]))
                                 .max(Integer::compareTo)
                                 .orElse(0)
-                        + 1;
+                        + 3;
         this.height =
                 mapProperties.stringPropertyNames().stream()
                                 .map(pair -> Integer.parseInt(pair.split(",")[1]))
                                 .max(Integer::compareTo)
                                 .orElse(0)
-                        + 1;
+                        + 3;
 
         maze = new Block[width][height];
         entities = new Array<>();
+        BiFunction<Integer, Integer, Vector2> calcPosition =
+                (x, y) -> new Vector2(position.x + x * blockSize, position.y + y * blockSize);
 
-        for (int i = 0; i < width; ++i) {
-            for (int j = 0; j < height; ++j) {
-                String blockTypeStr = (String) mapProperties.get(i + "," + j);
+        for (int i = 1; i < width - 1; ++i) {
+            for (int j = 1; j < height - 1; ++j) {
+                // added border makes index +1, here map to original index
+                String blockTypeStr = (String) mapProperties.get((i - 1) + "," + (j - 1));
                 int blockTypeCode = blockTypeStr == null ? -1 : Integer.parseInt(blockTypeStr);
-                Vector2 pos = new Vector2(position.x + i * blockSize, position.y + j * blockSize);
+                Vector2 pos = calcPosition.apply(i, j);
                 switch (blockTypeCode) {
                     case 0: // Wall
                         maze[i][j] =
@@ -88,15 +92,40 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
                                         this, game.getResourcePack().getLightingTexture(), pos));
                         break;
                     case 8: // Shield
-                        entities.add(new Shield(this, game.getResourcePack().getShieldTexture(), pos));
+                        entities.add(
+                                new Shield(this, game.getResourcePack().getShieldTexture(), pos));
                         break;
-
                 }
                 // fallback: empty block rendered as path
                 if (maze[i][j] == null) {
                     maze[i][j] = new Path(this, game.getResourcePack().getBlockTexture(), pos);
                 }
             }
+        }
+
+        for (int i = 0; i < width; ++i) {
+            maze[i][0] =
+                    new Wall(
+                            this,
+                            game.getResourcePack().getBlackBlockTexture(),
+                            calcPosition.apply(i, 0));
+            maze[i][height - 1] =
+                    new Wall(
+                            this,
+                            game.getResourcePack().getBlackBlockTexture(),
+                            calcPosition.apply(i, height - 1));
+        }
+        for (int i = 0; i < height; ++i) {
+            maze[0][i] =
+                    new Wall(
+                            this,
+                            game.getResourcePack().getBlackBlockTexture(),
+                            calcPosition.apply(0, i));
+            maze[width - 1][i] =
+                    new Wall(
+                            this,
+                            game.getResourcePack().getBlackBlockTexture(),
+                            calcPosition.apply(width - 1, i));
         }
     }
 
