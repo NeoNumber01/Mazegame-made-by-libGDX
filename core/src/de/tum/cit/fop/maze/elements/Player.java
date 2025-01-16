@@ -26,7 +26,7 @@ public class Player extends Entity implements Health {
         // However, actual visible part 16x22 in walk animation, which we define as the hitbox size
         // of player
         super(maze, position, new Vector2(16f, 22f), new Vector2(0f, -5f));
-        maze.getEntities().add(this);
+        maze.setPlayer(this);
         walkAnimation = game.getResourcePack().getPlayerWalkAnimation();
         sprintAnimation = game.getResourcePack().getPlayerSprintAnimation();
         health = maxHealth = 100f;

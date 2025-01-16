@@ -24,6 +24,7 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
     private final Block[][] maze;
     private final Array<Entity> entities;
     private Entry entry;
+    private Player player;
 
     /**
      * Constructor for Maze. Initializes all important elements.
@@ -99,8 +100,25 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
         }
     }
 
+    public int getRow(Block block) {
+        return (int) ((block.getPosition().x - position.x) / blockSize);
+    }
+
+    public int getColumn(Block block) {
+        return (int) ((block.getPosition().y - position.y) / blockSize);
+    }
+
     public Array<Entity> getEntities() {
         return entities;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+        entities.add(player);
     }
 
     @Override
@@ -129,6 +147,11 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
         int i = (int) ((position.x - this.position.x) / blockSize);
         int j = (int) ((position.y - this.position.y) / blockSize);
         return maze[i][j];
+    }
+
+    /** Returns the block on (x, y). Null if position not valid. */
+    public Block getBlock(int x, int y) {
+        return getBlock(new Vector2(position.x + x * blockSize, position.y + y * blockSize));
     }
 
     public Entry getEntry() {
@@ -180,5 +203,73 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
 
     public void setBlock(int i, int j, Block block) {
         maze[i][j] = block;
+    }
+
+    /**
+     * search route from src to dest
+     *
+     * @param maxLength max number of blocks on the route
+     * @return an Array<> of Blocks to go through. Returns null if dest not reachable, too
+     *     expensive, or src and dest are (in) the same block. Src is not included in the result but
+     *     dest does.
+     */
+    public Array<Block> searchRoute(MazeObject src, MazeObject dest, int maxLength) {
+        // currently implementation only consider being on the same column or row to be reachable,
+        // but more complex path-finding like BFS can also be implemented here. Note that their cost
+        // are relatively high and thus caching/pre-processing are required.
+        Block srcBlock = src.getBlock(), destBlock = dest.getBlock();
+        if (srcBlock == destBlock) return null;
+        Array<Block> result = new Array<>();
+        if (srcBlock.getRow() == destBlock.getRow()
+                && Math.abs(srcBlock.getColumn() - destBlock.getColumn()) <= maxLength) {
+            int row = srcBlock.getRow(),
+                    diff = srcBlock.getColumn() - destBlock.getColumn() > 0 ? -1 : 1;
+            for (int i = srcBlock.getColumn() + diff; i != destBlock.getColumn(); i += diff) {
+                result.add(getBlock(row, i));
+            }
+        } else if (srcBlock.getColumn() == destBlock.getColumn()
+                && Math.abs(srcBlock.getRow() - destBlock.getColumn()) <= maxLength) {
+            int col = srcBlock.getColumn(),
+                    diff = srcBlock.getRow() - destBlock.getRow() > 0 ? -1 : 1;
+            for (int i = srcBlock.getRow() + diff; i != destBlock.getRow(); i += diff) {
+                result.add(getBlock(i, col));
+            }
+        }
+        result.add(destBlock);
+        return result;
+    }
+
+    /**
+     * Checks if the line between (row, columnStart) and (row, columnEnd) has no obstacles blocks.
+     */
+    public boolean isRowClear(int row, int columnStart, int columnEnd) {
+        if (columnStart > columnEnd) {
+            int columnTmp = columnStart;
+            columnStart = columnEnd;
+            columnEnd = columnTmp;
+        }
+        for (int i = columnStart; i <= columnEnd; ++i) {
+            if (maze[row][i].isObstacle()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks if the line between (rowStart, column) and (rowEnd, column) has no obstacles blocks.
+     */
+    public boolean isColumnClear(int column, int rowStart, int rowEnd) {
+        if (rowStart > rowEnd) {
+            int rowTmp = rowStart;
+            rowStart = rowEnd;
+            rowEnd = rowTmp;
+        }
+        for (int i = rowStart; i <= rowEnd; ++i) {
+            if (maze[i][column].isObstacle()) {
+                return false;
+            }
+        }
+        return true;
     }
 }

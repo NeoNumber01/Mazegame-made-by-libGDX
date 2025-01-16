@@ -49,4 +49,12 @@ public abstract class Block extends MazeObject {
 
     /** Triggers event when other object arrives this block. */
     public void onArrival(MazeObject other) {}
+
+    public int getRow() {
+        return maze.getRow(this);
+    }
+
+    public int getColumn() {
+        return maze.getColumn(this);
+    }
 }

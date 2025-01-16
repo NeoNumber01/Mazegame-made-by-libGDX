@@ -62,4 +62,8 @@ public abstract class MazeObject extends GameObject implements Visible, Collisio
     public void displace(Vector2 displacement) {
         hitbox.setPosition((new Vector2(hitbox.x, hitbox.y)).add(displacement));
     }
+
+    public Block getBlock() {
+        return maze.getBlock(getPosition());
+    }
 }
