@@ -75,6 +75,7 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
                         maze[i][j] = new Exit(this, game.getResourcePack().getBlockTexture(), pos);
                         break;
                     case 3: // TODO: Trap
+                        maze[i][j] = new Trap(this, game.getResourcePack().getTrapTexture(), pos);
                         break;
                     case 4: // TODO: Enemy
                         entities.add(new Skeleton(this, pos));

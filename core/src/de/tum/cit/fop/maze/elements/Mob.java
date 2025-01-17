@@ -58,6 +58,7 @@ public abstract class Mob extends Entity {
         performDisplacement(deltaTime, direction);
     }
 
+
     public void changeDirection() {
         direction = Helper.getRandomDirection();
     }

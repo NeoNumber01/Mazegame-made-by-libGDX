@@ -19,7 +19,9 @@ public class ResourcePack { // Character animation
             fullHeartTexture,
             halfHeartTexture,
             lightningTexture,
-            shieldTexture;
+            shieldTexture,trapTexture
+
+            ;
 
     public ResourcePack() {
         loadPlayerAnimation();
@@ -29,6 +31,7 @@ public class ResourcePack { // Character animation
         loadHeartTextures();
         loadLightningTexture();
         loadShieldTexture();
+        loadTrapTexture();
     }
 
     public MoveAnimation getSkeletonMoveAnimation() {
@@ -193,6 +196,15 @@ public class ResourcePack { // Character animation
 
     public TextureRegion getShieldTexture() {
         return shieldTexture;
+    }
+
+    private void loadTrapTexture() {
+        Texture trapSheet = new Texture(Gdx.files.internal("Trap.png"));
+        trapTexture = new TextureRegion(trapSheet, 0, 0, 16, 16);
+    }
+
+    public TextureRegion getTrapTexture() {
+        return trapTexture;
     }
 
     /**
