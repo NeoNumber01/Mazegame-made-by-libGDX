@@ -42,13 +42,22 @@ public class MoveAnimation {
     }
 
     public TextureRegion getTexture(Direction direction, float stateTime) {
-        Animation<TextureRegion> animation =
-                switch (direction) {
-                    case UP -> animationUp;
-                    case DOWN -> animationDown;
-                    case LEFT -> animationLeft;
-                    case RIGHT -> animationRight;
-                };
-        return animation.getKeyFrame(stateTime, true);
+        return getAnimation(direction).getKeyFrame(stateTime, true);
+    }
+
+    /**
+     * @param stateTime How long the animation has already played.
+     */
+    public TextureRegion getTextureNoLoop(Direction direction, float stateTime) {
+        return getAnimation(direction).getKeyFrame(stateTime, false);
+    }
+
+    private Animation<TextureRegion> getAnimation(Direction direction) {
+        return switch (direction) {
+            case UP -> animationUp;
+            case DOWN -> animationDown;
+            case LEFT -> animationLeft;
+            case RIGHT -> animationRight;
+        };
     }
 }

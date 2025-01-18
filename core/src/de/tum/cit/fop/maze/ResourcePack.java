@@ -11,7 +11,9 @@ import java.util.function.Function;
 
 /* load and serves art assets */
 public class ResourcePack { // Character animation
-    private MoveAnimation playerWalkAnimation, playerSprintAnimation;
+    private MoveAnimation playerWalkAnimation;
+    private MoveAnimation playerSprintAnimation;
+    private MoveAnimation playerAttackAnimation;
     private MoveAnimation SkeletonMoveAnimation;
     private TextureRegion blockTexture,
             blackBlockTexture,
@@ -32,6 +34,10 @@ public class ResourcePack { // Character animation
         loadLightningTexture();
         loadShieldTexture();
         loadTrapTexture();
+    }
+
+    public MoveAnimation getPlayerAttackAnimation() {
+        return playerAttackAnimation;
     }
 
     public MoveAnimation getSkeletonMoveAnimation() {
@@ -107,6 +113,30 @@ public class ResourcePack { // Character animation
                             new PixelVector(144, row * size.y),
                             size,
                             new PixelVector(size.x, 0),
+                            frameCount));
+        }
+
+        Function<Helper.Direction, Integer> getRowNumber_atk =
+                dir ->
+                        switch (dir) {
+                            case UP -> 1;
+                            case DOWN -> 0;
+                            case LEFT -> 3;
+                            case RIGHT -> 2;
+                        };
+
+        playerAttackAnimation = new MoveAnimation();
+
+        for (Helper.Direction direction : Helper.Direction.values()) {
+            int row = getRowNumber_atk.apply(direction);
+            playerAttackAnimation.loadDirectionAnimation(
+                    0.1f,
+                    direction,
+                    loadTextureArray(
+                            walkSheet,
+                            new PixelVector(0, 128 + row * 32),
+                            new PixelVector(32, 32),
+                            new PixelVector(32, 0),
                             frameCount));
         }
     }

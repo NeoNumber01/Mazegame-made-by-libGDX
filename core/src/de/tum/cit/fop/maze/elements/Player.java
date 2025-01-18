@@ -10,10 +10,11 @@ import de.tum.cit.fop.maze.MazeRunnerGame;
 
 public class Player extends Entity implements Health {
 
-    private final MoveAnimation walkAnimation, sprintAnimation;
+    private final MoveAnimation walkAnimation, sprintAnimation, attackAnimation;
     private final float maxHealth;
     private final MazeRunnerGame game;
     private final float shieldDuration = 30f;
+    private final float attackAnimationDuration = 0.4f;
     private Vector2 position;
     private float health;
     private float lastHitTimestamp;
@@ -21,6 +22,7 @@ public class Player extends Entity implements Health {
     private float speedFactor = 64f;
     private boolean hasShield = false;
     private float shieldStartTime = 0f;
+    private float attackAnimationTimer = 0f;
 
     public Player(MazeRunnerGame game, Maze maze, Vector2 position) {
         // TextureRegion cut from assets is 16x32
@@ -30,6 +32,7 @@ public class Player extends Entity implements Health {
         maze.setPlayer(this);
         walkAnimation = game.getResourcePack().getPlayerWalkAnimation();
         sprintAnimation = game.getResourcePack().getPlayerSprintAnimation();
+        attackAnimation = game.getResourcePack().getPlayerAttackAnimation();
         health = maxHealth = 100f;
         this.game = game;
         this.hasKey = false;
@@ -37,10 +40,19 @@ public class Player extends Entity implements Health {
 
     @Override
     public void render() {
-        MoveAnimation currentMoveAnimation = isSprinting() ? sprintAnimation : walkAnimation;
-        TextureRegion texture =
-                currentMoveAnimation.getTexture(direction, super.game.getStateTime());
-        super.renderTexture(texture);
+        if (attackAnimationTimer > 0f) {
+            super.renderTextureV2(
+                    attackAnimation.getTextureNoLoop(
+                            direction, attackAnimationDuration - attackAnimationTimer),
+                    1f,
+                    new Vector2(0f, 0f));
+
+        } else {
+            MoveAnimation currentMoveAnimation = isSprinting() ? sprintAnimation : walkAnimation;
+            TextureRegion texture =
+                    currentMoveAnimation.getTexture(direction, super.game.getStateTime());
+            super.renderTexture(texture);
+        }
     }
 
     private boolean isSprinting() {
@@ -135,5 +147,22 @@ public class Player extends Entity implements Health {
 
     public boolean hasShield() {
         return this.hasShield;
+    }
+
+    @Override
+    public void onFrame(float deltaTime) {
+        if (!isSprinting() && Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            attack();
+        }
+
+        if (attackAnimationTimer > 0) {
+            attackAnimationTimer -= deltaTime;
+        }
+    }
+
+    public void attack() {
+        if (attackAnimationTimer <= 0f) { // can't attack until last time's animation's over
+            attackAnimationTimer = attackAnimationDuration;
+        }
     }
 }

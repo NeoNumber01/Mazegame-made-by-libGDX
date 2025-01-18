@@ -23,7 +23,8 @@ public abstract class MazeObject extends GameObject implements Visible, Collisio
     }
 
     public Vector2 getCenter() {
-        return new Vector2(hitbox.x + hitbox.width / 2, hitbox.y + hitbox.height / 2);
+        Vector2 result = new Vector2();
+        return hitbox.getCenter(result);
     }
 
     public Rectangle getHitbox() {
@@ -31,7 +32,7 @@ public abstract class MazeObject extends GameObject implements Visible, Collisio
     }
 
     /** Returns the position where the texture should be rendered at. */
-    public Vector2 getVisualPosition() {
+    private Vector2 getVisualPosition() {
         return getPosition().add(visualOffset);
     }
 
@@ -43,11 +44,19 @@ public abstract class MazeObject extends GameObject implements Visible, Collisio
         return hitbox.overlaps(other);
     }
 
+    /**
+     * Calls spritebatch to render a texture at MazeObject's location. Uses visualOffset and hitbox
+     * position to determine actual texture position. This is a legacy implementation reserved for
+     * compatibility, use renderTextureV2() if possible
+     */
     public void renderTexture(TextureRegion texture) {
         renderTexture(texture, 1f);
     }
 
-    public void renderTexture(TextureRegion texture, float scale) {
+    /**
+     * @param scale BROKEN, never use it!
+     */
+    private void renderTexture(TextureRegion texture, float scale) {
         Vector2 visualPosition = getVisualPosition();
         super.game
                 .getSpriteBatch()
@@ -55,6 +64,23 @@ public abstract class MazeObject extends GameObject implements Visible, Collisio
                         texture,
                         visualPosition.x,
                         visualPosition.y,
+                        texture.getRegionWidth() * scale,
+                        texture.getRegionHeight() * scale);
+    }
+
+    /**
+     * Calls spritebatch to render a texture at MazeObject's location. Uses visualOffset and hitbox
+     * position to determine actual texture position. This is the recommended implementation. It
+     * aligns the center of hitbox and scaled TextureRegion, then applies offset to the position.
+     */
+    public void renderTextureV2(TextureRegion texture, float scale, Vector2 offset) {
+        Vector2 center = getCenter();
+        super.game
+                .getSpriteBatch()
+                .draw(
+                        texture,
+                        center.x - texture.getRegionWidth() * scale / 2f + offset.x,
+                        center.y - texture.getRegionHeight() * scale / 2f + offset.y,
                         texture.getRegionWidth() * scale,
                         texture.getRegionHeight() * scale);
     }
