@@ -81,7 +81,8 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
                         entities.add(new Skeleton(this, pos));
                         break;
                     case 5: // TODO: Key
-                        maze[i][j] = new Key(this, game.getResourcePack().getKeyTexture(), pos);
+                        entities.add(new Key(this, game.getResourcePack().getKeyTexture(), pos));
+//                        maze[i][j] = new Key(this, game.getResourcePack().getKeyTexture(), pos);
                         break;
                     case 6: // TODO: Lives
                         Lives life =
