@@ -47,7 +47,7 @@ public class Player extends Entity implements Health {
 
     @Override
     public void render() {
-        Color originalColor = maze.getGame().getSpriteBatch().getColor();
+        Color originalColor = maze.getGame().getSpriteBatch().getColor().cpy();
         if (isRed) {
             maze.getGame().getSpriteBatch().setColor(1f, 0f, 0f, originalColor.a);
         }
