@@ -27,6 +27,8 @@ public class Player extends Entity implements Health {
     private boolean hasShield = false;
     private float shieldStartTime = 0f;
     private float attackAnimationTimer = 0f;
+    private boolean isRed = false;
+    private float redEffectTimer = 0f;
 
     public Player(MazeRunnerGame game, Maze maze, Vector2 position) {
         // TextureRegion cut from assets is 16x32
@@ -44,6 +46,9 @@ public class Player extends Entity implements Health {
 
     @Override
     public void render() {
+        if (isRed) {
+            maze.getGame().getSpriteBatch().setColor(1f, 0f, 0f, 1f);
+        }
         if (attackAnimationTimer > 0f) {
             super.renderTextureV2(
                     attackAnimation.getTextureNoLoop(
@@ -78,6 +83,8 @@ public class Player extends Entity implements Health {
             } else {
                 lastHitTimestamp = game.getStateTime();
             }
+            isRed = true;
+            redEffectTimer = 1f;
         }
         if (delta < 0 && hasShield) {
             delta += 5; // Reduce damage by 5
@@ -155,6 +162,12 @@ public class Player extends Entity implements Health {
 
     @Override
     public void onFrame(float deltaTime) {
+        if (isRed) {
+            redEffectTimer -= deltaTime;
+            if (redEffectTimer <= 0f) {
+                isRed = false; // 红色效果结束
+            }
+        }
         if (Objects.requireNonNull(getMotion())
                 == Motion.ATTACK) { // do nothing when currently performing attack animation
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
