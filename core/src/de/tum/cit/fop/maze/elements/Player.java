@@ -2,6 +2,7 @@ package de.tum.cit.fop.maze.elements;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -46,8 +47,9 @@ public class Player extends Entity implements Health {
 
     @Override
     public void render() {
+        Color originalColor = maze.getGame().getSpriteBatch().getColor();
         if (isRed) {
-            maze.getGame().getSpriteBatch().setColor(1f, 0f, 0f, 1f);
+            maze.getGame().getSpriteBatch().setColor(1f, 0f, 0f, originalColor.a);
         }
         if (attackAnimationTimer > 0f) {
             super.renderTextureV2(
@@ -62,7 +64,7 @@ public class Player extends Entity implements Health {
                     currentMoveAnimation.getTexture(direction, super.game.getStateTime());
             super.renderTexture(texture);
         }
-        maze.getGame().getSpriteBatch().setColor(0f, 0f, 0f, 1f);
+        maze.getGame().getSpriteBatch().setColor(originalColor);
     }
 
     private boolean isSprinting() {
