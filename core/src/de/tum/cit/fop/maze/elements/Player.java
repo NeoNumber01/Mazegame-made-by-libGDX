@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import de.tum.cit.fop.maze.GameOverScreen;
+import de.tum.cit.fop.maze.Helper;
 import de.tum.cit.fop.maze.MazeRunnerGame;
 
 import java.util.Objects;
@@ -174,6 +175,9 @@ public class Player extends Entity implements Health {
                 deltaPos.x += deltaDist;
             }
             this.performDisplacement(deltaPos);
+            // force update player direction, so that player can attack to arbitrary direction in
+            // case of collision
+            direction = Helper.Vector2Direction(deltaPos);
         }
 
         handleTimers(deltaTime);
