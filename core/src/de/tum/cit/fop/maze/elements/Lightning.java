@@ -2,6 +2,7 @@ package de.tum.cit.fop.maze.elements;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
 
 public class Lightning extends InteractiveElements {
 
@@ -32,6 +33,14 @@ public class Lightning extends InteractiveElements {
         if (other instanceof Player player) {
 
             player.setSpeedFactor(player.getSpeedFactor() + 100f);
+
+            // 启动一个延迟任务，10 秒后恢复速度
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    player.setSpeedFactor(player.getSpeedFactor() - 100f);
+                }
+            }, 10);  // 延迟 10 秒
 
             maze.getEntities().removeValue(this, true);
         }

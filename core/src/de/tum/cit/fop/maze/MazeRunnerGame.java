@@ -160,6 +160,14 @@ public class MazeRunnerGame extends Game {
         pausedTime = 0; // Reset paused time
         timerStarted = false; // Reset the timer flag
         startNewGame(DEFAULT_MAP_PATH);
+        if (backgroundMusic != null) {
+            backgroundMusic.stop();
+            backgroundMusic.dispose();
+        }
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
+        backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(0.5f);
+        backgroundMusic.play();
     }
 
     public void startNewGame(String mapFilePath) {
@@ -182,6 +190,15 @@ public class MazeRunnerGame extends Game {
             menuScreen.dispose();
             menuScreen = null;
         }
+
+        if (backgroundMusic != null) {
+            backgroundMusic.stop();
+            backgroundMusic.dispose();
+        }
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
+        backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(0.5f);
+        backgroundMusic.play();
     }
 
     // 游戏暂停与恢复

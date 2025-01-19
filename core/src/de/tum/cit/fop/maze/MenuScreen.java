@@ -2,6 +2,7 @@ package de.tum.cit.fop.maze;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -21,6 +22,8 @@ public class MenuScreen implements Screen {
     private final MazeRunnerGame game;
     private final Stage stage;
     private final boolean pauseMode;
+    private Music menuMusic;
+    private float musicVolume = 0.5f;
 
     public MenuScreen(MazeRunnerGame game, boolean pauseMode) {
         this.game = game;
@@ -37,6 +40,12 @@ public class MenuScreen implements Screen {
         table.setFillParent(true);
         stage.addActor(table);
 
+        game.stopMusic();
+        menuMusic = Gdx.audio.newMusic(Gdx.files.internal("menu.ogg"));
+        menuMusic.setLooping(true); // Optional: Loop the music
+        menuMusic.setVolume(musicVolume);
+        menuMusic.play(); // Start playing the music
+
         // Title
         table.add(new Label("Maze Runner Menu", game.getSkin(), "title")).padBottom(80).row();
 
@@ -49,6 +58,7 @@ public class MenuScreen implements Screen {
                         @Override
                         public void changed(ChangeEvent event, Actor actor) {
                             // Continue
+                            menuMusic.stop();
                             game.goToGame();
                         }
                     });
@@ -61,6 +71,7 @@ public class MenuScreen implements Screen {
                 new ChangeListener() {
                     @Override
                     public void changed(ChangeEvent event, Actor actor) {
+                        menuMusic.stop();
                         game.startNewGame();
                     }
                 });
@@ -99,6 +110,7 @@ public class MenuScreen implements Screen {
                 });
     }
 
+
     private void showVolumeDialog() {
         Dialog volumeDialog =
                 new Dialog("Volume Control", game.getSkin()) {
@@ -124,6 +136,7 @@ public class MenuScreen implements Screen {
                     public void changed(ChangeEvent event, Actor actor) {
                         float sliderValue = volumeSlider.getValue();
                         game.setVolume(sliderValue / 100f); // 更新音量
+                        menuMusic.setVolume(sliderValue / 100f);
                     }
                 });
 
@@ -173,6 +186,7 @@ public class MenuScreen implements Screen {
                     new ChangeListener() {
                         @Override
                         public void changed(ChangeEvent event, Actor actor) {
+                            menuMusic.stop();
                             game.startNewGame(selectedMapPath);
                             loadMapDialog.hide();
                         }
