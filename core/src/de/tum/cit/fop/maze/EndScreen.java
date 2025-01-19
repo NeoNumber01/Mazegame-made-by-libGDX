@@ -2,6 +2,7 @@ package de.tum.cit.fop.maze;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -17,11 +18,15 @@ public class EndScreen implements Screen {
     private final MazeRunnerGame game;
     private final Stage stage;
     private final int score;
+    private Music victory;
 
     public EndScreen(MazeRunnerGame game, int score) {
         this.game = game;
         this.score = score;
-
+        victory = Gdx.audio.newMusic(Gdx.files.internal("victory.mp3"));
+        victory.setLooping(true); // Optional: Loop the music
+        victory.setVolume(0.5f); // Set the volume (adjust as needed)
+        victory.play(); // Start playing the music
         // Set up camera and viewport
         var camera = new OrthographicCamera();
         camera.zoom = 1.5f;
@@ -49,6 +54,7 @@ public class EndScreen implements Screen {
                 new ChangeListener() {
                     @Override
                     public void changed(ChangeEvent event, Actor actor) {
+                        victory.stop();
                         game.goToMenu(); // Return to the main menu
                     }
                 });

@@ -2,6 +2,7 @@ package de.tum.cit.fop.maze;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -17,10 +18,14 @@ public class GameOverScreen implements Screen {
 
     private final MazeRunnerGame game;
     private final Stage stage;
+    private Music afterDeath;
 
     public GameOverScreen(MazeRunnerGame game) {
         this.game = game;
-
+        afterDeath = Gdx.audio.newMusic(Gdx.files.internal("after death.mp3"));
+        afterDeath.setLooping(true); // Optional: Set to loop
+        afterDeath.setVolume(0.5f); // Set volume (adjust as needed)
+        afterDeath.play(); // Start playing music
         var camera = new OrthographicCamera();
         camera.zoom = 1.5f; // Set camera zoom for a closer view
 
@@ -53,6 +58,7 @@ public class GameOverScreen implements Screen {
                 new ChangeListener() {
                     @Override
                     public void changed(ChangeEvent event, Actor actor) {
+                        afterDeath.stop();
                         game.goToMenu(); // Return to the main menu
                     }
                 });
