@@ -9,6 +9,8 @@ import com.badlogic.gdx.math.Vector2;
 import de.tum.cit.fop.maze.GameOverScreen;
 import de.tum.cit.fop.maze.MazeRunnerGame;
 
+import java.util.Objects;
+
 public class Player extends Entity implements Health {
 
     private final MoveAnimation walkAnimation, sprintAnimation, attackAnimation;
@@ -57,7 +59,7 @@ public class Player extends Entity implements Health {
     }
 
     private boolean isSprinting() {
-        return Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT);
+        return getMotion() == Motion.SPRINT;
     }
 
     @Override
@@ -152,17 +154,37 @@ public class Player extends Entity implements Health {
 
     @Override
     public void onFrame(float deltaTime) {
-        if (!isSprinting() && Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+        if (Objects.requireNonNull(getMotion())
+                == Motion.ATTACK) { // do nothing when currently performing attack animation
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             attack();
+        } else {
+            Vector2 deltaPos = new Vector2();
+            float deltaDist = getMoveDistance(deltaTime);
+            if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+                deltaPos.y += deltaDist;
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+                deltaPos.y -= deltaDist;
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+                deltaPos.x -= deltaDist;
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+                deltaPos.x += deltaDist;
+            }
+            this.performDisplacement(deltaPos);
         }
 
-        if (attackAnimationTimer > 0) {
-            attackAnimationTimer -= deltaTime;
-        }
+        handleTimers(deltaTime);
+    }
+
+    private void handleTimers(float deltaTime) {
+        attackAnimationTimer = Math.max(0f, attackAnimationTimer - deltaTime);
     }
 
     public void attack() {
-        if (attackAnimationTimer <= 0f) { // can't attack until last time's animation's over
+        if (getMotion() != Motion.ATTACK) { // only execute once during one attack animation
             attackAnimationTimer = attackAnimationDuration;
 
             Vector2 attackHitboxOffset =
@@ -185,5 +207,21 @@ public class Player extends Entity implements Health {
                 }
             }
         }
+    }
+
+    private Motion getMotion() {
+        if (attackAnimationTimer > 0) {
+            return Motion.ATTACK;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+            return Motion.SPRINT;
+        }
+        return Motion.WALK;
+    }
+
+    private enum Motion {
+        WALK,
+        SPRINT,
+        ATTACK
     }
 }

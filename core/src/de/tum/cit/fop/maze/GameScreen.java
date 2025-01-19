@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+
 import de.tum.cit.fop.maze.elements.Exit;
 import de.tum.cit.fop.maze.elements.Maze;
 import de.tum.cit.fop.maze.elements.Player;
@@ -22,8 +23,8 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
- * The GameScreen class is responsible for rendering the gameplay screen.
- * It handles the game logic and rendering of the game elements.
+ * The GameScreen class is responsible for rendering the gameplay screen. It handles the game logic
+ * and rendering of the game elements.
  */
 public class GameScreen implements Screen {
 
@@ -42,7 +43,7 @@ public class GameScreen implements Screen {
     private final Viewport gameViewport;
 
     private final ShapeRenderer shapeRenderer; // For rendering shapes/stencil
-    private Texture gradientTexture;           // Used for the circular gradient
+    private Texture gradientTexture; // Used for the circular gradient
 
     private float stateTime = 0f;
     private boolean paused = false;
@@ -85,9 +86,7 @@ public class GameScreen implements Screen {
         createGradientTexture(); // Create the gradient texture for masking
     }
 
-    /**
-     * Creates a circular gradient texture that will be used for the stencil effect.
-     */
+    /** Creates a circular gradient texture that will be used for the stencil effect. */
     private void createGradientTexture() {
         int size = 1024;
         Pixmap pix = new Pixmap(size, size, Pixmap.Format.RGBA8888);
@@ -112,9 +111,7 @@ public class GameScreen implements Screen {
         pix.dispose();
     }
 
-    /**
-     * Whether the game is currently paused.
-     */
+    /** Whether the game is currently paused. */
     public boolean isPaused() {
         return paused;
     }
@@ -123,9 +120,7 @@ public class GameScreen implements Screen {
         this.paused = paused;
     }
 
-    /**
-     * Returns the current state time of the game screen, typically used for animations.
-     */
+    /** Returns the current state time of the game screen, typically used for animations. */
     public float getStateTime() {
         return stateTime;
     }
@@ -164,8 +159,8 @@ public class GameScreen implements Screen {
 
         // Use screen coordinate system for the circle
         shapeRenderer.setProjectionMatrix(
-            new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight())
-        );
+                new Matrix4()
+                        .setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         float cx = Gdx.graphics.getWidth() / 2f;
@@ -193,35 +188,31 @@ public class GameScreen implements Screen {
 
         SpriteBatch batch = game.getSpriteBatch();
         batch.setProjectionMatrix(
-            new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight())
-        );
+                new Matrix4()
+                        .setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         batch.begin();
 
         float gradientSize = 600f;
         batch.draw(
-            gradientTexture,
-            cx - gradientSize / 2f,
-            cy - gradientSize / 2f,
-            gradientSize,
-            gradientSize
-        );
+                gradientTexture,
+                cx - gradientSize / 2f,
+                cy - gradientSize / 2f,
+                gradientSize,
+                gradientSize);
         batch.end();
 
         Gdx.gl.glDisable(GL20.GL_STENCIL_TEST);
 
         // Update and render HUD
         hud.update(
-            (int) player.getHealth(),
-            player.hasKey(),
-            player.getSpeedFactor(),
-            player.hasShield()
-        );
+                (int) player.getHealth(),
+                player.hasKey(),
+                player.getSpeedFactor(),
+                player.hasShield());
         hud.render();
     }
 
-    /**
-     * Handle input for the game screen, should only be called by render() when not paused.
-     */
+    /** Handle input for the game screen, should only be called by render() when not paused. */
     private void handleInput(float delta) {
         // Check for escape key press to go back to the menu
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
@@ -230,23 +221,8 @@ public class GameScreen implements Screen {
             return;
         }
 
-        Vector2 deltaPos = new Vector2();
-        float deltaDist = player.getMoveDistance(delta);
+        // Player input is now handled in Player::onFrame()
 
-        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            deltaPos.y += deltaDist;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            deltaPos.y -= deltaDist;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            deltaPos.x -= deltaDist;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            deltaPos.x += deltaDist;
-        }
-
-        player.performDisplacement(deltaPos);
         camera.moveTowards(player.getPosition());
 
         if (Gdx.input.isKeyPressed(Input.Keys.Z)) {
@@ -257,23 +233,19 @@ public class GameScreen implements Screen {
         }
     }
 
-    /**
-     * Trigger events in the game, should only be called by render() when not paused.
-     */
+    /** Trigger events in the game, should only be called by render() when not paused. */
     private void triggerEvents(float delta) {
         maze.onFrame(delta);
     }
 
-    /**
-     * Render the game elements, should only be called by render().
-     */
+    /** Render the game elements, should only be called by render(). */
     private void renderGameElements() {
         maze.render();
     }
 
     /**
-     * Called when the window is resized. We update the FitViewport for the game world
-     * and also resize the HUD accordingly.
+     * Called when the window is resized. We update the FitViewport for the game world and also
+     * resize the HUD accordingly.
      */
     @Override
     public void resize(int width, int height) {
@@ -312,9 +284,7 @@ public class GameScreen implements Screen {
         // Dispose resources if needed
     }
 
-    /**
-     * Restores the player's state, for example when returning from another screen.
-     */
+    /** Restores the player's state, for example when returning from another screen. */
     public void restorePlayerState(Player player, Exit exit) {
         Vector2 exitPosition = exit.getPosition();
         player.getHitbox().setPosition(exitPosition.x, exitPosition.y);

@@ -21,9 +21,8 @@ public class ResourcePack { // Character animation
             fullHeartTexture,
             halfHeartTexture,
             lightningTexture,
-            shieldTexture,trapTexture
-
-            ;
+            shieldTexture,
+            trapTexture;
 
     public ResourcePack() {
         loadPlayerAnimation();
