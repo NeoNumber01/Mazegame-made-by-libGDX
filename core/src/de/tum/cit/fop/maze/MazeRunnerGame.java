@@ -273,7 +273,7 @@ public class MazeRunnerGame extends Game {
         long elapsedSeconds = elapsedTime / 1000; // Convert milliseconds to seconds
         int maxScore = 10000;
         int minScore = 100;
-        int minTime = 100; // 100 seconds or less gives max score
+        int minTime = 10; // 100 seconds or less gives max score
         int maxTime = 3600; // 3600 seconds or more gives min score
         int scoreRange = maxScore - minScore;
         int timeRange = maxTime - minTime;

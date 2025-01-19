@@ -22,6 +22,7 @@ public class GameOverScreen implements Screen {
 
     public GameOverScreen(MazeRunnerGame game) {
         this.game = game;
+        game.stopMusic();
         afterDeath = Gdx.audio.newMusic(Gdx.files.internal("after death.mp3"));
         afterDeath.setLooping(true); // Optional: Set to loop
         afterDeath.setVolume(0.5f); // Set volume (adjust as needed)
@@ -47,6 +48,7 @@ public class GameOverScreen implements Screen {
                 new ChangeListener() {
                     @Override
                     public void changed(ChangeEvent event, Actor actor) {
+                        afterDeath.stop();
                         game.startNewGame(); // Restart the game
                     }
                 });

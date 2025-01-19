@@ -23,6 +23,7 @@ public class EndScreen implements Screen {
     public EndScreen(MazeRunnerGame game, int score) {
         this.game = game;
         this.score = score;
+        game.stopMusic();
         victory = Gdx.audio.newMusic(Gdx.files.internal("victory.mp3"));
         victory.setLooping(true); // Optional: Loop the music
         victory.setVolume(0.5f); // Set the volume (adjust as needed)
@@ -40,7 +41,7 @@ public class EndScreen implements Screen {
 
         // Add "Game Completed" message label
         Label messageLabel =
-                new Label("Congratulations! You completed the game!", game.getSkin(), "title");
+                new Label("Congratulations! You escaped!", game.getSkin(), "title");
         table.add(messageLabel).padBottom(50).center().row();
 
         // Display the score
