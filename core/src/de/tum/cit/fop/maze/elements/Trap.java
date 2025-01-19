@@ -19,8 +19,6 @@ public class Trap extends Block {
             Vector2 pos = getPosition();
             int i = (int) ((pos.x - maze.getPosition().x) / maze.getBlockSize());
             int j = (int) ((pos.y - maze.getPosition().y) / maze.getBlockSize());
-            // 从 Maze 中移fi钥匙
-            maze.setBlock(i, j, new Path(maze, game.getResourcePack().getTrapTexture(), pos));
         }
     }
 }
