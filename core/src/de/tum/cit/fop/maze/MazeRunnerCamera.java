@@ -10,7 +10,7 @@ public class MazeRunnerCamera {
     private final OrthographicCamera camera;
     private final float viewPointWidth = 1024f;
     // 定义缩放的最小值和最大值
-    private final float minZoom = 0.5f; // 最小缩放比例
+    private final float minZoom = 0.9f; // 最小缩放比例
     private final float maxZoom = 1.1f; // 最大缩放比例
 
     public MazeRunnerCamera(MazeRunnerGame game, Vector2 initialPosition) {

@@ -65,14 +65,14 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
                 switch (blockTypeCode) {
                     case 0: // Wall
                         maze[i][j] =
-                                new Wall(this, game.getResourcePack().getBlackBlockTexture(), pos);
+                                new Wall(this, game.getResourcePack().getWallTexture(), pos);
                         break;
                     case 1: // Entry Point
-                        maze[i][j] = new Entry(this, game.getResourcePack().getBlockTexture(), pos);
+                        maze[i][j] = new Entry(this, game.getResourcePack().getEntryTexture(), pos);
                         entry = (Entry) maze[i][j];
                         break;
                     case 2: // TODO: Exit
-                        maze[i][j] = new Exit(this, game.getResourcePack().getBlockTexture(), pos);
+                        maze[i][j] = new Exit(this, game.getResourcePack().getExitTexture(), pos);
                         break;
                     case 3: // TODO: Trap
                         maze[i][j] = new Trap(this, game.getResourcePack().getTrapTexture(), pos);
@@ -104,7 +104,7 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
                 }
                 // fallback: empty block rendered as path
                 if (maze[i][j] == null) {
-                    maze[i][j] = new Path(this, game.getResourcePack().getBlockTexture(), pos);
+                    maze[i][j] = new Path(this, game.getResourcePack().getPathTexture(), pos);
                 }
             }
         }

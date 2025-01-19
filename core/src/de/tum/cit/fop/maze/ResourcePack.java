@@ -22,7 +22,12 @@ public class ResourcePack { // Character animation
             halfHeartTexture,
             lightningTexture,
             shieldTexture,
-            trapTexture;
+            trapTexture,
+            wallTexture,
+            pathTexture,
+            exitTexture,
+            entryTexture;
+
 
     public ResourcePack() {
         loadPlayerAnimation();
@@ -33,6 +38,10 @@ public class ResourcePack { // Character animation
         loadLightningTexture();
         loadShieldTexture();
         loadTrapTexture();
+        loadWallTexture();
+        loadPathTexture();
+        loadExitTexture();
+        loadEntryTexture();
     }
 
     public MoveAnimation getPlayerAttackAnimation() {
@@ -232,8 +241,47 @@ public class ResourcePack { // Character animation
         trapTexture = new TextureRegion(trapSheet, 0, 0, 16, 16);
     }
 
+    private void loadWallTexture() {
+        Texture wallSheet = new Texture(Gdx.files.internal("Wood_Box.png"));
+        wallTexture = new TextureRegion(wallSheet, 0, 0, 16, 16);
+    }
+
+    private void loadPathTexture() {
+        Texture pathSheet = new Texture(Gdx.files.internal("tile_grass.png"));
+        pathTexture = new TextureRegion(pathSheet, 0, 0, 16, 16);
+    }
+    private void loadExitTexture() {
+        Texture tilesSheet = new Texture(Gdx.files.internal("basictiles.png"));
+
+        int tileSize = 16;
+        exitTexture = new TextureRegion(tilesSheet, 0, 96, tileSize, tileSize);
+    }
+
+    private void loadEntryTexture() {
+        Texture tilesSheet = new Texture(Gdx.files.internal("basictiles.png"));
+
+        int tileSize = 16;
+        entryTexture = new TextureRegion(tilesSheet, 16, 112, tileSize, tileSize);
+    }
+
+    public TextureRegion getExitTexture(){
+        return exitTexture;
+    }
+
+    public TextureRegion getEntryTexture(){
+        return entryTexture;
+    }
+
     public TextureRegion getTrapTexture() {
         return trapTexture;
+    }
+
+    public TextureRegion getWallTexture() {
+        return wallTexture;
+    }
+
+    public TextureRegion getPathTexture() {
+        return pathTexture;
     }
 
     /**
