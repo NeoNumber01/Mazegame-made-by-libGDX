@@ -3,6 +3,7 @@ package de.tum.cit.fop.maze.elements;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import de.tum.cit.fop.maze.GameOverScreen;
@@ -163,6 +164,26 @@ public class Player extends Entity implements Health {
     public void attack() {
         if (attackAnimationTimer <= 0f) { // can't attack until last time's animation's over
             attackAnimationTimer = attackAnimationDuration;
+
+            Vector2 attackHitboxOffset =
+                    switch (direction) {
+                        case UP -> new Vector2(0f, getSize().y);
+                        case DOWN -> new Vector2(0f, -getSize().y);
+                        case LEFT -> new Vector2(-getSize().x, 0f);
+                        case RIGHT -> new Vector2(getSize().x, 0f);
+                    };
+            Rectangle attackHitbox =
+                    new Rectangle(
+                            getPosition().x + attackHitboxOffset.x,
+                            getPosition().y + attackHitboxOffset.y,
+                            getSize().x,
+                            getSize().y);
+            for (MazeObject other : getCollision(attackHitbox)) {
+                if (other instanceof Mob mob) {
+                    System.out.println("Hit!");
+                    mob.modifyHealth(-10f);
+                }
+            }
         }
     }
 }

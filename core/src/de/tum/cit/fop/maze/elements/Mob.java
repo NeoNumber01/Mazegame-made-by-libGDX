@@ -4,8 +4,10 @@ import com.badlogic.gdx.math.Vector2;
 
 import de.tum.cit.fop.maze.Helper;
 
-public abstract class Mob extends Entity {
+public abstract class Mob extends Entity implements Health {
     private final MoveAnimation moveAnimation;
+    private final float maxHealth = 10f;
+    private float health;
 
     public Mob(
             Maze maze,
@@ -16,6 +18,20 @@ public abstract class Mob extends Entity {
         super(maze, position, size, visualOffset);
         this.moveAnimation = moveAnimation;
         changeDirection();
+        health = maxHealth;
+    }
+
+    @Override
+    public void onEmptyHealth() {
+        maze.getEntities().removeValue(this, true);
+    }
+
+    @Override
+    public void modifyHealth(float deltaHealth) {
+        health = Math.min(health + deltaHealth, maxHealth);
+        if (health < 0) {
+            onEmptyHealth();
+        }
     }
 
     @Override
@@ -57,7 +73,6 @@ public abstract class Mob extends Entity {
         }
         performDisplacement(deltaTime, direction);
     }
-
 
     public void changeDirection() {
         direction = Helper.getRandomDirection();
