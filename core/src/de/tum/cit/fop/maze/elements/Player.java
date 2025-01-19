@@ -62,6 +62,7 @@ public class Player extends Entity implements Health {
                     currentMoveAnimation.getTexture(direction, super.game.getStateTime());
             super.renderTexture(texture);
         }
+        maze.getGame().getSpriteBatch().setColor(0f, 0f, 0f, 1f);
     }
 
     private boolean isSprinting() {
