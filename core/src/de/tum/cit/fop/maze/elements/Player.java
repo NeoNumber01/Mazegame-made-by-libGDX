@@ -34,7 +34,8 @@ public class Player extends Entity implements Health {
     private boolean isRed = false;
     private float redEffectTimer = 0f;
     private Sound playeronHit;
-    private Sound attackHit;
+    private Sound swing;
+    private Sound monsterHit;
 
     public Player(MazeRunnerGame game, Maze maze, Vector2 position) {
         // TextureRegion cut from assets is 16x32
@@ -49,7 +50,8 @@ public class Player extends Entity implements Health {
         this.game = game;
         this.hasKey = false;
         this.playeronHit = Gdx.audio.newSound(Gdx.files.internal("playeronHit.wav"));
-        this.attackHit = Gdx.audio.newSound(Gdx.files.internal("sword sound.wav"));
+        this.swing = Gdx.audio.newSound(Gdx.files.internal("swing.wav"));
+        this.monsterHit = Gdx.audio.newSound(Gdx.files.internal("monster.wav"));
     }
 
     @Override
@@ -235,8 +237,9 @@ public class Player extends Entity implements Health {
                     System.out.println("Hit!");
                     mob.modifyHealth(-10f);
                 }
+                monsterHit.play();
             }
-            attackHit.play();
+            swing.play();
         }
     }
 
