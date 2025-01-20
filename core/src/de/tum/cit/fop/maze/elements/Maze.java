@@ -119,6 +119,12 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
                         entities.add(
                                 new Shield(this, game.getResourcePack().getShieldTexture(), pos));
                         break;
+                    case 9: // MovableWall
+                        entities.add(
+                                new MovableWall(
+                                        this, game.getResourcePack().getWallTexture(), pos));
+                        ;
+                        break;
                 }
                 // fallback: empty block rendered as path
                 if (maze[i][j] == null) {
