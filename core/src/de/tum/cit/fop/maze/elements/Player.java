@@ -236,8 +236,8 @@ public class Player extends Entity implements Health {
                 if (other instanceof Mob mob) {
                     System.out.println("Hit!");
                     mob.modifyHealth(-10f);
+                    monsterHit.play();
                 }
-                monsterHit.play();
             }
             swing.play();
         }
