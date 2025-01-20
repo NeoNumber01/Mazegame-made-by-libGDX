@@ -11,7 +11,6 @@ public class Trap extends Block {
     @Override
     public void onArrival(MazeObject other) {
         if (other instanceof Player player) {
-            player.setHasKey(true);
             // TODO：播放音效
 
             player.modifyHealth(-10f);
