@@ -20,24 +20,14 @@ public class DesktopLauncher {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setTitle("Maze Runner");
 
-        // 获取显示器的分辨率
         Graphics.DisplayMode displayMode = Lwjgl3ApplicationConfiguration.getDisplayMode();
-        // 设置窗口大小 (这里示例：80% 的屏幕大小)
         config.setWindowedMode(
-            Math.round(0.8f * displayMode.width), Math.round(0.8f * displayMode.height)
-        );
+                Math.round(0.8f * displayMode.width), Math.round(0.8f * displayMode.height));
 
-        // 开启垂直同步 (Vsync)
+        config.setWindowSizeLimits(1280, 720, 9999, 999);
         config.useVsync(true);
 
-        // 配置后缓冲区格式: RGBA 各 8 位，深度 16 位，Stencil 8 位，采样 0
-        // 参数含义: (r, g, b, a, depth, stencil, msaaSamples)
-        config.setBackBufferConfig(
-            8, 8, 8, 8,  // RGBA 各 8 位
-            16,          // 深度缓冲 16 位
-            8,           // 模板缓冲 8 位 (Stencil)
-            0            // MSAA 采样次数 (可以根据需要改成 4、8 等)
-        );
+        config.setBackBufferConfig(8, 8, 8, 8, 16, 8, 0);
 
         new Lwjgl3Application(new MazeRunnerGame(new DesktopFileChooser()), config);
     }
