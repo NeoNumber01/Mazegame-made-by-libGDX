@@ -7,13 +7,9 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 import de.tum.cit.fop.maze.elements.Exit;
 import de.tum.cit.fop.maze.elements.Maze;
@@ -51,7 +47,6 @@ public class GameScreen implements Screen {
 
     public GameScreen(MazeRunnerGame game, String mapFilePath) {
         this.game = game;
-        hud = new HUD(game.getSpriteBatch());
 
         // Get the font from the game's skin
         font = game.getSkin().getFont("font");
@@ -70,6 +65,7 @@ public class GameScreen implements Screen {
         maze = new Maze(game, new Vector2(0, 0), mapProperties);
         player = new Player(game, maze, maze.getEntry().getPosition());
         camera = new MazeRunnerCamera(game, player.getPosition());
+        hud = new HUD(game.getSpriteBatch());
 
         shapeRenderer = new ShapeRenderer();
         createGradientTexture(); // Create the gradient texture for masking
@@ -133,6 +129,10 @@ public class GameScreen implements Screen {
         renderGameElements();
         game.getSpriteBatch().end();
 
+        // ULTIMATE SPAGHETTI!
+        // Before war fog code, SpriteBatch::draw() uses in-game position,
+        // after war fog code, it uses relative-to-window position instead
+
         // ----------------- War Fog Rendering with Stencil Buffer -----------------
         Gdx.gl.glEnable(GL20.GL_STENCIL_TEST);
         Gdx.gl.glClearStencil(0);
@@ -164,11 +164,10 @@ public class GameScreen implements Screen {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(0, 0, 0, 1f);
         shapeRenderer.rect(
-            playerX - Gdx.graphics.getWidth(),
-            playerY - Gdx.graphics.getHeight(),
-            Gdx.graphics.getWidth() * 2,
-            Gdx.graphics.getHeight() * 2
-        );
+                playerX - Gdx.graphics.getWidth(),
+                playerY - Gdx.graphics.getHeight(),
+                Gdx.graphics.getWidth() * 2,
+                Gdx.graphics.getHeight() * 2);
         shapeRenderer.end();
 
         // Step 3: Draw gradient light texture over the circular visible area
@@ -196,7 +195,8 @@ public class GameScreen implements Screen {
                 (int) player.getHealth(),
                 player.hasKey(),
                 player.getSpeedFactor(),
-                player.hasShield());
+                player.hasShield(),
+                maze.findNearestExitDirection(player.getCenter()));
         hud.render();
     }
 

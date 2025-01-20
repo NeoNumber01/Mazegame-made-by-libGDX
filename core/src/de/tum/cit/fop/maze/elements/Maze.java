@@ -11,6 +11,7 @@ import de.tum.cit.fop.maze.MazeRunnerGame;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /*
  * The maze that contains all blocks
@@ -29,6 +30,7 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
     private final Block[][] maze;
     private final Array<Entity> entities;
     private Entry entry;
+    private Array<Exit> exits;
     private Player player;
 
     /**
@@ -59,6 +61,7 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
 
         maze = new Block[width][height];
         entities = new Array<>();
+        exits = new Array<>();
         BiFunction<Integer, Integer, Vector2> calcPosition =
                 (x, y) -> new Vector2(position.x + x * blockSize, position.y + y * blockSize);
 
@@ -78,6 +81,7 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
                         break;
                     case 2: // TODO: Exit
                         maze[i][j] = new Exit(this, game.getResourcePack().getExitTexture(), pos);
+                        exits.add((Exit) maze[i][j]);
                         break;
                     case 3: // Trap
                         TextureRegion floorTexture = game.getResourcePack().getPathTexture();
@@ -311,5 +315,34 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
 
     public Rectangle getBorder() {
         return border;
+    }
+
+    /** Returns the exit that has the minimal Manhattan distance to position */
+    public Exit findNearestExit(Vector2 position) {
+        Exit result = null;
+        // calculates Manhattan distance
+        Function<Exit, Float> calcDist =
+                x ->
+                        Math.abs(x.getPosition().x - position.x)
+                                + Math.abs(x.getPosition().y - position.y);
+        for (Exit exit : exits) {
+            if (result == null || calcDist.apply(result) > calcDist.apply(exit)) {
+                result = exit;
+            }
+        }
+        return result;
+    }
+
+    /** Returns the degree to the nearest Exit */
+    public float findNearestExitDirection(Vector2 position) {
+        Exit target = findNearestExit(position);
+        float deg =
+                (float)
+                        (Math.atan(
+                                        (target.getCenter().y - position.y)
+                                                / (target.getCenter().x - position.x))
+                                * 180
+                                / Math.PI);
+        return target.getCenter().x - position.x < 0 ? deg : deg + 180;
     }
 }

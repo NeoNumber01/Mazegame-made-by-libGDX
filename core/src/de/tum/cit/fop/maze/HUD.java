@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class HUD {
+    private final SpriteBatch spriteBatch;
     private final float viewPointWidth = 1024f;
     private final Label keyStatusLabel;
     private final Label shieldStatusLabel;
@@ -21,12 +22,18 @@ public class HUD {
     private final Label speedLabel;
     private final TextureRegion fullHeartTexture;
     private final TextureRegion halfHeartTexture;
+    private final TextureRegion compassTexture, pointerTexture;
     public Stage stage;
+    private float pointerDegree = 0f;
     private int health;
     private boolean hasKey;
     private boolean hasShield;
 
     public HUD(SpriteBatch spriteBatch) {
+        this.spriteBatch = spriteBatch;
+
+        // Although libGDX doc recommends binding the camera to viewport, this breaks currently
+        // implementation. So let it be.
         Viewport viewport = new ExtendViewport(1280, 720);
         stage = new Stage(viewport, spriteBatch);
 
@@ -61,14 +68,19 @@ public class HUD {
         // Add main table to the stage
         stage.addActor(mainTable);
 
+        compassTexture = new TextureRegion(new Texture(Gdx.files.internal("Compass.png")));
+        pointerTexture = new TextureRegion(new Texture(Gdx.files.internal("Pointer.png")));
+
         // Initialize health display
         updateLivesDisplay(100); // Default to full health
     }
 
-    public void update(int health, boolean hasKey, float speed, boolean hasShield) {
+    public void update(
+            int health, boolean hasKey, float speed, boolean hasShield, float pointerDegree) {
         this.health = health;
         this.hasKey = hasKey;
         this.hasShield = hasShield;
+        this.pointerDegree = pointerDegree;
         // Update lives display
         updateLivesDisplay(health);
 
@@ -102,6 +114,26 @@ public class HUD {
 
     public void render() {
         stage.draw(); // Render the HUD
+        spriteBatch.begin();
+        float offsetX = 32f,
+                offsetY = Gdx.graphics.getHeight() * 0.75f,
+                scale = 1.5f,
+                compassSize = compassTexture.getRegionWidth() / scale,
+                pointerSizeX = pointerTexture.getRegionWidth() / scale,
+                pointerSizeY = pointerTexture.getRegionHeight() / scale;
+        spriteBatch.draw(compassTexture, offsetX, offsetY, compassSize, compassSize);
+        spriteBatch.draw(
+                pointerTexture,
+                offsetX + compassSize / 2f - pointerSizeX / 2f,
+                offsetY + compassSize / 2f - pointerSizeY / 2f,
+                pointerSizeX / 2f,
+                pointerSizeY / 2f,
+                pointerSizeX,
+                pointerSizeY,
+                1f,
+                1f,
+                pointerDegree + 90);
+        spriteBatch.end();
     }
 
     public void resize(int width, int height) {
