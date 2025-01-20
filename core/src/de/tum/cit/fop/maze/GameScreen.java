@@ -27,20 +27,12 @@ import java.util.Properties;
  * and rendering of the game elements.
  */
 public class GameScreen implements Screen {
-
-    // Virtual world size used by FitViewport
-    private static final float FIT_VIEWPORT_WIDTH = 1024f;
-    private static final float FIT_VIEWPORT_HEIGHT = 576f;
-
     private final MazeRunnerGame game;
     private final MazeRunnerCamera camera;
     private final BitmapFont font;
     private final Player player;
     private final Maze maze;
     private final HUD hud;
-
-    // New: use a Viewport to manage the game world camera
-    private final Viewport gameViewport;
 
     private final ShapeRenderer shapeRenderer; // For rendering shapes/stencil
     private Texture gradientTexture; // Used for the circular gradient
@@ -78,9 +70,6 @@ public class GameScreen implements Screen {
         maze = new Maze(game, new Vector2(0, 0), mapProperties);
         player = new Player(game, maze, maze.getEntry().getPosition());
         camera = new MazeRunnerCamera(game, player.getPosition());
-
-        // Create a FitViewport bound to the camera's OrthographicCamera
-        gameViewport = new FitViewport(FIT_VIEWPORT_WIDTH, FIT_VIEWPORT_HEIGHT, camera.getCamera());
 
         shapeRenderer = new ShapeRenderer();
         createGradientTexture(); // Create the gradient texture for masking
@@ -127,9 +116,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        // Apply the viewport before drawing the game world
-        gameViewport.apply();
-
         if (!paused) {
             stateTime += delta;
             handleInput(delta);
@@ -189,24 +175,23 @@ public class GameScreen implements Screen {
 
         float gradientSize = circleRadius * 2f; // Keep the gradient size fixed, independent of zoom
 
-        game.getSpriteBatch().draw(
-            gradientTexture,
-            playerX - gradientSize / 2f,
-            playerY - gradientSize / 2f,
-            gradientSize,
-            gradientSize
-        );
+        game.getSpriteBatch()
+                .draw(
+                        gradientTexture,
+                        playerX - gradientSize / 2f,
+                        playerY - gradientSize / 2f,
+                        gradientSize,
+                        gradientSize);
         game.getSpriteBatch().end();
 
         Gdx.gl.glDisable(GL20.GL_STENCIL_TEST);
 
         // Update and render HUD
         hud.update(
-            (int) player.getHealth(),
-            player.hasKey(),
-            player.getSpeedFactor(),
-            player.hasShield()
-        );
+                (int) player.getHealth(),
+                player.hasKey(),
+                player.getSpeedFactor(),
+                player.hasShield());
         hud.render();
     }
 
@@ -247,9 +232,6 @@ public class GameScreen implements Screen {
      */
     @Override
     public void resize(int width, int height) {
-        // Update the game world viewport
-        gameViewport.update(width, height, true);
-
         // Resize the HUD
         hud.resize(width, height);
 

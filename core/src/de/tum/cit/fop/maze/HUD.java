@@ -2,7 +2,6 @@ package de.tum.cit.fop.maze;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -11,13 +10,11 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class HUD {
-    private final OrthographicCamera camera;
     private final float viewPointWidth = 1024f;
-    private final Viewport viewport;
     private final Label keyStatusLabel;
     private final Label shieldStatusLabel;
     private final Table livesTable;
@@ -30,12 +27,7 @@ public class HUD {
     private boolean hasShield;
 
     public HUD(SpriteBatch spriteBatch) {
-        camera = new OrthographicCamera(viewPointWidth, getViewPointHeight());
-        float viewportWidth = 1200f;
-        viewport =
-                new FitViewport(
-                        viewportWidth,
-                        viewportWidth * Gdx.graphics.getHeight() / Gdx.graphics.getWidth());
+        Viewport viewport = new ExtendViewport(1280, 720);
         stage = new Stage(viewport, spriteBatch);
 
         // Load heart textures
@@ -113,8 +105,6 @@ public class HUD {
     }
 
     public void resize(int width, int height) {
-        viewport.update(width, height, true); // Update viewport
-        camera.setToOrtho(false, viewPointWidth, getViewPointHeight()); // Update camera
         stage.getViewport().update(width, height, true); // Update stage viewport
     }
 
