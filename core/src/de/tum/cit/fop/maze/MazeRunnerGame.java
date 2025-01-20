@@ -61,7 +61,7 @@ public class MazeRunnerGame extends Game {
         resourcePack = new ResourcePack();
 
         // Play some background music
-        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.ogg"));
         backgroundMusic.setLooping(true);
         backgroundMusic.setVolume(volume);
         backgroundMusic.play();

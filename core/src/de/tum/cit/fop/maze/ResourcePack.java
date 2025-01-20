@@ -187,8 +187,8 @@ public class ResourcePack { // Character animation
 
     private void loadKeyTexture() {
         Texture keySheet = new Texture(Gdx.files.internal("Key.png"));
-        // 该资源是16x16
-        keyTexture = new TextureRegion(keySheet, 0, 0, 16, 16);
+        // 该资源是10x20
+        keyTexture = new TextureRegion(keySheet, 0, 0, 10, 20);
     }
 
     private void loadHeartTextures() {
