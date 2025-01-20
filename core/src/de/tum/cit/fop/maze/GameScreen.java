@@ -46,23 +46,35 @@ public class GameScreen implements Screen {
     }
 
     public GameScreen(MazeRunnerGame game, String mapFilePath) {
+        Maze currentMaze = null; // loaded map file maybe invalid, use this to temporarily store it
         this.game = game;
 
         // Get the font from the game's skin
         font = game.getSkin().getFont("font");
 
-        // Load map properties
-        Properties mapProperties = new Properties();
-        try {
-            mapProperties.load(Gdx.files.internal(mapFilePath).read());
-        } catch (IOException err) {
-            // Fallback if map file is missing
-            mapProperties.put("0,0", "0");
-            mapProperties.put("1,0", "1");
-        }
-
         // Initialize Maze, Player, and camera
-        maze = new Maze(game, new Vector2(0, 0), mapProperties);
+        try {
+            // Load map properties
+            Properties mapProperties = new Properties();
+            try {
+                mapProperties.load(Gdx.files.internal(mapFilePath).read());
+            } catch (IOException err) {
+                // Fallback if map file is missing
+                mapProperties.put("0,0", "0");
+                mapProperties.put("1,0", "1");
+            }
+            currentMaze = new Maze(game, new Vector2(0, 0), mapProperties);
+        } catch (InvalidMaze err) {
+            System.out.println(err.toString());
+            System.out.println("Falling back to default map.");
+            try {
+                Properties defaultMapProperties = new Properties();
+                defaultMapProperties.load(Gdx.files.internal("maps/level-1.properties").read());
+                currentMaze = new Maze(game, new Vector2(0, 0), defaultMapProperties);
+            } catch (IOException ignored) {
+            }
+        }
+        maze = currentMaze;
         player = new Player(game, maze, maze.getEntry().getPosition());
         camera = new MazeRunnerCamera(game, player.getPosition());
         hud = new HUD(game.getSpriteBatch());

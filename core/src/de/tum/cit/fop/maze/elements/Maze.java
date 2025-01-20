@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
+import de.tum.cit.fop.maze.InvalidMaze;
 import de.tum.cit.fop.maze.MazeRunnerGame;
 
 import java.util.Iterator;
@@ -38,30 +39,38 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
      *
      * @param position The base position of the maze. Should be normally (0, 0).
      */
-    public Maze(MazeRunnerGame game, Vector2 position, Properties mapProperties) {
+    public Maze(MazeRunnerGame game, Vector2 position, Properties mapProperties)
+            throws InvalidMaze {
         super(game);
         this.position = position;
 
+        // If width/height specified in properties file, use it as-is. Otherwise, use max position
+        // x/y as width/height
         // properties are 0-indexed, thus +1
-        // invisible border blocks are created, thus furthur +2
+        // invisible border blocks are created, thus further +2
         this.width =
-                mapProperties.stringPropertyNames().stream()
-                                .map(pair -> Integer.parseInt(pair.split(",")[0]))
-                                .max(Integer::compareTo)
-                                .orElse(0)
-                        + 3;
+                mapProperties.get("Width") != null
+                        ? Integer.parseInt((String) mapProperties.get("Width")) + 2
+                        : mapProperties.stringPropertyNames().stream()
+                                        .map(pair -> Integer.parseInt(pair.split(",")[0]))
+                                        .max(Integer::compareTo)
+                                        .orElse(0)
+                                + 3;
         this.height =
-                mapProperties.stringPropertyNames().stream()
-                                .map(pair -> Integer.parseInt(pair.split(",")[1]))
-                                .max(Integer::compareTo)
-                                .orElse(0)
-                        + 3;
+                mapProperties.get("Height") != null
+                        ? Integer.parseInt((String) mapProperties.get("Height")) + 2
+                        : mapProperties.stringPropertyNames().stream()
+                                        .map(pair -> Integer.parseInt(pair.split(",")[1]))
+                                        .max(Integer::compareTo)
+                                        .orElse(0)
+                                + 3;
 
         border = new Rectangle(position.x, position.y, width * blockSize, height * blockSize);
 
         maze = new Block[width][height];
         entities = new Array<>();
         exits = new Array<>();
+        boolean hasKey = false;
         BiFunction<Integer, Integer, Vector2> calcPosition =
                 (x, y) -> new Vector2(position.x + x * blockSize, position.y + y * blockSize);
 
@@ -101,6 +110,7 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
                         entities.add(new Key(this, game.getResourcePack().getKeyTexture(), pos));
                         //                        maze[i][j] = new Key(this,
                         // game.getResourcePack().getKeyTexture(), pos);
+                        hasKey = true;
                         break;
                     case 6: // TODO: Lives
                         Lives life =
@@ -144,6 +154,10 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
                 }
             }
         }
+
+        if (exits.isEmpty()) throw new InvalidMaze("Maze must have at least one exit!");
+        if (entry == null) throw new InvalidMaze("Maze must have an entry!");
+        if (!hasKey) throw new InvalidMaze("Maze must have a key!");
     }
 
     public int getRow(Block block) {
