@@ -260,10 +260,10 @@ public class ResourcePack { // Character animation
         pathTexture = new TextureRegion(pathSheet, 0, 0, 16, 16);
     }
     private void loadExitTexture() {
-        Texture tilesSheet = new Texture(Gdx.files.internal("basictiles.png"));
+        Texture tilesSheet = new Texture(Gdx.files.internal("door.png"));
 
         int tileSize = 16;
-        exitTexture = new TextureRegion(tilesSheet, 0, 96, tileSize, tileSize);
+        exitTexture = new TextureRegion(tilesSheet, 0, 0, tileSize, tileSize);
     }
 
     private void loadEntryTexture() {
