@@ -3,16 +3,13 @@ package de.tum.cit.fop.maze.elements;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import de.tum.cit.fop.maze.GameOverScreen;
 import de.tum.cit.fop.maze.Helper;
 import de.tum.cit.fop.maze.MazeRunnerGame;
-import de.tum.cit.fop.maze.ResourcePack;
 
 import java.util.Objects;
 
@@ -61,15 +58,15 @@ public class Player extends Entity implements Health {
         }
         if (attackAnimationTimer > 0f) {
             super.renderTextureV2(
-                attackAnimation.getTextureNoLoop(
-                    direction, attackAnimationDuration - attackAnimationTimer),
-                1f,
-                new Vector2(0f, 0f));
+                    attackAnimation.getTextureNoLoop(
+                            direction, attackAnimationDuration - attackAnimationTimer),
+                    1f,
+                    new Vector2(0f, 0f));
 
         } else {
             MoveAnimation currentMoveAnimation = isSprinting() ? sprintAnimation : walkAnimation;
             TextureRegion texture =
-                currentMoveAnimation.getTexture(direction, super.game.getStateTime());
+                    currentMoveAnimation.getTexture(direction, super.game.getStateTime());
             super.renderTexture(texture);
         }
         maze.getGame().getSpriteBatch().setColor(0f, 0f, 0f, 1f);
@@ -98,7 +95,6 @@ public class Player extends Entity implements Health {
             }
             isRed = true;
             redEffectTimer = 1f;
-
         }
         if (delta < 0 && hasShield) {
             delta += 5; // Reduce damage by 5
@@ -124,7 +120,7 @@ public class Player extends Entity implements Health {
         }
         // 日志输出：查看当前时间、改变前的血量以及改变值
         System.out.printf(
-            "Time=%f, Health Before=%f, Delta=%f\n", game.getStateTime(), health, delta);
+                "Time=%f, Health Before=%f, Delta=%f\n", game.getStateTime(), health, delta);
         // 日志输出：查看更新后的血量
         System.out.printf("Health After=%f\n", health);
     }
@@ -183,7 +179,7 @@ public class Player extends Entity implements Health {
             }
         }
         if (Objects.requireNonNull(getMotion())
-            == Motion.ATTACK) { // do nothing when currently performing attack animation
+                == Motion.ATTACK) { // do nothing when currently performing attack animation
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             attack();
         } else {
@@ -204,7 +200,9 @@ public class Player extends Entity implements Health {
             this.performDisplacement(deltaPos);
             // force update player direction, so that player can attack to arbitrary direction in
             // case of collision
-            direction = Helper.Vector2Direction(deltaPos);
+            if (deltaPos.len2() > 0f) {
+                direction = Helper.Vector2Direction(deltaPos);
+            }
         }
 
         handleTimers(deltaTime);
@@ -220,18 +218,18 @@ public class Player extends Entity implements Health {
             attackAnimationTimer = attackAnimationDuration;
 
             Vector2 attackHitboxOffset =
-                switch (direction) {
-                    case UP -> new Vector2(0f, getSize().y);
-                    case DOWN -> new Vector2(0f, -getSize().y);
-                    case LEFT -> new Vector2(-getSize().x, 0f);
-                    case RIGHT -> new Vector2(getSize().x, 0f);
-                };
+                    switch (direction) {
+                        case UP -> new Vector2(0f, getSize().y);
+                        case DOWN -> new Vector2(0f, -getSize().y);
+                        case LEFT -> new Vector2(-getSize().x, 0f);
+                        case RIGHT -> new Vector2(getSize().x, 0f);
+                    };
             Rectangle attackHitbox =
-                new Rectangle(
-                    getPosition().x + attackHitboxOffset.x,
-                    getPosition().y + attackHitboxOffset.y,
-                    getSize().x,
-                    getSize().y);
+                    new Rectangle(
+                            getPosition().x + attackHitboxOffset.x,
+                            getPosition().y + attackHitboxOffset.y,
+                            getSize().x,
+                            getSize().y);
             for (MazeObject other : getCollision(attackHitbox)) {
                 if (other instanceof Mob mob) {
                     System.out.println("Hit!");
