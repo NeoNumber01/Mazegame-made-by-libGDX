@@ -230,7 +230,7 @@ public class Player extends Entity implements Health {
             for (MazeObject other : getCollision(attackHitbox)) {
                 if (other instanceof Mob mob) {
                     System.out.println("Hit!");
-                    mob.modifyHealth(-20f);
+                    mob.modifyHealth(-10f);
                 }
             }
         }
