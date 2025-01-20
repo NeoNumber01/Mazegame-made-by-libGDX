@@ -2,6 +2,7 @@ package de.tum.cit.fop.maze.elements;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
@@ -22,6 +23,7 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
     // size of the maze, in number of blocks
     private final int width;
     private final int height;
+    private final Rectangle border;
     // this should never be exposed directly,
     // so that we can switch to other implementations, like Array<> provided by libGDX
     private final Block[][] maze;
@@ -52,6 +54,8 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
                                 .max(Integer::compareTo)
                                 .orElse(0)
                         + 3;
+
+        border = new Rectangle(position.x, position.y, width * blockSize, height * blockSize);
 
         maze = new Block[width][height];
         entities = new Array<>();
@@ -303,5 +307,9 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
             }
         }
         return true;
+    }
+
+    public Rectangle getBorder() {
+        return border;
     }
 }
