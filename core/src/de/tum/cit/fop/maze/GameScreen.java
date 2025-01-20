@@ -163,7 +163,12 @@ public class GameScreen implements Screen {
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(0, 0, 0, 1f);
-        shapeRenderer.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        shapeRenderer.rect(
+            playerX - Gdx.graphics.getWidth(),
+            playerY - Gdx.graphics.getHeight(),
+            Gdx.graphics.getWidth() * 2,
+            Gdx.graphics.getHeight() * 2
+        );
         shapeRenderer.end();
 
         // Step 3: Draw gradient light texture over the circular visible area
