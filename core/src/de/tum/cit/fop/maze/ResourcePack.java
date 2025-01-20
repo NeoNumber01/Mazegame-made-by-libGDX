@@ -242,8 +242,8 @@ public class ResourcePack { // Character animation
     }
 
     private void loadTrapTexture() {
-        Texture trapSheet01 = new Texture(Gdx.files.internal("electric01.png"));
-        Texture trapSheet02 = new Texture(Gdx.files.internal("electric02.png"));
+        Texture trapSheet01 = new Texture(Gdx.files.internal("electric03.png"));
+        Texture trapSheet02 = new Texture(Gdx.files.internal("electric04.png"));
         frame1 = new TextureRegion(trapSheet01,0,0,16,16);
         frame2 = new TextureRegion(trapSheet02,0,0,16,16);
         trapAnimation = new Animation<>(0.3f, frame1, frame2);
@@ -251,12 +251,12 @@ public class ResourcePack { // Character animation
     }
 
     private void loadWallTexture() {
-        Texture wallSheet = new Texture(Gdx.files.internal("Wood_Box.png"));
+        Texture wallSheet = new Texture(Gdx.files.internal("wall.png"));
         wallTexture = new TextureRegion(wallSheet, 0, 0, 16, 16);
     }
 
     private void loadPathTexture() {
-        Texture pathSheet = new Texture(Gdx.files.internal("tile_grass.png"));
+        Texture pathSheet = new Texture(Gdx.files.internal("floor01.png"));
         pathTexture = new TextureRegion(pathSheet, 0, 0, 16, 16);
     }
     private void loadExitTexture() {
