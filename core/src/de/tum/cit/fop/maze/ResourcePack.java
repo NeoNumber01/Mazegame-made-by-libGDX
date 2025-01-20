@@ -2,6 +2,7 @@ package de.tum.cit.fop.maze;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 
@@ -15,6 +16,7 @@ public class ResourcePack { // Character animation
     private MoveAnimation playerSprintAnimation;
     private MoveAnimation playerAttackAnimation;
     private MoveAnimation SkeletonMoveAnimation;
+    private Animation<TextureRegion> trapAnimation;
     private TextureRegion blockTexture,
             blackBlockTexture,
             keyTexture,
@@ -22,11 +24,13 @@ public class ResourcePack { // Character animation
             halfHeartTexture,
             lightningTexture,
             shieldTexture,
-            trapTexture,
             wallTexture,
             pathTexture,
             exitTexture,
-            entryTexture;
+            entryTexture,
+            frame1,
+            frame2;
+
 
 
     public ResourcePack() {
@@ -42,6 +46,7 @@ public class ResourcePack { // Character animation
         loadPathTexture();
         loadExitTexture();
         loadEntryTexture();
+        loadTrapTexture();
     }
 
     public MoveAnimation getPlayerAttackAnimation() {
@@ -237,8 +242,12 @@ public class ResourcePack { // Character animation
     }
 
     private void loadTrapTexture() {
-        Texture trapSheet = new Texture(Gdx.files.internal("Trap.png"));
-        trapTexture = new TextureRegion(trapSheet, 0, 0, 16, 16);
+        Texture trapSheet01 = new Texture(Gdx.files.internal("electric01.png"));
+        Texture trapSheet02 = new Texture(Gdx.files.internal("electric02.png"));
+        frame1 = new TextureRegion(trapSheet01,0,0,16,16);
+        frame2 = new TextureRegion(trapSheet02,0,0,16,16);
+        trapAnimation = new Animation<>(0.3f, frame1, frame2);
+        trapAnimation.setPlayMode(Animation.PlayMode.LOOP);
     }
 
     private void loadWallTexture() {
@@ -272,8 +281,8 @@ public class ResourcePack { // Character animation
         return entryTexture;
     }
 
-    public TextureRegion getTrapTexture() {
-        return trapTexture;
+    public Animation<TextureRegion> getTrapAnimation() {
+        return trapAnimation;
     }
 
     public TextureRegion getWallTexture() {

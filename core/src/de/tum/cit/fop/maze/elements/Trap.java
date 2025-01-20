@@ -1,5 +1,7 @@
 package de.tum.cit.fop.maze.elements;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -9,9 +11,13 @@ public class Trap extends Block {
     private static final float DAMAGE_INTERVAL = 0.5f;
     private float lastDamageTime = 0f;
     private boolean playerOnTrap = false;
+    private Animation<TextureRegion> trapAnimation;
+    private float stateTime = 0f;
 
-    public Trap(Maze maze, TextureRegion texture, Vector2 position) {
+    public Trap(Maze maze, TextureRegion texture, Animation<TextureRegion> trapAnimation, Vector2 position) {
         super(maze, texture, position, false);
+        this.trapAnimation = trapAnimation;
+
     }
 
     @Override
@@ -54,4 +60,19 @@ public class Trap extends Block {
         return trapRect.overlaps(playerHitbox);
     }
 
+
+    @Override
+    public void render() {
+        stateTime += Gdx.graphics.getDeltaTime();
+        TextureRegion currentFrame = trapAnimation.getKeyFrame(stateTime, true);
+
+        super.game.getSpriteBatch().draw(
+            currentFrame,
+            getPosition().x,
+            getPosition().y,
+            maze.getBlockSize(),
+            maze.getBlockSize()
+        );
+    }
 }
+

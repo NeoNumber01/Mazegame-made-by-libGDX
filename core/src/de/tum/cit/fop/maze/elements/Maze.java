@@ -1,5 +1,10 @@
 package de.tum.cit.fop.maze.elements;
 
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.TextureData;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
@@ -74,9 +79,17 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
                     case 2: // TODO: Exit
                         maze[i][j] = new Exit(this, game.getResourcePack().getExitTexture(), pos);
                         break;
-                    case 3: // TODO: Trap
-                        maze[i][j] = new Trap(this, game.getResourcePack().getTrapTexture(), pos);
+                    case 3: // Trap
+                        TextureRegion floorTexture = game.getResourcePack().getPathTexture();
+
+                        // 不再获取单一静态纹理，而是获取动画对象
+                        Animation<TextureRegion> trapAnimation = game.getResourcePack().getTrapAnimation();
+
+                        // 创建陷阱对象，并传入动画
+                        maze[i][j] = new Trap(this, floorTexture, trapAnimation, pos);
                         break;
+
+
                     case 4: // TODO: Enemy
                         entities.add(new Skeleton(this, pos));
                         break;

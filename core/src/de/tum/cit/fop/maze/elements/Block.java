@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public abstract class Block extends MazeObject {
-    private final TextureRegion texture;
+    private TextureRegion texture;
     private final boolean obstacle;
 
     /**
@@ -40,6 +40,9 @@ public abstract class Block extends MazeObject {
                         getPosition().y,
                         maze.getBlockSize(),
                         maze.getBlockSize());
+    }
+    public TextureRegion getTexture() {
+        return texture;
     }
 
     @Override
