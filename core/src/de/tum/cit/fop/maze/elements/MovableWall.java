@@ -6,8 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 import de.tum.cit.fop.maze.Helper;
 
 public class MovableWall extends Entity {
-    private final TextureRegion wallTexture;
     private static final float MOVE_SPEED = 30f;
+    private final TextureRegion wallTexture;
     private float scale = 2.0f;
     private Vector2 offset = new Vector2(0, 0);
 
@@ -47,14 +47,6 @@ public class MovableWall extends Entity {
     public void render() {
 
         renderTextureV2(this.wallTexture, scale, offset);
-    }
-
-    @Override
-    public void onCollision(MazeObject other) {
-        // 如果 other 是 Mobs 类型，那就让它掉血 10
-        if (other instanceof Mob) {
-            ((Mob) other).modifyHealth(-10);
-        }
     }
 
     @Override
