@@ -164,7 +164,7 @@ public class MazeRunnerGame extends Game {
             backgroundMusic.stop();
             backgroundMusic.dispose();
         }
-        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.ogg"));
         backgroundMusic.setLooping(true);
         backgroundMusic.setVolume(0.5f);
         backgroundMusic.play();
@@ -195,7 +195,7 @@ public class MazeRunnerGame extends Game {
             backgroundMusic.stop();
             backgroundMusic.dispose();
         }
-        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.ogg"));
         backgroundMusic.setLooping(true);
         backgroundMusic.setVolume(0.5f);
         backgroundMusic.play();
