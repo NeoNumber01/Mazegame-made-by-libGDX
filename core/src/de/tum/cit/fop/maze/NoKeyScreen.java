@@ -38,8 +38,8 @@ public class NoKeyScreen implements Screen {
         // 添加提示信息
         Label messageLabel =
                 new Label("You don't have enough keys to exit!", game.getSkin(), "title");
+        messageLabel.setFontScale(0.5f);
         table.add(messageLabel).padBottom(50).center().row();
-
         // 添加 "Return to Game" 按钮
         TextButton returnButton = new TextButton("Return to Game", game.getSkin());
         table.add(returnButton).width(300).padBottom(20).center().row();
