@@ -24,7 +24,7 @@ public class DesktopLauncher {
         config.setWindowedMode(
                 Math.round(0.8f * displayMode.width), Math.round(0.8f * displayMode.height));
 
-        config.setWindowSizeLimits(1280, 720, 9999, 999);
+        config.setWindowSizeLimits(1280, 720, 9999, 9999);
         config.useVsync(true);
 
         config.setBackBufferConfig(8, 8, 8, 8, 16, 8, 0);
