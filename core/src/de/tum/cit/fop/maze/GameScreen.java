@@ -147,29 +147,27 @@ public class GameScreen implements Screen {
         renderGameElements();
         game.getSpriteBatch().end();
 
-        // ------------- Below is your circular stencil logic (in screen coordinates) -------------
+        // ----------------- War Fog Rendering with Stencil Buffer -----------------
         Gdx.gl.glEnable(GL20.GL_STENCIL_TEST);
         Gdx.gl.glClearStencil(0);
         Gdx.gl.glClear(GL20.GL_STENCIL_BUFFER_BIT);
 
-        // Write a circle (stencil=1)
+        // Step 1: Write to stencil buffer with a circle (set stencil=1 in circle area)
         Gdx.gl.glColorMask(false, false, false, false);
         Gdx.gl.glStencilFunc(GL20.GL_ALWAYS, 1, 0xFF);
         Gdx.gl.glStencilOp(GL20.GL_KEEP, GL20.GL_KEEP, GL20.GL_REPLACE);
 
-        // Use screen coordinate system for the circle
-        shapeRenderer.setProjectionMatrix(
-                new Matrix4()
-                        .setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+        shapeRenderer.setProjectionMatrix(camera.getCamera().combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        float cx = Gdx.graphics.getWidth() / 2f;
-        float cy = Gdx.graphics.getHeight() / 2f;
-        float circleRadius = 300f;
-        shapeRenderer.circle(cx, cy, circleRadius);
+        float playerX = player.getPosition().x;
+        float playerY = player.getPosition().y;
+        float circleRadius = 125f; // Keep the circle radius fixed, independent of zoom
+
+        shapeRenderer.circle(playerX, playerY, circleRadius);
         shapeRenderer.end();
 
-        // Draw black overlay in stencil=0 areas
+        // Step 2: Render black overlay where stencil != 1
         Gdx.gl.glColorMask(true, true, true, true);
         Gdx.gl.glStencilFunc(GL20.GL_EQUAL, 0, 0xFF);
         Gdx.gl.glStencilOp(GL20.GL_KEEP, GL20.GL_KEEP, GL20.GL_KEEP);
@@ -182,33 +180,33 @@ public class GameScreen implements Screen {
         shapeRenderer.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         shapeRenderer.end();
 
-        // Now draw the gradient texture in stencil=1 area
+        // Step 3: Draw gradient light texture over the circular visible area
         Gdx.gl.glStencilFunc(GL20.GL_EQUAL, 1, 0xFF);
         Gdx.gl.glStencilOp(GL20.GL_KEEP, GL20.GL_KEEP, GL20.GL_KEEP);
 
-        SpriteBatch batch = game.getSpriteBatch();
-        batch.setProjectionMatrix(
-                new Matrix4()
-                        .setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
-        batch.begin();
+        game.getSpriteBatch().setProjectionMatrix(camera.getCamera().combined);
+        game.getSpriteBatch().begin();
 
-        float gradientSize = 600f;
-        batch.draw(
-                gradientTexture,
-                cx - gradientSize / 2f,
-                cy - gradientSize / 2f,
-                gradientSize,
-                gradientSize);
-        batch.end();
+        float gradientSize = circleRadius * 2f; // Keep the gradient size fixed, independent of zoom
+
+        game.getSpriteBatch().draw(
+            gradientTexture,
+            playerX - gradientSize / 2f,
+            playerY - gradientSize / 2f,
+            gradientSize,
+            gradientSize
+        );
+        game.getSpriteBatch().end();
 
         Gdx.gl.glDisable(GL20.GL_STENCIL_TEST);
 
         // Update and render HUD
         hud.update(
-                (int) player.getHealth(),
-                player.hasKey(),
-                player.getSpeedFactor(),
-                player.hasShield());
+            (int) player.getHealth(),
+            player.hasKey(),
+            player.getSpeedFactor(),
+            player.hasShield()
+        );
         hud.render();
     }
 
