@@ -1,8 +1,5 @@
 package de.tum.cit.fop.maze.elements;
 
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.TextureData;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -69,8 +66,7 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
                 Vector2 pos = calcPosition.apply(i, j);
                 switch (blockTypeCode) {
                     case 0: // Wall
-                        maze[i][j] =
-                                new Wall(this, game.getResourcePack().getWallTexture(), pos);
+                        maze[i][j] = new Wall(this, game.getResourcePack().getWallTexture(), pos);
                         break;
                     case 1: // Entry Point
                         maze[i][j] = new Entry(this, game.getResourcePack().getEntryTexture(), pos);
@@ -83,19 +79,20 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
                         TextureRegion floorTexture = game.getResourcePack().getPathTexture();
 
                         // 不再获取单一静态纹理，而是获取动画对象
-                        Animation<TextureRegion> trapAnimation = game.getResourcePack().getTrapAnimation();
+                        Animation<TextureRegion> trapAnimation =
+                                game.getResourcePack().getTrapAnimation();
 
                         // 创建陷阱对象，并传入动画
                         maze[i][j] = new Trap(this, floorTexture, trapAnimation, pos);
                         break;
-
 
                     case 4: // TODO: Enemy
                         entities.add(new Skeleton(this, pos));
                         break;
                     case 5: // TODO: Key
                         entities.add(new Key(this, game.getResourcePack().getKeyTexture(), pos));
-//                        maze[i][j] = new Key(this, game.getResourcePack().getKeyTexture(), pos);
+                        //                        maze[i][j] = new Key(this,
+                        // game.getResourcePack().getKeyTexture(), pos);
                         break;
                     case 6: // TODO: Lives
                         Lives life =
@@ -123,28 +120,15 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
         }
 
         for (int i = 0; i < width; ++i) {
-            maze[i][0] =
-                    new Wall(
-                            this,
-                            game.getResourcePack().getBlackBlockTexture(),
-                            calcPosition.apply(i, 0));
-            maze[i][height - 1] =
-                    new Wall(
-                            this,
-                            game.getResourcePack().getBlackBlockTexture(),
-                            calcPosition.apply(i, height - 1));
-        }
-        for (int i = 0; i < height; ++i) {
-            maze[0][i] =
-                    new Wall(
-                            this,
-                            game.getResourcePack().getBlackBlockTexture(),
-                            calcPosition.apply(0, i));
-            maze[width - 1][i] =
-                    new Wall(
-                            this,
-                            game.getResourcePack().getBlackBlockTexture(),
-                            calcPosition.apply(width - 1, i));
+            for (int j = 0; j < height; ++j) {
+                if (maze[i][j] == null) {
+                    maze[i][j] =
+                            new Wall(
+                                    this,
+                                    game.getResourcePack().getBlackBlockTexture(),
+                                    calcPosition.apply(i, j));
+                }
+            }
         }
     }
 

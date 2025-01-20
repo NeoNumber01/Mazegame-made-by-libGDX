@@ -90,6 +90,12 @@ public abstract class MazeObject extends GameObject implements Visible, Collisio
     }
 
     public Block getBlock() {
-        return maze.getBlock(getPosition());
+        Block result = maze.getBlock(getPosition());
+        if (result == null) {
+            System.out.printf(
+                    "Out of bound: %s %f %f\n",
+                    this.getClass().getName(), getPosition().x, getPosition().y);
+        }
+        return result;
     }
 }
