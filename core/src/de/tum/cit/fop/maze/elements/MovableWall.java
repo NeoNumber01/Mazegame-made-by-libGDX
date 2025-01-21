@@ -2,6 +2,7 @@ package de.tum.cit.fop.maze.elements;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 
 import de.tum.cit.fop.maze.Helper;
 
@@ -34,11 +35,20 @@ public class MovableWall extends Entity {
         Vector2 displacement = direction.toVector2(distance);
 
         Vector2 newPosition = getPosition().cpy().add(displacement);
-        if (checkCollision(newPosition)) {
+        Array<MazeObject> others = getCollision(newPosition);
 
+        // only change direction when collide into wall, instead of player, mob, etc.
+        boolean collideWithWall = false;
+        for (MazeObject other : others) {
+            if (other instanceof Wall) {
+                collideWithWall = true;
+                break;
+            }
+        }
+
+        if (collideWithWall) {
             changeDirection();
         } else {
-
             performDisplacement(displacement);
         }
     }

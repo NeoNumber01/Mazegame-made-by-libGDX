@@ -42,6 +42,10 @@ public abstract class Entity extends MazeObject implements Move {
         return result;
     }
 
+    public Array<MazeObject> getCollision(Vector2 position) {
+        return getCollision(new Rectangle(position.x, position.y, getSize().x, getSize().y));
+    }
+
     /**
      * Returns an array of all other objects that conjuncts with given rectangle.
      *
