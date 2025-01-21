@@ -120,10 +120,9 @@ public class HUD {
         spriteBatch.begin();
 
         float margin = 20f; // 罗盘离屏幕边缘的距离
-        float scale = 1.5f;
-        float compassSize = compassTexture.getRegionWidth() / scale;
-        float pointerSizeX = pointerTexture.getRegionWidth() / scale;
-        float pointerSizeY = pointerTexture.getRegionHeight() / scale;
+        float compassSize = compassTexture.getRegionWidth();
+        float pointerSizeX = pointerTexture.getRegionWidth();
+        float pointerSizeY = pointerTexture.getRegionHeight();
 
         // 计算罗盘的位置，始终固定在左上角
         float offsetX = margin; // 靠近左侧
