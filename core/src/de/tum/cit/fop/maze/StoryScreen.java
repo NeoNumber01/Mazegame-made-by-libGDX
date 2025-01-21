@@ -10,16 +10,14 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 public class StoryScreen {
     private static StoryScreen instance;
     private final BitmapFont font;
-    private String message;
-    private float alpha;
-    private boolean showing;
-    private float timer;
-
     private final float FADE_IN_TIME = 1.0f;
     private final float DISPLAY_TIME = 3.0f;
     private final float FADE_OUT_TIME = 1.0f;
     private final Stage stage;
-
+    private String message;
+    private float alpha;
+    private boolean showing;
+    private float timer;
 
     public StoryScreen() {
         font = new BitmapFont();

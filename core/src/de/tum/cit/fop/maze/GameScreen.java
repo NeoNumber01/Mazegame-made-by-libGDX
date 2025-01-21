@@ -65,7 +65,7 @@ public class GameScreen implements Screen {
             }
             currentMaze = new Maze(game, new Vector2(0, 0), mapProperties);
         } catch (InvalidMaze err) {
-            System.out.println(err.toString());
+            System.out.println(err);
             System.out.println("Falling back to default map.");
             try {
                 Properties defaultMapProperties = new Properties();
