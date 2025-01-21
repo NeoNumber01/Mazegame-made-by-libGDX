@@ -197,6 +197,12 @@ public class Player extends Entity implements Health {
             if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
                 deltaPos.x += deltaDist;
             }
+            // only move 1 unit instead of \sqrt(2) unit when moving diagonally
+            if (deltaPos.len() > deltaDist) {
+                deltaPos.x /= (float) Math.sqrt(2);
+                deltaPos.y /= (float) Math.sqrt(2);
+            }
+
             this.performDisplacement(deltaPos);
             // force update player direction, so that player can attack to arbitrary direction in
             // case of collision
