@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import de.tum.cit.fop.maze.MazeRunnerGame;
 
+/** Entrance of a maze, where the player is spawn. */
 public class Entry extends Path {
     public Entry(Maze maze, TextureRegion texture, Vector2 position) {
         super(maze, texture, position);

@@ -1,6 +1,5 @@
 package de.tum.cit.fop.maze.elements;
 
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -17,6 +16,9 @@ public abstract class Entity extends MazeObject implements Move {
         direction = Helper.Direction.DOWN;
     }
 
+    /**
+     * Performs displacement towards given direction, without check collision or being out of bound.
+     */
     private void performForceDisplacement(Vector2 delta) {
         direction = Helper.Vector2Direction(delta);
         super.displace(delta);
@@ -28,10 +30,20 @@ public abstract class Entity extends MazeObject implements Move {
         return checkCollision(rect);
     }
 
+    /**
+     * Checks if current entity collides with other objects.
+     *
+     * @param rect overrides hitbox with this rectangle.
+     */
     public boolean checkCollision(Rectangle rect) {
         return !getCollision(rect).isEmpty();
     }
 
+    /**
+     * Returns all MazeObject that collides with this entity.
+     *
+     * @param rect overrides hitbox with this rectangle.
+     */
     public Array<MazeObject> getCollision(Rectangle rect) {
         Array<MazeObject> result = new Array<>();
         for (MazeObject other : maze) {
@@ -42,6 +54,11 @@ public abstract class Entity extends MazeObject implements Move {
         return result;
     }
 
+    /**
+     * Returns all MazeObject that collides with this entity.
+     *
+     * @param position overrides current position with this Vector.
+     */
     public Array<MazeObject> getCollision(Vector2 position) {
         return getCollision(new Rectangle(position.x, position.y, getSize().x, getSize().y));
     }
@@ -93,25 +110,12 @@ public abstract class Entity extends MazeObject implements Move {
         }
     }
 
-    public void moveTowards(Block targetBlock, float deltaTime) {
-        float dist = getMoveDistance(deltaTime);
-        Vector2 requiredDisplacement = targetBlock.getCenter().sub(getCenter()),
-                possibleDisplacement =
-                        new Vector2(
-                                MathUtils.clamp(requiredDisplacement.x, -dist, dist),
-                                MathUtils.clamp(requiredDisplacement.y, -dist, dist));
-        performDisplacement(possibleDisplacement);
-    }
-
-    public boolean inBlockCenter() {
-        // not sure round-off error should be considered
-        return maze.getBlock(getCenter()).getCenter().sub(getCenter()).len2() < 1e-12f;
-    }
-
+    /** Returns the row number of the block that this entity is in. */
     public int getRow() {
         return getBlock().getRow();
     }
 
+    /** Returns the column number of the block that this entity is in. */
     public int getColumn() {
         return getBlock().getColumn();
     }

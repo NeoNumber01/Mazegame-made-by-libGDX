@@ -6,21 +6,9 @@ import com.badlogic.gdx.utils.Array;
 
 import de.tum.cit.fop.maze.Helper.Direction;
 
+/** A set of animations that has their variants on all 4 directions. */
 public class MoveAnimation {
-
     private Animation<TextureRegion> animationUp, animationDown, animationLeft, animationRight;
-
-    public MoveAnimation(
-            Array<TextureRegion> texturesUp,
-            Array<TextureRegion> texturesDown,
-            Array<TextureRegion> texturesLeft,
-            Array<TextureRegion> texturesRight,
-            float frameDuration) {
-        this.animationUp = new Animation<>(frameDuration, texturesUp);
-        this.animationDown = new Animation<>(frameDuration, texturesDown);
-        this.animationLeft = new Animation<>(frameDuration, texturesLeft);
-        this.animationRight = new Animation<>(frameDuration, texturesRight);
-    }
 
     public MoveAnimation() {}
 

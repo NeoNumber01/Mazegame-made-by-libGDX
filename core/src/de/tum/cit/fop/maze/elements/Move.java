@@ -6,6 +6,7 @@ import de.tum.cit.fop.maze.Helper;
 
 import java.awt.*;
 
+/** Basic movement mechanics */
 public interface Move {
     float globalSpeedFactor = 64f;
 
@@ -16,6 +17,10 @@ public interface Move {
      */
     void performDisplacement(Vector2 delta);
 
+    /**
+     * A QoL wrapper that calls performDisplacement() with default move distance towards given
+     * direction.
+     */
     default void performDisplacement(float deltaTime, Helper.Direction direction) {
         performDisplacement(direction.toVector2(getMoveDistance(deltaTime)));
     }

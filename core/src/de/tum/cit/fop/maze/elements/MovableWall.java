@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Array;
 
 import de.tum.cit.fop.maze.Helper;
 
+/** A special kind of obstacle. A wall but moves itself. */
 public class MovableWall extends Entity {
     private static final float MOVE_SPEED = 30f;
     private final TextureRegion wallTexture;
@@ -16,14 +17,6 @@ public class MovableWall extends Entity {
         super(maze, position, new Vector2(32, 32), Vector2.Zero);
         this.wallTexture = wallTexture;
         direction = Helper.getRandomDirection();
-    }
-
-    public void setScale(float scale) {
-        this.scale = scale;
-    }
-
-    public void setOffset(Vector2 offset) {
-        this.offset = offset;
     }
 
     @Override
@@ -69,6 +62,7 @@ public class MovableWall extends Entity {
         return MOVE_SPEED * deltaTime;
     }
 
+    /** Changes current direction to its opposite. */
     public void changeDirection() {
         switch (direction) {
             case LEFT -> direction = Helper.Direction.RIGHT;

@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import de.tum.cit.fop.maze.Helper;
 
+/** Entity that has a basic AI to control movement, and deals damage to the player. */
 public abstract class Mob extends Entity implements Health {
     private final MoveAnimation moveAnimation;
     private final float maxHealth = 10f;
@@ -79,6 +80,7 @@ public abstract class Mob extends Entity implements Health {
         performDisplacement(deltaTime, direction);
     }
 
+    /** Changes direction to a random one. */
     public void changeDirection() {
         direction = Helper.getRandomDirection();
     }

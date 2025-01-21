@@ -4,8 +4,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+/** Base abstraction of a static block in the maze. */
 public abstract class Block extends MazeObject {
-    private TextureRegion texture;
+    private final TextureRegion texture;
     private final boolean obstacle;
 
     /**
@@ -14,7 +15,7 @@ public abstract class Block extends MazeObject {
      * @param maze the maze it belongs to
      * @param texture texture of the block, normally static
      * @param position position of the block
-     * @param obstacle if a block is an obstacle, it cannot be walk ed on
+     * @param obstacle if a block is an obstacle, it cannot be walked ed on
      */
     public Block(Maze maze, TextureRegion texture, Vector2 position, boolean obstacle) {
         super(
@@ -26,6 +27,7 @@ public abstract class Block extends MazeObject {
         this.obstacle = obstacle;
     }
 
+    /** Returns if it is an obstacle, i.e. player cannot walk on. */
     public boolean isObstacle() {
         return obstacle;
     }
@@ -41,9 +43,6 @@ public abstract class Block extends MazeObject {
                         maze.getBlockSize(),
                         maze.getBlockSize());
     }
-    public TextureRegion getTexture() {
-        return texture;
-    }
 
     @Override
     public boolean overlaps(Rectangle other) {
@@ -53,10 +52,12 @@ public abstract class Block extends MazeObject {
     /** Triggers event when other object arrives this block. */
     public void onArrival(MazeObject other) {}
 
+    /** Returns the row number of the block in maze. */
     public int getRow() {
         return maze.getRow(this);
     }
 
+    /** Returns the column number of the block in maze. */
     public int getColumn() {
         return maze.getColumn(this);
     }

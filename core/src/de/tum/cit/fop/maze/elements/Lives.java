@@ -5,8 +5,9 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
+/** Interactive collectable that heals the player. */
 public class Lives extends InteractiveElements {
-    private Sound lives;
+    private final Sound lives;
     private float scale = 1.0f;
 
     public Lives(Maze maze, TextureRegion texture, Vector2 position) {

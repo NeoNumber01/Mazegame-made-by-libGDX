@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+/** A generic abstraction of in-maze game elements. */
 public abstract class MazeObject extends GameObject implements Visible, Collision {
     protected final Maze maze;
 
@@ -87,17 +88,23 @@ public abstract class MazeObject extends GameObject implements Visible, Collisio
                         texture.getRegionHeight() * scale);
     }
 
+    /**
+     * Calls spritebatch to render a texture at MazeObject's location. Uses visualOffset and hitbox
+     * position to determine actual texture position. This is the recommended implementation.
+     */
     public void renderTextureV2(TextureRegion texture, float scale) {
         renderTextureV2(texture, scale, new Vector2(0f, 0f));
     }
 
-    public void displace(Vector2 displacement) {
+    /** A wrapper to re-position hitbox. */
+    protected void displace(Vector2 displacement) {
         hitbox.setPosition((new Vector2(hitbox.x, hitbox.y)).add(displacement));
     }
 
+    /** Returns the block where the object is on. If it is a block returns itself. */
     public Block getBlock() {
         Block result = maze.getBlock(getPosition());
-        if (result == null) {
+        if (result == null) { // DEBUG log, normally this should not be triggered
             System.out.printf(
                     "Out of bound: %s %f %f\n",
                     this.getClass().getName(), getPosition().x, getPosition().y);

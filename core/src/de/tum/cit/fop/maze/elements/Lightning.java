@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
 
+/** Interactive collectable that provides speed upgrades for the player. */
 public class Lightning extends InteractiveElements {
     private float scale = 1.0f;
     private Sound lightning;

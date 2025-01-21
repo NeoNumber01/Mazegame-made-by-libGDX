@@ -14,9 +14,7 @@ import java.util.Properties;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-/*
- * The maze that contains all blocks
- */
+/** The maze that contains all blocks */
 public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
 
     private final float blockSize = 32f;
@@ -88,7 +86,7 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
                         maze[i][j] = new Entry(this, game.getResourcePack().getEntryTexture(), pos);
                         entry = (Entry) maze[i][j];
                         break;
-                    case 2: // TODO: Exit
+                    case 2: // Exit
                         maze[i][j] = new Exit(this, game.getResourcePack().getExitTexture(), pos);
                         exits.add((Exit) maze[i][j]);
                         break;
@@ -103,16 +101,14 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
                         maze[i][j] = new Trap(this, floorTexture, trapAnimation, pos);
                         break;
 
-                    case 4: // TODO: Enemy
+                    case 4: // Enemy
                         entities.add(new Skeleton(this, pos));
                         break;
-                    case 5: // TODO: Key
+                    case 5: // Key
                         entities.add(new Key(this, game.getResourcePack().getKeyTexture(), pos));
-                        //                        maze[i][j] = new Key(this,
-                        // game.getResourcePack().getKeyTexture(), pos);
                         hasKey = true;
                         break;
-                    case 6: // TODO: Lives
+                    case 6: // Lives
                         Lives life =
                                 new Lives(this, game.getResourcePack().getFullHeartTexture(), pos);
                         life.setScale(0.5f);
@@ -160,10 +156,12 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
         if (!hasKey) throw new InvalidMaze("Maze must have a key!");
     }
 
+    /** Calculates the row number of given block. */
     public int getRow(Block block) {
         return (int) ((block.getPosition().x - position.x) / blockSize);
     }
 
+    /** Calculates the column number of given block. */
     public int getColumn(Block block) {
         return (int) ((block.getPosition().y - position.y) / blockSize);
     }
@@ -192,7 +190,9 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
         return blockSize;
     }
 
-    /* Get the block at the given position
+    /**
+     * Get the block at the given position
+     *
      * @param position The position of the block
      * @return The block at the given position, or null if the position is outside the maze
      */
@@ -259,44 +259,6 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
 
     public Vector2 getPosition() {
         return position;
-    }
-
-    public void setBlock(int i, int j, Block block) {
-        maze[i][j] = block;
-    }
-
-    /**
-     * search route from src to dest
-     *
-     * @param maxLength max number of blocks on the route
-     * @return an Array<> of Blocks to go through. Returns null if dest not reachable, too
-     *     expensive, or src and dest are (in) the same block. Src is not included in the result but
-     *     dest does.
-     */
-    public Array<Block> searchRoute(MazeObject src, MazeObject dest, int maxLength) {
-        // currently implementation only consider being on the same column or row to be reachable,
-        // but more complex path-finding like BFS can also be implemented here. Note that their cost
-        // are relatively high and thus caching/pre-processing are required.
-        Block srcBlock = src.getBlock(), destBlock = dest.getBlock();
-        if (srcBlock == destBlock) return null;
-        Array<Block> result = new Array<>();
-        if (srcBlock.getRow() == destBlock.getRow()
-                && Math.abs(srcBlock.getColumn() - destBlock.getColumn()) <= maxLength) {
-            int row = srcBlock.getRow(),
-                    diff = srcBlock.getColumn() - destBlock.getColumn() > 0 ? -1 : 1;
-            for (int i = srcBlock.getColumn() + diff; i != destBlock.getColumn(); i += diff) {
-                result.add(getBlock(row, i));
-            }
-        } else if (srcBlock.getColumn() == destBlock.getColumn()
-                && Math.abs(srcBlock.getRow() - destBlock.getColumn()) <= maxLength) {
-            int col = srcBlock.getColumn(),
-                    diff = srcBlock.getRow() - destBlock.getRow() > 0 ? -1 : 1;
-            for (int i = srcBlock.getRow() + diff; i != destBlock.getRow(); i += diff) {
-                result.add(getBlock(i, col));
-            }
-        }
-        result.add(destBlock);
-        return result;
     }
 
     /**

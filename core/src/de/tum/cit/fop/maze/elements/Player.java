@@ -13,6 +13,7 @@ import de.tum.cit.fop.maze.MazeRunnerGame;
 
 import java.util.Objects;
 
+/** The main characters. */
 public class Player extends Entity implements Health {
 
     private final MoveAnimation walkAnimation, sprintAnimation, attackAnimation;
@@ -20,6 +21,9 @@ public class Player extends Entity implements Health {
     private final MazeRunnerGame game;
     private final float shieldDuration = 30f;
     private final float attackAnimationDuration = 0.4f;
+    private final Sound playerOnHit;
+    private final Sound swing;
+    private final Sound monsterHit;
     private Vector2 position;
     private float health;
     private float lastHitTimestamp;
@@ -30,9 +34,6 @@ public class Player extends Entity implements Health {
     private float attackAnimationTimer = 0f;
     private boolean isRed = false;
     private float redEffectTimer = 0f;
-    private Sound playeronHit;
-    private Sound swing;
-    private Sound monsterHit;
 
     public Player(MazeRunnerGame game, Maze maze, Vector2 position) {
         // TextureRegion cut from assets is 16x32
@@ -46,7 +47,7 @@ public class Player extends Entity implements Health {
         health = maxHealth = 100f;
         this.game = game;
         this.hasKey = false;
-        this.playeronHit = Gdx.audio.newSound(Gdx.files.internal("playeronHit.wav"));
+        this.playerOnHit = Gdx.audio.newSound(Gdx.files.internal("playeronHit.wav"));
         this.swing = Gdx.audio.newSound(Gdx.files.internal("swing.wav"));
         this.monsterHit = Gdx.audio.newSound(Gdx.files.internal("monster.wav"));
     }
@@ -72,6 +73,7 @@ public class Player extends Entity implements Health {
         maze.getGame().getSpriteBatch().setColor(0f, 0f, 0f, 1f);
     }
 
+    /** checks if player is sprinting. Compatibility code. */
     private boolean isSprinting() {
         return getMotion() == Motion.SPRINT;
     }
@@ -90,8 +92,8 @@ public class Player extends Entity implements Health {
             } else {
                 lastHitTimestamp = game.getStateTime();
             }
-            if (playeronHit != null) {
-                playeronHit.play(); // 播放音效
+            if (playerOnHit != null) {
+                playerOnHit.play(); // 播放音效
             }
             isRed = true;
             redEffectTimer = 1f;
@@ -127,17 +129,17 @@ public class Player extends Entity implements Health {
 
     @Override
     public void onEmptyHealth() {
-        // TODO: end game
         System.out.println("Player has died!");
         game.setScreen(new GameOverScreen(game)); // 切换到 GameOverScreen
     }
 
-    // Shield
+    /** triggers shield effect. */
     public void activateShield() {
         this.hasShield = true;
         this.shieldStartTime = game.getStateTime();
     }
 
+    /** Ends shield effect. */
     private void deactivateShield() {
         this.hasShield = false;
     }
@@ -214,10 +216,15 @@ public class Player extends Entity implements Health {
         handleTimers(deltaTime);
     }
 
+    /** handles timers, should be called on every frame. */
     private void handleTimers(float deltaTime) {
         attackAnimationTimer = Math.max(0f, attackAnimationTimer - deltaTime);
     }
 
+    /**
+     * Tries to perform an attack. Checks if there is ongoing attack animation, and deals damage to
+     * mobs.
+     */
     public void attack() {
 
         if (getMotion() != Motion.ATTACK) { // only execute once during one attack animation
@@ -264,6 +271,7 @@ public class Player extends Entity implements Health {
         }
     }
 
+    /** Get the status of the player. We require the player to stop before attack. */
     private Motion getMotion() {
         if (attackAnimationTimer > 0) {
             return Motion.ATTACK;

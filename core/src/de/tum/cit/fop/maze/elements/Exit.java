@@ -7,6 +7,7 @@ import de.tum.cit.fop.maze.EndScreen;
 import de.tum.cit.fop.maze.MazeRunnerGame;
 import de.tum.cit.fop.maze.StoryScreen;
 
+/** Exit of the maze, where the victory may be triggered. */
 public class Exit extends Path {
     public Exit(Maze maze, TextureRegion texture, Vector2 position) {
         super(maze, texture, position);
