@@ -114,25 +114,34 @@ public class HUD {
 
     public void render() {
         stage.draw(); // Render the HUD
+        //确保罗盘位置固定。需要重新绘制spriteBatch的投影矩阵，
+        //因为战争迷雾使用过
+        spriteBatch.setProjectionMatrix(stage.getViewport().getCamera().combined);
         spriteBatch.begin();
-        float offsetX = 32f,
-                offsetY = Gdx.graphics.getHeight() * 0.75f,
-                scale = 1.5f,
-                compassSize = compassTexture.getRegionWidth() / scale,
-                pointerSizeX = pointerTexture.getRegionWidth() / scale,
-                pointerSizeY = pointerTexture.getRegionHeight() / scale;
+
+        float margin = 20f; // 罗盘离屏幕边缘的距离
+        float scale = 1.5f;
+        float compassSize = compassTexture.getRegionWidth() / scale;
+        float pointerSizeX = pointerTexture.getRegionWidth() / scale;
+        float pointerSizeY = pointerTexture.getRegionHeight() / scale;
+
+        // 计算罗盘的位置，始终固定在左上角
+        float offsetX = margin; // 靠近左侧
+        float offsetY = stage.getViewport().getWorldHeight() - compassSize - margin; // 靠近上侧
+
         spriteBatch.draw(compassTexture, offsetX, offsetY, compassSize, compassSize);
         spriteBatch.draw(
-                pointerTexture,
-                offsetX + compassSize / 2f - pointerSizeX / 2f,
-                offsetY + compassSize / 2f - pointerSizeY / 2f,
-                pointerSizeX / 2f,
-                pointerSizeY / 2f,
-                pointerSizeX,
-                pointerSizeY,
-                1f,
-                1f,
-                pointerDegree + 90);
+            pointerTexture,
+            offsetX + compassSize / 2f - pointerSizeX / 2f,
+            offsetY + compassSize / 2f - pointerSizeY / 2f,
+            pointerSizeX / 2f,
+            pointerSizeY / 2f,
+            pointerSizeX,
+            pointerSizeY,
+            1f,
+            1f,
+            pointerDegree + 90);
+
         spriteBatch.end();
     }
 
