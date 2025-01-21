@@ -167,8 +167,9 @@ public class MenuScreen implements Screen {
 
         Table buttonTable = new Table();
         buttonTable.defaults().width(300).padBottom(20);
-        String[] mapNames = {"Map 1", "Map 2", "Map 3", "Map 4", "Map 5", "Map 6"};
+        String[] mapNames = {"Map 0","Map 1", "Map 2", "Map 3", "Map 4", "Map 5", "Map 6"};
         String[] mapPaths = {
+            "maps/level-0.properties",
             "maps/level-1.properties",
             "maps/level-2.properties",
             "maps/level-3.properties",
