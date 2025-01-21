@@ -17,6 +17,7 @@ public class ResourcePack { // Character animation
     private MoveAnimation playerAttackAnimation;
     private MoveAnimation SkeletonMoveAnimation;
     private Animation<TextureRegion> trapAnimation;
+    private Animation<TextureRegion> explosionAnimation;
     private TextureRegion blockTexture,
             blackBlockTexture,
             keyTexture,
@@ -29,9 +30,8 @@ public class ResourcePack { // Character animation
             exitTexture,
             entryTexture,
             frame1,
-            frame2;
-
-
+            frame2,
+            mineTexture;
 
     public ResourcePack() {
         loadPlayerAnimation();
@@ -244,8 +244,8 @@ public class ResourcePack { // Character animation
     private void loadTrapTexture() {
         Texture trapSheet01 = new Texture(Gdx.files.internal("electric03.png"));
         Texture trapSheet02 = new Texture(Gdx.files.internal("electric04.png"));
-        frame1 = new TextureRegion(trapSheet01,0,0,16,16);
-        frame2 = new TextureRegion(trapSheet02,0,0,16,16);
+        frame1 = new TextureRegion(trapSheet01, 0, 0, 16, 16);
+        frame2 = new TextureRegion(trapSheet02, 0, 0, 16, 16);
         trapAnimation = new Animation<>(0.3f, frame1, frame2);
         trapAnimation.setPlayMode(Animation.PlayMode.LOOP);
     }
@@ -259,6 +259,7 @@ public class ResourcePack { // Character animation
         Texture pathSheet = new Texture(Gdx.files.internal("floor01.png"));
         pathTexture = new TextureRegion(pathSheet, 0, 0, 16, 16);
     }
+
     private void loadExitTexture() {
         Texture tilesSheet = new Texture(Gdx.files.internal("door.png"));
 
@@ -273,11 +274,27 @@ public class ResourcePack { // Character animation
         entryTexture = new TextureRegion(tilesSheet, 16, 112, tileSize, tileSize);
     }
 
-    public TextureRegion getExitTexture(){
+    public TextureRegion getMineTexture() {
+        return new TextureRegion(new Texture(Gdx.files.internal("Skull.png")));
+    }
+
+    public Animation<TextureRegion> getExplosionAnimation() {
+        TextureRegion explosion1 =
+                new TextureRegion(new Texture(Gdx.files.internal("explosion1.png")));
+        TextureRegion explosion2 =
+                new TextureRegion(new Texture(Gdx.files.internal("explosion2.png")));
+        TextureRegion explosion3 =
+                new TextureRegion(new Texture(Gdx.files.internal("explosion3.png")));
+        TextureRegion explosion4 =
+                new TextureRegion(new Texture(Gdx.files.internal("explosion4.png")));
+        return new Animation<>(0.3f, explosion1, explosion2, explosion3, explosion4);
+    }
+
+    public TextureRegion getExitTexture() {
         return exitTexture;
     }
 
-    public TextureRegion getEntryTexture(){
+    public TextureRegion getEntryTexture() {
         return entryTexture;
     }
 
