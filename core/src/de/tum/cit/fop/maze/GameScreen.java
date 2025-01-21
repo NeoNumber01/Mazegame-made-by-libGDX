@@ -210,6 +210,9 @@ public class GameScreen implements Screen {
                 player.hasShield(),
                 maze.findNearestExitDirection(player.getCenter()));
         hud.render();
+
+        StoryScreen.getInstance().update(delta);
+        StoryScreen.getInstance().render(game.getSpriteBatch());
     }
 
     /** Handle input for the game screen, should only be called by render() when not paused. */
