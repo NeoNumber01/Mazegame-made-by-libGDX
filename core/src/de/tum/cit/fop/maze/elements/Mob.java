@@ -29,7 +29,7 @@ public abstract class Mob extends Entity implements Health {
     @Override
     public void modifyHealth(float deltaHealth) {
         health = Math.min(health + deltaHealth, maxHealth);
-        if (health < 0) {
+        if (health <= 0) {
             onEmptyHealth();
         }
     }
@@ -44,6 +44,11 @@ public abstract class Mob extends Entity implements Health {
         if (other instanceof Player) {
             ((Player) other).modifyHealth(-10f);
         }
+    }
+
+    @Override
+    public float getMoveDistance(float deltaTime) {
+        return globalSpeedFactor * deltaTime * 0.75f;
     }
 
     @Override

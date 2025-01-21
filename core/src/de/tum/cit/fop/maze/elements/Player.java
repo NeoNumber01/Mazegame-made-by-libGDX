@@ -217,19 +217,36 @@ public class Player extends Entity implements Health {
         if (getMotion() != Motion.ATTACK) { // only execute once during one attack animation
             attackAnimationTimer = attackAnimationDuration;
 
-            Vector2 attackHitboxOffset =
-                    switch (direction) {
-                        case UP -> new Vector2(0f, getSize().y);
-                        case DOWN -> new Vector2(0f, -getSize().y);
-                        case LEFT -> new Vector2(-getSize().x, 0f);
-                        case RIGHT -> new Vector2(getSize().x, 0f);
-                    };
+            // actual hit range is attackHitboxSizeW * attackHitboxSizeH
+            // W is the edge vertical to player's direction
+            float attackHitboxSizeW = 24f, attackHitboxSizeH = 16f;
             Rectangle attackHitbox =
-                    new Rectangle(
-                            getPosition().x + attackHitboxOffset.x,
-                            getPosition().y + attackHitboxOffset.y,
-                            getSize().x,
-                            getSize().y);
+                    switch (direction) {
+                        case UP ->
+                                new Rectangle(
+                                        getCenter().x - attackHitboxSizeW / 2f,
+                                        getPosition().y + getSize().y,
+                                        attackHitboxSizeW,
+                                        attackHitboxSizeH);
+                        case DOWN ->
+                                new Rectangle(
+                                        getCenter().x - attackHitboxSizeW / 2f,
+                                        getPosition().y - attackHitboxSizeH,
+                                        attackHitboxSizeW,
+                                        attackHitboxSizeH);
+                        case LEFT ->
+                                new Rectangle(
+                                        getPosition().x - attackHitboxSizeH,
+                                        getCenter().y - attackHitboxSizeW / 2f,
+                                        attackHitboxSizeH,
+                                        attackHitboxSizeW);
+                        case RIGHT ->
+                                new Rectangle(
+                                        getPosition().x + getSize().x,
+                                        getCenter().y - attackHitboxSizeW / 2f,
+                                        attackHitboxSizeH,
+                                        attackHitboxSizeW);
+                    };
             for (MazeObject other : getCollision(attackHitbox)) {
                 if (other instanceof Mob mob) {
                     System.out.println("Hit!");
