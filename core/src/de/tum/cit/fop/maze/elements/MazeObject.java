@@ -8,6 +8,8 @@ public abstract class MazeObject extends GameObject implements Visible, Collisio
     protected final Maze maze;
 
     private final Rectangle hitbox;
+    // legacy design: hitbox position + visualOffset = texture position
+    // replaced by center-based calculation in renderTextureV2()
     private final Vector2 visualOffset;
 
     public MazeObject(Maze maze, Vector2 position, Vector2 size, Vector2 visualOffset) {
@@ -83,6 +85,10 @@ public abstract class MazeObject extends GameObject implements Visible, Collisio
                         center.y - texture.getRegionHeight() * scale / 2f + offset.y,
                         texture.getRegionWidth() * scale,
                         texture.getRegionHeight() * scale);
+    }
+
+    public void renderTextureV2(TextureRegion texture, float scale) {
+        renderTextureV2(texture, scale, new Vector2(0f, 0f));
     }
 
     public void displace(Vector2 displacement) {

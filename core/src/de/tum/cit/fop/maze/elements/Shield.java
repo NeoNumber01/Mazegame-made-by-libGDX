@@ -6,25 +6,16 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 public class Shield extends InteractiveElements {
-    private final Vector2 position;
     private Sound shiled;
 
     public Shield(Maze maze, TextureRegion texture, Vector2 position) {
-        super(maze, position, new Vector2(32, 32), new Vector2(0, 0));
-        this.position = position;
+        super(maze, position, new Vector2(16f, 16f), new Vector2(0, 0));
         this.shiled = Gdx.audio.newSound(Gdx.files.internal("Keys.mp3"));
     }
 
     @Override
     public void render() {
-        maze.getGame()
-                .getSpriteBatch()
-                .draw(
-                        maze.getGame().getResourcePack().getShieldTexture(),
-                        position.x,
-                        position.y,
-                        maze.getBlockSize(),
-                        maze.getBlockSize());
+        renderTextureV2(maze.getGame().getResourcePack().getShieldTexture(), 2f);
     }
 
     @Override

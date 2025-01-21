@@ -11,9 +11,6 @@ public abstract class InteractiveElements extends Entity {
     }
 
     @Override
-    public void render() {}
-
-    @Override
     public void onCollision(MazeObject other) {
         super.onCollision(other);
     }
