@@ -346,7 +346,7 @@ public class MazeRunnerGame extends Game {
     /** Calculate score based on elapsed time in milliseconds */
     public int calculateScore(long elapsedTime) {
         long elapsedSeconds = elapsedTime / 1000; // Convert milliseconds to seconds
-        int maxScore = 10000;
+        int maxScore = 1000;
         int minScore = 100;
         int minTime = 10; // 100 seconds or less gives max score
         int maxTime = 3600; // 3600 seconds or more gives min score
