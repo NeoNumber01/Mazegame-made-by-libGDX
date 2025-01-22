@@ -19,7 +19,7 @@ public class Player extends Entity implements Health {
     private final MoveAnimation walkAnimation, sprintAnimation, attackAnimation;
     private final float maxHealth;
     private final MazeRunnerGame game;
-    private final float shieldDuration = 30f;
+    private final float shieldDuration = 10f;
     private final float attackAnimationDuration = 0.4f;
     private final Sound playerOnHit;
     private final Sound swing;
@@ -99,7 +99,7 @@ public class Player extends Entity implements Health {
             redEffectTimer = 1f;
         }
         if (delta < 0 && hasShield) {
-            delta += 5; // Reduce damage by 5
+            delta += 10; // Reduce damage by 5
             if (delta > 0) {
                 delta = 0; // Ensure no health is gained from reduced damage
             }

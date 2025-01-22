@@ -37,6 +37,9 @@ public class StoryScreen {
     }
 
     public void showMessage(String text) {
+        if (showing && message.equals(text)) {
+            return; // Avoid repetition of messages
+        }
         message = text;
         timer = 0;
         showing = true;
