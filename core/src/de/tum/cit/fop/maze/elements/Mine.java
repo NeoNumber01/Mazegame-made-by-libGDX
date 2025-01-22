@@ -46,11 +46,14 @@ public class Mine extends InteractiveElements {
         System.out.println("Mine exploded!");
 
         for (MazeObject obj : maze) {
-            if (obj instanceof Player player) {
-                float distance = getPosition().dst(player.getPosition());
-                if (distance <= explosionRadius) {
+            float distance = getPosition().dst(obj.getPosition());
+            if (distance <= explosionRadius) {
+                if (obj instanceof Player player) {
                     player.modifyHealth(-damage);
                     System.out.println("Player took damage: " + damage);
+                } else if (obj instanceof Mob mob) {
+                    mob.modifyHealth(-damage);
+                    System.out.println("Mob took damage: " + damage);
                 }
             }
         }
