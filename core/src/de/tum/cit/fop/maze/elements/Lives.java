@@ -26,6 +26,7 @@ public class Lives extends InteractiveElements {
 
     @Override
     public void onCollision(MazeObject other) {
+        super.onCollision(other);
         if (other instanceof Player player) {
             player.modifyHealth(20);
             lives.play();

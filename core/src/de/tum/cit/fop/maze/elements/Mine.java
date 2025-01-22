@@ -30,6 +30,7 @@ public class Mine extends InteractiveElements {
 
     @Override
     public void onCollision(MazeObject other) {
+        super.onCollision(other);
         if (!triggered && other instanceof Player) {
             triggerExplosion();
         }

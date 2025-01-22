@@ -27,6 +27,7 @@ public class Lightning extends InteractiveElements {
 
     @Override
     public void onCollision(MazeObject other) {
+        super.onCollision(other);
         if (other instanceof Player player) {
 
             player.setSpeedFactor(player.getSpeedFactor() + 16f);

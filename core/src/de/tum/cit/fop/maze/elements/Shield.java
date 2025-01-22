@@ -21,6 +21,7 @@ public class Shield extends InteractiveElements {
 
     @Override
     public void onCollision(MazeObject other) {
+        super.onCollision(other);
         if (other instanceof Player player) {
             player.activateShield(); // Activate shield for the player
             shield.play();
