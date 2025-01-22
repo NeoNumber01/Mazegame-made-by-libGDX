@@ -50,6 +50,10 @@ In `core` class, the following class encapsulates core features and provides bas
                 - `Mob`: dynamic element that deals damage to the player.
                 - `InteractiveElements`: collectable elements, e.g. keys, health, power-ups
 
+For complete structure, see UML graph:
+
+![UML](/docs/UML.png)
+
 ## Team members
 
 In lexicographic order:
