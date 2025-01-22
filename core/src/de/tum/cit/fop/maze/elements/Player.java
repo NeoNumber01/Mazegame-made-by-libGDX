@@ -24,7 +24,6 @@ public class Player extends Entity implements Health {
     private final Sound playerOnHit;
     private final Sound swing;
     private final Sound monsterHit;
-    private Vector2 position;
     private float health;
     private float lastHitTimestamp;
     private boolean hasKey;

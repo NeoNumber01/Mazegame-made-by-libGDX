@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+/** The game screen that appears when player wins. */
 public class EndScreen implements Screen {
 
     private final MazeRunnerGame game;
@@ -40,8 +41,7 @@ public class EndScreen implements Screen {
         stage.addActor(table);
 
         // Add "Game Completed" message label
-        Label messageLabel =
-                new Label("Congratulations! You escaped!", game.getSkin(), "title");
+        Label messageLabel = new Label("Congratulations! You escaped!", game.getSkin(), "title");
         table.add(messageLabel).padBottom(50).center().row();
 
         // Display the score

@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+/** The game screen that appears when player dies. */
 public class GameOverScreen implements Screen {
 
     private final MazeRunnerGame game;

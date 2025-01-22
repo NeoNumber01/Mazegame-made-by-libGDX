@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import java.util.Random;
 
+/** A collection of Helper functions. */
 public class Helper {
 
     public static Direction Vector2Direction(Vector2 vec) {
@@ -21,6 +22,7 @@ public class Helper {
         };
     }
 
+    /** We define all 4 directions as an enum to make code more readable */
     public enum Direction {
         UP,
         DOWN,

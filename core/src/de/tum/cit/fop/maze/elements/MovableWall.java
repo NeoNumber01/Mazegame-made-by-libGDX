@@ -11,7 +11,6 @@ public class MovableWall extends Entity {
     private static final float MOVE_SPEED = 30f;
     private final TextureRegion wallTexture;
     private float scale = 2.0f;
-    private Vector2 offset = new Vector2(0, 0);
 
     public MovableWall(Maze maze, TextureRegion wallTexture, Vector2 position) {
         super(maze, position, new Vector2(32, 32), Vector2.Zero);
@@ -48,7 +47,7 @@ public class MovableWall extends Entity {
     @Override
     public void render() {
 
-        renderTextureV2(this.wallTexture, scale, offset);
+        renderTextureV2(this.wallTexture, scale);
     }
 
     @Override

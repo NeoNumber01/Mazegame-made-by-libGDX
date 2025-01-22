@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+/** In-game HUD, displays health information, etc. */
 public class HUD {
     private final SpriteBatch spriteBatch;
     private final float viewPointWidth = 1024f;
@@ -114,8 +115,8 @@ public class HUD {
 
     public void render() {
         stage.draw(); // Render the HUD
-        //确保罗盘位置固定。需要重新绘制spriteBatch的投影矩阵，
-        //因为战争迷雾使用过
+        // 确保罗盘位置固定。需要重新绘制spriteBatch的投影矩阵，
+        // 因为战争迷雾使用过
         spriteBatch.setProjectionMatrix(stage.getViewport().getCamera().combined);
         spriteBatch.begin();
 
@@ -130,16 +131,16 @@ public class HUD {
 
         spriteBatch.draw(compassTexture, offsetX, offsetY, compassSize, compassSize);
         spriteBatch.draw(
-            pointerTexture,
-            offsetX + compassSize / 2f - pointerSizeX / 2f,
-            offsetY + compassSize / 2f - pointerSizeY / 2f,
-            pointerSizeX / 2f,
-            pointerSizeY / 2f,
-            pointerSizeX,
-            pointerSizeY,
-            1f,
-            1f,
-            pointerDegree + 90);
+                pointerTexture,
+                offsetX + compassSize / 2f - pointerSizeX / 2f,
+                offsetY + compassSize / 2f - pointerSizeY / 2f,
+                pointerSizeX / 2f,
+                pointerSizeY / 2f,
+                pointerSizeX,
+                pointerSizeY,
+                1f,
+                1f,
+                pointerDegree + 90);
 
         spriteBatch.end();
     }

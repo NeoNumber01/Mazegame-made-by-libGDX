@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
+/** A simple wrapper of OrthographicCamera */
 public class MazeRunnerCamera {
     private final MazeRunnerGame game;
     private final OrthographicCamera camera;

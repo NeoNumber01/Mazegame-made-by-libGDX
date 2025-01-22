@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+/** Displays background messages during gameplay. */
 public class StoryScreen {
     private static StoryScreen instance;
     private final BitmapFont font;

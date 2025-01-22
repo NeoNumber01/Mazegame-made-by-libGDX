@@ -7,20 +7,17 @@ import com.badlogic.gdx.math.Vector2;
 
 /** Interactive collectable required to win the game. */
 public class Key extends InteractiveElements {
-    private final Vector2 position;
+    private final Sound keys;
     private float scale = 0.75f;
-    private Vector2 offset = new Vector2(0, 0);
-    private Sound keys;
 
     public Key(Maze maze, TextureRegion texture, Vector2 position) {
         super(maze, position, new Vector2(32, 32), new Vector2(0, 0));
-        this.position = position;
         this.keys = Gdx.audio.newSound(Gdx.files.internal("Keys.mp3"));
     }
 
     @Override
     public void render() {
-        renderTextureV2(maze.getGame().getResourcePack().getKeyTexture(), scale, offset);
+        renderTextureV2(maze.getGame().getResourcePack().getKeyTexture(), scale);
     }
 
     @Override

@@ -8,8 +8,8 @@ import com.badlogic.gdx.utils.Timer;
 
 /** Interactive collectable that provides speed upgrades for the player. */
 public class Lightning extends InteractiveElements {
+    private final Sound lightning;
     private float scale = 1.0f;
-    private Sound lightning;
 
     public Lightning(Maze maze, TextureRegion texture, Vector2 position) {
         super(maze, position, new Vector2(16f, 16f), new Vector2(0, 0));

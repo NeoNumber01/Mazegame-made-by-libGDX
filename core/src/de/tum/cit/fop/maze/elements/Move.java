@@ -4,8 +4,6 @@ import com.badlogic.gdx.math.Vector2;
 
 import de.tum.cit.fop.maze.Helper;
 
-import java.awt.*;
-
 /** Basic movement mechanics */
 public interface Move {
     float globalSpeedFactor = 64f;

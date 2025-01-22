@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
+/** A special type of obstacle that explodes after collides with player. */
 public class Mine extends InteractiveElements {
     private final Animation<TextureRegion> explosionAnimation;
     private final float explosionRadius = 40f;
@@ -40,6 +41,7 @@ public class Mine extends InteractiveElements {
         System.out.println("Mine triggered! Explosion in " + delayBeforeExplosion + " seconds.");
     }
 
+    /** Trigger sound effect, texture change, and deal damage to player. */
     private void explode() {
         exploded = true;
         explosion.play();

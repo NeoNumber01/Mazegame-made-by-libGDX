@@ -10,7 +10,7 @@ import de.tum.cit.fop.maze.elements.MoveAnimation;
 
 import java.util.function.Function;
 
-/* load and serves art assets */
+/** load and serves art assets */
 public class ResourcePack { // Character animation
     private MoveAnimation playerWalkAnimation;
     private MoveAnimation playerSprintAnimation;
