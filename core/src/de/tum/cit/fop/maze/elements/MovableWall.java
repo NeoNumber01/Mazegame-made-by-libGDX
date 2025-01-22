@@ -30,16 +30,48 @@ public class MovableWall extends Entity {
         Vector2 newPosition = getPosition().cpy().add(displacement);
         Array<MazeObject> others = getCollision(newPosition);
 
-        // only change direction when collide into wall, instead of player, mob, etc.
-        boolean collideWithWall = false;
+        // only change direction when collide into wall, mob, etc.
+        boolean collide = false;
         for (MazeObject other : others) {
             if (other instanceof Wall) {
-                collideWithWall = true;
+                collide = true;
+                break;
+            }
+            if (other instanceof MovableWall) {
+                collide = true;
+                break;
+            }
+            if (other instanceof Mob) {
+                collide = true;
+                break;
+            }
+            if (other instanceof Lives) {
+                collide = true;
+                break;
+            }
+            if (other instanceof Lightning) {
+                collide = true;
+                break;
+            }
+            if (other instanceof Shield) {
+                collide = true;
+                break;
+            }
+            if (other instanceof Key) {
+                collide = true;
+                break;
+            }
+            if (other instanceof Player) {
+                collide = true;
+                break;
+            }
+            if (other instanceof Mine) {
+                collide = true;
                 break;
             }
         }
 
-        if (collideWithWall) {
+        if (collide) {
             changeDirection();
         } else {
             performDisplacement(displacement);

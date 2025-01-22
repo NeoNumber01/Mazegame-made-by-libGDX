@@ -43,7 +43,7 @@ public abstract class Mob extends Entity implements Health {
     @Override
     public void onCollision(MazeObject other) {
         if (other instanceof Player) {
-            ((Player) other).modifyHealth(-10f);
+            ((Player) other).modifyHealth(-20f);
         }
     }
 

@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 public class Mine extends InteractiveElements {
     private final Animation<TextureRegion> explosionAnimation;
     private final float explosionRadius = 40f;
-    private final int damage = 30; //
+    private final int damage = 40; //
     private final float delayBeforeExplosion = 1.0f;
     private final float explosionDuration = 2.0f;
     private final Sound explosion;
