@@ -1,0 +1,26 @@
+Press arrow keys to move around
+Press Shift to run faster
+Press Space to attack
+
+You can collect hearts to restore your health.
+You can collect lightning bolts to run faster.
+You can collect shields to reduce damage taken from a single hit.
+Watch out for various traps. Don’t step on them out of curiosity.
+
+
+You wake up from a nightmare, 
+only to find yourself in an even deeper dream,
+an unknown space, dim lighting, and a labyrinth 
+full of twists and turns, with the occasional sound of monsters 
+echoing in the distance. Could this be an even stranger dream? 
+However, everything around you feels so real that it is 
+hard to distinguish reality from illusion. 
+No matter what, you must find the key inside the labyrinth, 
+locate the path to the exit, and escape as soon as possible.
+
+Beware of the monsters! 
+When they try to give you a hug, 
+don’t be fooled by their harmless appearance. 
+They approach you to drain your life force.
+
+Also, watch out for various traps. Don’t step on them out of curiosity.

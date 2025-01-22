@@ -168,6 +168,7 @@ public class MazeRunnerGame extends Game {
         backgroundMusic.setLooping(true);
         backgroundMusic.setVolume(0.5f);
         backgroundMusic.play();
+        showStorySequence();
     }
 
     public void startNewGame(String mapFilePath) {
@@ -199,9 +200,66 @@ public class MazeRunnerGame extends Game {
         backgroundMusic.setLooping(true);
         backgroundMusic.setVolume(0.5f);
         backgroundMusic.play();
+        showStorySequence();
     }
 
-    // 游戏暂停与恢复
+    /** Show messages one by one */
+    private void showStorySequence() {
+        new Thread(
+                        () -> {
+                            try {
+                                Gdx.app.postRunnable(
+                                        () ->
+                                                StoryScreen.getInstance()
+                                                        .showMessage(
+                                                                "\"Was it a vision,or a waking dream?\"\n"
+                                                                        + "\"Do I wake,or sleep?\""));
+                                Thread.sleep(5000);
+
+                                Gdx.app.postRunnable(
+                                        () ->
+                                                StoryScreen.getInstance()
+                                                        .showMessage(
+                                                                "You wake up from a nightmare, only to find\n"
+                                                                        + "yourself in an even deeper dream\n"));
+                                Thread.sleep(5000);
+
+                                Gdx.app.postRunnable(
+                                        () ->
+                                                StoryScreen.getInstance()
+                                                        .showMessage(
+                                                                "an unknown space, dim lighting, \n"
+                                                                        + "and a labyrinth full\n"
+                                                                        + "of twists and turns, with the occasional\n"
+                                                                        + "sound of monsters echoing in the distance."));
+                                Thread.sleep(5000);
+                                Gdx.app.postRunnable(
+                                        () ->
+                                                StoryScreen.getInstance()
+                                                        .showMessage(
+                                                                "Could this be an even stranger dream?\n"
+                                                                        + "However, everything around you feels so\n"
+                                                                        + "real that it is hard to distinguish reality\n"
+                                                                        + "from illusion."));
+                                Thread.sleep(5000);
+
+                                Gdx.app.postRunnable(
+                                        () ->
+                                                StoryScreen.getInstance()
+                                                        .showMessage(
+                                                                "No matter what, you must\n"
+                                                                        + "find the key inside the labyrinth, locate\n"
+                                                                        + "the path to the exit, and escape\n"
+                                                                        + "as soon as possible.\n"));
+                                Thread.sleep(5000);
+                            } catch (InterruptedException e) {
+                                Gdx.app.log("StoryScreen", "Error displaying story sequence", e);
+                            }
+                        })
+                .start();
+    }
+
+    /** pause and resume game */
     public void pauseGame() {
         if (!paused && timerStarted) { // Only pause if the timer has started
             pausedTime = System.currentTimeMillis() - startTime; // Record the elapsed time

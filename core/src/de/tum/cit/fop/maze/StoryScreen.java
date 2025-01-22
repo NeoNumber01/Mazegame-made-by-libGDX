@@ -19,10 +19,11 @@ public class StoryScreen {
     private boolean showing;
     private float timer;
 
+    /** To tell background story and no key information */
     public StoryScreen() {
         font = new BitmapFont();
         font.setColor(new Color(1, 1, 1, 0)); // Initial fully transparent
-        font.getData().setScale(1.5f);
+        font.getData().setScale(2.0f);
         showing = false;
         alpha = 0;
         stage = new Stage(new ScreenViewport());
@@ -68,7 +69,7 @@ public class StoryScreen {
         batch.setProjectionMatrix(stage.getViewport().getCamera().combined);
         batch.begin();
 
-        float margin = 20f; // Margin from screen edge
+        float margin = 300f; // Margin from screen edge
         float textWidth = font.getRegion().getRegionWidth();
         float offsetX = stage.getViewport().getWorldWidth() - textWidth - margin; // Right side
         float offsetY = stage.getViewport().getWorldHeight() - margin; // Top side

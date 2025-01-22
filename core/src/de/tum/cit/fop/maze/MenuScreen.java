@@ -7,12 +7,9 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Slider;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -22,8 +19,8 @@ public class MenuScreen implements Screen {
     private final MazeRunnerGame game;
     private final Stage stage;
     private final boolean pauseMode;
-    private Music menuMusic;
-    private float musicVolume = 0.5f;
+    private final Music menuMusic;
+    private final float musicVolume = 0.5f;
 
     public MenuScreen(MazeRunnerGame game, boolean pauseMode) {
         this.game = game;
@@ -98,6 +95,17 @@ public class MenuScreen implements Screen {
                     }
                 });
 
+        // Tutorial Button
+        TextButton tutorialButton = new TextButton("Tutorial", game.getSkin());
+        table.add(tutorialButton).width(300).padBottom(20).row();
+        tutorialButton.addListener(
+                new ChangeListener() {
+                    @Override
+                    public void changed(ChangeEvent event, Actor actor) {
+                        showTutorialDialog();
+                    }
+                });
+
         // Exit
         TextButton exitButton = new TextButton("Exit", game.getSkin());
         table.add(exitButton).width(300).row();
@@ -110,6 +118,65 @@ public class MenuScreen implements Screen {
                 });
     }
 
+    private void showTutorialDialog() {
+        Dialog tutorialDialog =
+                new Dialog("Game Tutorial", game.getSkin()) {
+                    @Override
+                    protected void result(Object object) {
+                        if ((boolean) object) {
+                            this.hide(); // Close the tutorial dialog
+                        }
+                    }
+                };
+
+        String tutorialTextContent = loadTutorialFromFile("tutorial.txt");
+
+        if (tutorialTextContent == null || tutorialTextContent.isEmpty()) {
+            tutorialTextContent = "Failed to load tutorial content.";
+        }
+
+        Label.LabelStyle labelStyle = new Label.LabelStyle();
+        labelStyle.font = game.getSkin().getFont("title");
+
+        Label tutorialText = new Label(tutorialTextContent, labelStyle);
+        tutorialText.setWrap(true); // Enable text wrapping
+        tutorialText.setAlignment(Align.topLeft);
+
+        ScrollPane scrollPane = new ScrollPane(tutorialText, game.getSkin());
+        scrollPane.setFadeScrollBars(false);
+        scrollPane.setScrollingDisabled(true, false); // Enable only vertical scrolling
+
+        // Make the dialog cover a large part of the screen
+        float dialogWidth = Gdx.graphics.getWidth() * 0.85f;
+        float dialogHeight = Gdx.graphics.getHeight() * 0.85f;
+
+        Table contentTable = new Table();
+        contentTable
+                .add(scrollPane)
+                .width(dialogWidth * 0.9f)
+                .height(dialogHeight * 0.8f)
+                .pad(30)
+                .row();
+
+        tutorialDialog.getContentTable().add(contentTable).expand().center().row();
+        tutorialDialog.button("Close", true);
+
+        // Set dialog size to occupy most of the screen
+        tutorialDialog.setSize(dialogWidth, dialogHeight);
+        tutorialDialog.setPosition(
+                Gdx.graphics.getWidth() * 0.075f, Gdx.graphics.getHeight() * 0.075f);
+
+        tutorialDialog.show(stage);
+    }
+
+    private String loadTutorialFromFile(String filePath) {
+        try {
+            return Gdx.files.internal(filePath).readString();
+        } catch (Exception e) {
+            Gdx.app.error("Tutorial", "Error loading tutorial file: " + filePath, e);
+            return null;
+        }
+    }
 
     private void showVolumeDialog() {
         Dialog volumeDialog =
@@ -167,7 +234,7 @@ public class MenuScreen implements Screen {
 
         Table buttonTable = new Table();
         buttonTable.defaults().width(300).padBottom(20);
-        String[] mapNames = {"Map 0","Map 1", "Map 2", "Map 3", "Map 4", "Map 5", "Map 6"};
+        String[] mapNames = {"Map 0", "Map 1", "Map 2", "Map 3", "Map 4", "Map 5", "Map 6"};
         String[] mapPaths = {
             "maps/level-0.properties",
             "maps/level-1.properties",
