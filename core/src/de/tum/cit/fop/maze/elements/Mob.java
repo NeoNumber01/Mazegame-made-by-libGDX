@@ -45,25 +45,7 @@ public abstract class Mob extends Entity implements Health {
         if (other instanceof Player) {
             ((Player) other).modifyHealth(-30f);
         }
-        if (other instanceof Mob) {
-            changeDirection();
-        }
-        if (other instanceof MovableWall) {
-            changeDirection();
-        }
-        if (other instanceof Shield) {
-            changeDirection();
-        }
-        if (other instanceof Lives) {
-            changeDirection();
-        }
-        if (other instanceof Lightning) {
-            changeDirection();
-        }
-        if (other instanceof Mine) {
-            changeDirection();
-        }
-        if (other instanceof Key){
+        if (other instanceof Wall || other instanceof Entity) {
             changeDirection();
         }
     }
