@@ -17,10 +17,6 @@ public class MazeRunnerCamera {
     public MazeRunnerCamera(MazeRunnerGame game, Vector2 initialPosition) {
         this.game = game;
         camera = new OrthographicCamera(viewPointWidth, getViewPointHeight());
-        //                camera.position.set(
-        //                       camera.viewportWidth / 2 + initialPosition.x,
-        //                       camera.viewportHeight / 2 + initialPosition.y,
-        //                       0f);
         moveTowards(initialPosition);
     }
 
