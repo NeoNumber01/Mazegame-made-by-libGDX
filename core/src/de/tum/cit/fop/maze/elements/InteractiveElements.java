@@ -13,7 +13,9 @@ public abstract class InteractiveElements extends Entity {
 
     @Override
     public void onCollision(MazeObject other) {
-        super.onCollision(other);
+        if (other instanceof Mob mob) {
+            mob.changeDirection();
+        }
     }
 
     @Override

@@ -69,4 +69,11 @@ public class MovableWall extends Entity {
             case UP -> direction = Helper.Direction.DOWN;
         }
     }
+
+    @Override
+    public void onCollision(MazeObject other) {
+        if (other instanceof Mob mob) {
+            mob.changeDirection();
+        }
+    }
 }
