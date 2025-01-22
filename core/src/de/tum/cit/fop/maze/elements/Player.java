@@ -121,7 +121,7 @@ public class Player extends Entity implements Health {
         }
         // 日志输出：查看当前时间、改变前的血量以及改变值
         System.out.printf(
-                "Time=%f, Health Before=%f, Delta=%f\n", game.getStateTime(), health, delta);
+                "Time=%f, Health=%f, Delta=%f\n", game.getStateTime(), health, delta);
     }
 
     @Override
