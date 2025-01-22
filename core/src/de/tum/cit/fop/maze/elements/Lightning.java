@@ -29,18 +29,19 @@ public class Lightning extends InteractiveElements {
     public void onCollision(MazeObject other) {
         if (other instanceof Player player) {
 
-            player.setSpeedFactor(player.getSpeedFactor() + 100f);
+            player.setSpeedFactor(player.getSpeedFactor() + 16f);
             lightning.play();
 
-            // 启动一个延迟任务，10 秒后恢复速度
+            // 启动一个延迟任务，7 秒后恢复速度
             Timer.schedule(
                     new Timer.Task() {
                         @Override
                         public void run() {
-                            player.setSpeedFactor(player.getSpeedFactor() - 100f);
+                            float newSpeed = player.getSpeedFactor() - 16f;
+                            player.setSpeedFactor(Math.max(newSpeed, 64f));
                         }
                     },
-                    10); // 延迟 10 秒
+                    7); // 延迟 7 秒
 
             maze.getEntities().removeValue(this, true);
         }

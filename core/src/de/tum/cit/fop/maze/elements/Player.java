@@ -33,6 +33,7 @@ public class Player extends Entity implements Health {
     private float attackAnimationTimer = 0f;
     private boolean isRed = false;
     private float redEffectTimer = 0f;
+    private static final float MAX_SPEED = 96f;
 
     public Player(MazeRunnerGame game, Maze maze, Vector2 position) {
         // TextureRegion cut from assets is 16x32
@@ -79,7 +80,7 @@ public class Player extends Entity implements Health {
 
     @Override
     public float getMoveDistance(float deltaTime) {
-        return globalSpeedFactor * deltaTime * (isSprinting() ? 1.5f : 1f);
+        return speedFactor * deltaTime * (isSprinting() ? 1.3f : 1f);
     }
 
     @Override
@@ -162,7 +163,7 @@ public class Player extends Entity implements Health {
     }
 
     public void setSpeedFactor(float speedFactor) {
-        this.speedFactor = speedFactor;
+        this.speedFactor = Math.min(speedFactor, MAX_SPEED);
     }
 
     public boolean hasShield() {
