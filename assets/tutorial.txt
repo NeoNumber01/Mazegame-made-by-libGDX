@@ -7,6 +7,9 @@ You can collect lightning bolts to run faster.
 You can collect shields to reduce damage taken from a single hit.
 Watch out for various traps. Don’t step on them out of curiosity.
 
+The red arrow of compass
+always points to the direction of
+the closest exit! 
 
 You wake up from a nightmare, 
 only to find yourself in an even deeper dream,
