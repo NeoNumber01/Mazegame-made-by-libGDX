@@ -27,7 +27,7 @@ public class EndScreen implements Screen {
         game.stopMusic();
         victory = Gdx.audio.newMusic(Gdx.files.internal("victory.mp3"));
         victory.setLooping(true); // Optional: Loop the music
-        victory.setVolume(0.5f); // Set the volume (adjust as needed)
+        victory.setVolume(game.getVolume()); // Set the volume (adjust as needed)
         victory.play(); // Start playing the music
         // Set up camera and viewport
         var camera = new OrthographicCamera();

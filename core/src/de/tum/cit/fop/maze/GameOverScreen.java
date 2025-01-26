@@ -26,7 +26,7 @@ public class GameOverScreen implements Screen {
         game.stopMusic();
         afterDeath = Gdx.audio.newMusic(Gdx.files.internal("after death.mp3"));
         afterDeath.setLooping(true); // Optional: Set to loop
-        afterDeath.setVolume(0.5f); // Set volume (adjust as needed)
+        afterDeath.setVolume(game.getVolume()); // Set volume (adjust as needed)
         afterDeath.play(); // Start playing music
         var camera = new OrthographicCamera();
         camera.zoom = 1.5f; // Set camera zoom for a closer view
