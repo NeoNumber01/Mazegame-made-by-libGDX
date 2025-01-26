@@ -111,6 +111,17 @@ public class MazeRunnerGame extends Game {
         }
     }
 
+    private void playBackgroundMusic(String musicFilePath) {
+        if (backgroundMusic != null) {
+            backgroundMusic.stop();
+            backgroundMusic.dispose();
+        }
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal(musicFilePath));
+        backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(volume);  // 这里保持用户设定的音量
+        backgroundMusic.play();
+    }
+
     // 回主菜单
     public void goToMenu(boolean pause) {
 
@@ -128,6 +139,7 @@ public class MazeRunnerGame extends Game {
                 gameScreen = null;
             }
             // switchMusic("background.mp3");
+            playBackgroundMusic("menu.ogg");
         }
 
         // 切换到主菜单
@@ -160,14 +172,7 @@ public class MazeRunnerGame extends Game {
         pausedTime = 0; // Reset paused time
         timerStarted = false; // Reset the timer flag
         startNewGame(DEFAULT_MAP_PATH);
-        if (backgroundMusic != null) {
-            backgroundMusic.stop();
-            backgroundMusic.dispose();
-        }
-        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.ogg"));
-        backgroundMusic.setLooping(true);
-        backgroundMusic.setVolume(0.5f);
-        backgroundMusic.play();
+        playBackgroundMusic("background.ogg");
         showStorySequence();
     }
 
@@ -192,14 +197,7 @@ public class MazeRunnerGame extends Game {
             menuScreen = null;
         }
 
-        if (backgroundMusic != null) {
-            backgroundMusic.stop();
-            backgroundMusic.dispose();
-        }
-        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.ogg"));
-        backgroundMusic.setLooping(true);
-        backgroundMusic.setVolume(0.5f);
-        backgroundMusic.play();
+        playBackgroundMusic("background.ogg");
         showStorySequence();
     }
 
@@ -302,9 +300,6 @@ public class MazeRunnerGame extends Game {
         if (backgroundMusic != null) {
             backgroundMusic.dispose();
         }
-        if (backgroundMusic != null) {
-            backgroundMusic.dispose(); // 释放音乐资源
-        }
         super.dispose();
     }
 
@@ -368,10 +363,5 @@ public class MazeRunnerGame extends Game {
                 maxScore - (int) (((double) (elapsedSeconds - minTime) / timeRange) * scoreRange);
 
         return score;
-    }
-
-    public void resumeFromExit(Player player, Exit exit) {
-        setScreen(gameScreen); // 切换回游戏界面
-        gameScreen.restorePlayerState(player, exit); // 恢复玩家位置和状态
     }
 }

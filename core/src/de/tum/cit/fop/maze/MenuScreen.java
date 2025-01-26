@@ -20,7 +20,6 @@ public class MenuScreen implements Screen {
     private final Stage stage;
     private final boolean pauseMode;
     private final Music menuMusic;
-    private final float musicVolume = 0.5f;
 
     public MenuScreen(MazeRunnerGame game, boolean pauseMode) {
         this.game = game;
@@ -40,7 +39,7 @@ public class MenuScreen implements Screen {
         game.stopMusic();
         menuMusic = Gdx.audio.newMusic(Gdx.files.internal("menu.ogg"));
         menuMusic.setLooping(true); // Optional: Loop the music
-        menuMusic.setVolume(musicVolume);
+        menuMusic.setVolume(game.getVolume());
         menuMusic.play(); // Start playing the music
 
         // Title
