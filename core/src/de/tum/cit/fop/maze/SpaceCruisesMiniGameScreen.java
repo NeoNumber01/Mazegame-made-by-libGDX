@@ -171,7 +171,7 @@ public class SpaceCruisesMiniGameScreen implements Screen, Disposable {
     private float bossMoveDir = 1f;
 
     // Boss AI state machine
-    private enum BossState { ENTERING, CHARGING, BURST_FIRING, COOLDOWN, DRIFTING }
+    private enum BossState { ENTERING, CHARGING, BURST_FIRING, COOLDOWN, DRIFTING, ENRAGED_PREPARE, ENRAGED_CHASING, ENRAGED_COOLDOWN }
     private BossState bossState = BossState.ENTERING;
     private float bossStateTimer = 0f;
     private float bossTargetX = 0f; // Target X position when charging
@@ -181,6 +181,13 @@ public class SpaceCruisesMiniGameScreen implements Screen, Disposable {
     private static final float BOSS_CHARGE_SPEED = 450f; // Fast charge speed
     private static final float BOSS_DRIFT_SPEED = 40f; // Slow drift speed
     private static final float BOSS_COOLDOWN_TIME = 2.0f; // 2 seconds no firing
+
+    // Enraged mode settings
+    private boolean bossEnragedMode = false;
+    private static final float BOSS_ENRAGED_SPEED = 240f; // Slightly slower than player (380f)
+    private static final float BOSS_ENRAGED_FIRE_RATE = 0.08f; // Frequent fire
+    private static final float BOSS_ENRAGED_CHASE_TIME = 0.8f;
+    private static final float BOSS_ENRAGED_COOLDOWN_TIME = 2.0f;
 
     // Randomized delay before charging; sampled once per DRIFTING phase (prevents per-frame re-randomization issues)
     private float bossNextChargeDelay = 2.0f;
@@ -1115,6 +1122,16 @@ public class SpaceCruisesMiniGameScreen implements Screen, Disposable {
         float minX = bossDrawW * 0.5f + 30f;
         float maxX = WORLD_W - bossDrawW * 0.5f - 30f;
 
+        // Check for Enraged Mode Transition
+        if (!bossEnragedMode && bossHp < BOSS_HP * 0.3f) {
+            bossEnragedMode = true;
+            bossState = BossState.ENRAGED_PREPARE;
+            bossStateTimer = 0f;
+            // Visual cue for phase change
+            triggerShake(0.3f, 8f);
+            spawnSparks(bossX, bossY, 20, 0.6f);
+        }
+
         // Fix move direction if boss is at edge (prevents getting stuck)
         if (bossX <= minX + 5f && bossMoveDir < 0) {
             bossMoveDir = 1f;
@@ -1235,6 +1252,52 @@ public class SpaceCruisesMiniGameScreen implements Screen, Disposable {
                     bossNextChargeDelay = MathUtils.random(1.0f, 2.0f);
                     // Ensure moving toward center
                     bossMoveDir = (bossX < WORLD_W * 0.5f) ? 1f : -1f;
+                }
+                break;
+
+            // --- NEW ENRAGED STATES ---
+            case ENRAGED_PREPARE:
+                // Move down slightly to a lower combat altitude
+                float targetY = WORLD_H - bossDrawH * 1.2f;
+                if (bossY > targetY) {
+                    bossY -= 60f * dt;
+                } else {
+                    bossState = BossState.ENRAGED_CHASING;
+                    bossStateTimer = 0f;
+                    bossFireTimer = 0f;
+                }
+                break;
+
+            case ENRAGED_CHASING:
+                // Move horizontally towards player
+                float dx = shipX - bossX;
+                if (Math.abs(dx) > 10f) {
+                    bossX += Math.signum(dx) * BOSS_ENRAGED_SPEED * dt;
+                }
+
+                // Fire frequently
+                bossFireTimer += dt;
+                if (bossFireTimer >= BOSS_ENRAGED_FIRE_RATE) {
+                    bossFireTimer = 0f;
+                    float laserOffset = bossDrawW * 0.22f;
+                    spawnBossLaser(bossX - laserOffset, bossY - bossDrawH * 0.4f);
+                    spawnBossLaser(bossX + laserOffset, bossY - bossDrawH * 0.4f);
+                    spawnSparks(bossX - laserOffset, bossY - bossDrawH * 0.35f, 3, 0.1f);
+                    spawnSparks(bossX + laserOffset, bossY - bossDrawH * 0.35f, 3, 0.1f);
+                }
+
+                if (bossStateTimer >= BOSS_ENRAGED_CHASE_TIME) {
+                    bossState = BossState.ENRAGED_COOLDOWN;
+                    bossStateTimer = 0f;
+                }
+                break;
+
+            case ENRAGED_COOLDOWN:
+                // Cooldown: drift slowly, no firing
+                if (bossStateTimer >= BOSS_ENRAGED_COOLDOWN_TIME) {
+                    bossState = BossState.ENRAGED_CHASING;
+                    bossStateTimer = 0f;
+                    bossFireTimer = 0f;
                 }
                 break;
         }

@@ -24,9 +24,12 @@ input box appear under "Build and run". paste the mentioned argument and click `
 
 - Arrow keys: movement
     - press `Shift` to sprint
-- `Space`: attack
+- `Space`: attack ,also for spaceship
 - `z`/`x`: camera zoom in/out
 - `Esc`: pause menu
+- `R`: saber surrounding to attack
+- `F`: energy cannon attack
+- `Q`: lightning attack
 
 ## Technical details
 
