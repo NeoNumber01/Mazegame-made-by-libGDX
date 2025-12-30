@@ -21,7 +21,7 @@ public class Lives extends InteractiveElements {
 
     @Override
     public void render() {
-        renderTextureV2(maze.getGame().getResourcePack().getFullHeartTexture(), scale);
+        renderFlashing(maze.getGame().getResourcePack().getFullHeartTexture(), scale);
     }
 
     @Override

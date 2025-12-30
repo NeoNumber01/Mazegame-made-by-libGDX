@@ -3,11 +3,9 @@ package de.tum.cit.fop.maze;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 
@@ -29,9 +27,8 @@ public class GameScreen implements Screen {
     private final Player player;
     private final Maze maze;
     private final HUD hud;
-
-    private final ShapeRenderer shapeRenderer; // For rendering shapes/stencil
-    private Texture gradientTexture; // Used for the circular gradient
+    private final FogOfWar fogOfWar;
+    private final ShapeRenderer shapeRenderer;
 
     private float stateTime = 0f;
     private boolean paused = false;
@@ -77,35 +74,10 @@ public class GameScreen implements Screen {
         maze = currentMaze;
         player = new Player(game, maze, maze.getEntry().getPosition());
         camera = new MazeRunnerCamera(game, player.getPosition());
+        maze.setCamera(camera);
         hud = new HUD(game.getSpriteBatch());
-
+        fogOfWar = new FogOfWar();
         shapeRenderer = new ShapeRenderer();
-        createGradientTexture(); // Create the gradient texture for masking
-    }
-
-    /** Creates a circular gradient texture that will be used for the stencil effect. */
-    private void createGradientTexture() {
-        int size = 1024;
-        Pixmap pix = new Pixmap(size, size, Pixmap.Format.RGBA8888);
-
-        float center = size / 2f;
-        for (int y = 0; y < size; y++) {
-            for (int x = 0; x < size; x++) {
-                float dx = x - center;
-                float dy = y - center;
-                float dist = (float) Math.sqrt(dx * dx + dy * dy);
-
-                float t = dist / center; // range 0..1
-                if (t > 1f) t = 1f;
-
-                // center (0) => fully transparent, edge (1) => fully opaque black
-                float alpha = t;
-                pix.setColor(0, 0, 0, alpha);
-                pix.drawPixel(x, y);
-            }
-        }
-        gradientTexture = new Texture(pix);
-        pix.dispose();
     }
 
     /** Whether the game is currently paused. */
@@ -133,82 +105,37 @@ public class GameScreen implements Screen {
         // Clear the screen
         ScreenUtils.clear(0, 0, 0, 1);
 
+        // Update camera (shake logic, etc.)
+        camera.update(delta);
+
         // Refresh camera (updates position, etc.)
         camera.refresh();
+
+        // Render background if spaceship mode
+        if (player.isSpaceshipMode()) {
+            renderSpaceBackground();
+        }
 
         // Render the game world using spriteBatch
         game.getSpriteBatch().begin();
         renderGameElements();
         game.getSpriteBatch().end();
 
-        // ULTIMATE SPAGHETTI!
-        // Before war fog code, SpriteBatch::draw() uses in-game position,
-        // after war fog code, it uses relative-to-window position instead
-
-        // ----------------- War Fog Rendering with Stencil Buffer -----------------
-        Gdx.gl.glEnable(GL20.GL_STENCIL_TEST);
-        Gdx.gl.glClearStencil(0);
-        Gdx.gl.glClear(GL20.GL_STENCIL_BUFFER_BIT);
-
-        // Step 1: Write to stencil buffer with a circle (set stencil=1 in circle area)
-        Gdx.gl.glColorMask(false, false, false, false);
-        Gdx.gl.glStencilFunc(GL20.GL_ALWAYS, 1, 0xFF);
-        Gdx.gl.glStencilOp(GL20.GL_KEEP, GL20.GL_KEEP, GL20.GL_REPLACE);
-
-        shapeRenderer.setProjectionMatrix(camera.getCamera().combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
-        float playerX = player.getPosition().x;
-        float playerY = player.getPosition().y;
-        float circleRadius = 125f; // Keep the circle radius fixed, independent of zoom
-
-        shapeRenderer.circle(playerX, playerY, circleRadius);
-        shapeRenderer.end();
-
-        // Step 2: Render black overlay where stencil != 1
-        Gdx.gl.glColorMask(true, true, true, true);
-        Gdx.gl.glStencilFunc(GL20.GL_EQUAL, 0, 0xFF);
-        Gdx.gl.glStencilOp(GL20.GL_KEEP, GL20.GL_KEEP, GL20.GL_KEEP);
-
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(0, 0, 0, 1f);
-        shapeRenderer.rect(
-                playerX - Gdx.graphics.getWidth(),
-                playerY - Gdx.graphics.getHeight(),
-                Gdx.graphics.getWidth() * 2,
-                Gdx.graphics.getHeight() * 2);
-        shapeRenderer.end();
-
-        // Step 3: Draw gradient light texture over the circular visible area
-        Gdx.gl.glStencilFunc(GL20.GL_EQUAL, 1, 0xFF);
-        Gdx.gl.glStencilOp(GL20.GL_KEEP, GL20.GL_KEEP, GL20.GL_KEEP);
-
-        game.getSpriteBatch().setProjectionMatrix(camera.getCamera().combined);
-        game.getSpriteBatch().begin();
-
-        float gradientSize = circleRadius * 2f; // Keep the gradient size fixed, independent of zoom
-
-        game.getSpriteBatch()
-                .draw(
-                        gradientTexture,
-                        playerX - gradientSize / 2f,
-                        playerY - gradientSize / 2f,
-                        gradientSize,
-                        gradientSize);
-        game.getSpriteBatch().end();
-
-        Gdx.gl.glDisable(GL20.GL_STENCIL_TEST);
+        // Render fog of war effect around the player
+        fogOfWar.render(game.getSpriteBatch(), camera.getCamera(), player.getPosition());
 
         // Update and render HUD
+        float compassDeg = player.hasKey()
+                ? maze.findNearestExitDirection(player.getCenter())
+                : maze.findNearestKeyDirection(player.getCenter());
+
         hud.update(
                 (int) player.getHealth(),
                 player.hasKey(),
                 player.getSpeedFactor(),
                 player.hasShield(),
-                maze.findNearestExitDirection(player.getCenter()));
+                compassDeg);
+        hud.onFrame(delta);
         hud.render();
 
         StoryScreen.getInstance().update(delta);
@@ -281,7 +208,42 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-        // Dispose resources if needed
+        fogOfWar.dispose();
+        if (player != null) {
+            player.dispose();
+        }
+        if (shapeRenderer != null) {
+            shapeRenderer.dispose();
+        }
+    }
+
+    private void renderSpaceBackground() {
+        shapeRenderer.setProjectionMatrix(camera.getCamera().combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        float w = maze.getWidth() * maze.getBlockSize();
+        float h = maze.getHeight() * maze.getBlockSize();
+
+        // Draw some planets
+        shapeRenderer.setColor(0.2f, 0.1f, 0.4f, 1f); // Dark Purple
+        shapeRenderer.circle(w * 0.2f, h * 0.8f, 120f);
+
+        shapeRenderer.setColor(0.1f, 0.3f, 0.5f, 1f); // Blueish
+        shapeRenderer.circle(w * 0.7f, h * 0.3f, 90f);
+
+        shapeRenderer.setColor(0.4f, 0.2f, 0.1f, 1f); // Reddish
+        shapeRenderer.circle(w * 0.5f, h * 0.6f, 60f);
+
+        // Draw some stars
+        shapeRenderer.setColor(Color.WHITE);
+        for(int i=0; i<100; i++) {
+            // Pseudo-random based on index
+            float x = (i * 137.5f * 7f) % w;
+            float y = (i * 293.3f * 3f) % h;
+            shapeRenderer.circle(x, y, 2f);
+        }
+
+        shapeRenderer.end();
     }
 
     /** Restores the player's state, for example when returning from another screen. */

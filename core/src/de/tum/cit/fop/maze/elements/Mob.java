@@ -10,6 +10,8 @@ public abstract class Mob extends Entity implements Health {
     private final float maxHealth = 10f;
     private float health;
 
+    private static final int SCORE_KILL_MOB = 25;
+
     public Mob(
             Maze maze,
             Vector2 position,
@@ -24,6 +26,7 @@ public abstract class Mob extends Entity implements Health {
 
     @Override
     public void onEmptyHealth() {
+        game.addBonusScore(SCORE_KILL_MOB);
         maze.getEntities().removeValue(this, true);
     }
 

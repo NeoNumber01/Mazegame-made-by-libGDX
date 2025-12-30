@@ -39,6 +39,9 @@ public class MazeRunnerGame extends Game {
 
     private Player player;
 
+    // ===== Score handling (time score + kill/destruction bonus) =====
+    private int bonusScore = 0;
+
     /**
      * Constructor for MazeRunnerGame.
      *
@@ -171,6 +174,7 @@ public class MazeRunnerGame extends Game {
         paused = false; // Reset the paused flag
         pausedTime = 0; // Reset paused time
         timerStarted = false; // Reset the timer flag
+        resetBonusScore();
         startNewGame(DEFAULT_MAP_PATH);
         playBackgroundMusic("background.ogg");
         showStorySequence();
@@ -363,5 +367,26 @@ public class MazeRunnerGame extends Game {
                 maxScore - (int) (((double) (elapsedSeconds - minTime) / timeRange) * scoreRange);
 
         return score;
+    }
+
+    /** Convenience: base time score + accumulated bonus score. */
+    public int calculateTotalScore(long elapsedTime) {
+        return calculateScore(elapsedTime) + bonusScore;
+    }
+
+    /** Adds bonus score from kills/destructions. Negative values are ignored. */
+    public void addBonusScore(int delta) {
+        if (delta <= 0) return;
+        bonusScore += delta;
+    }
+
+    /** Returns the current accumulated bonus score. */
+    public int getBonusScore() {
+        return bonusScore;
+    }
+
+    /** Resets bonus score (call when starting a new run). */
+    public void resetBonusScore() {
+        bonusScore = 0;
     }
 }

@@ -22,7 +22,7 @@ public class Lightning extends InteractiveElements {
 
     @Override
     public void render() {
-        renderTextureV2(maze.getGame().getResourcePack().getLightingTexture(), scale);
+        renderFlashing(maze.getGame().getResourcePack().getLightingTexture(), scale);
     }
 
     @Override

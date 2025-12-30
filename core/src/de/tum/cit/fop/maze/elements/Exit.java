@@ -3,8 +3,8 @@ package de.tum.cit.fop.maze.elements;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import de.tum.cit.fop.maze.EndScreen;
 import de.tum.cit.fop.maze.MazeRunnerGame;
+import de.tum.cit.fop.maze.SpaceCruisesMiniGameScreen;
 import de.tum.cit.fop.maze.StoryScreen;
 
 /** Exit of the maze, where the victory may be triggered. */
@@ -23,12 +23,13 @@ public class Exit extends Path {
                 return;
             }
             System.out.println("Player arrived at the exit!");
-            MazeRunnerGame game = other.getGame(); // Get the main game object
+            MazeRunnerGame game = other.getGame();
 
-            long elapsedTime = game.getElapsedTime(); // Get the total elapsed time
-            int score = game.calculateScore(elapsedTime); // Use game's calculateScore method
+            long elapsedTime = game.getElapsedTime();
+            int score = game.calculateTotalScore(elapsedTime);
 
-            game.setScreen(new EndScreen(game, score)); // Pass the score to EndScreen
+            // Gate victory behind the Space-Cruises mini game.
+            game.setScreen(new SpaceCruisesMiniGameScreen(game, score, elapsedTime));
         }
     }
 }

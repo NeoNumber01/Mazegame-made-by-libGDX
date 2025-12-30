@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 import de.tum.cit.fop.maze.InvalidMaze;
+import de.tum.cit.fop.maze.MazeRunnerCamera;
 import de.tum.cit.fop.maze.MazeRunnerGame;
 
 import java.util.Iterator;
@@ -31,6 +32,10 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
     private final Array<Exit> exits;
     private Entry entry;
     private Player player;
+    private MazeRunnerCamera camera;
+    private final SpaceshipSpawner spaceshipSpawner;
+    // Skull Boss (always spawns after a delay)
+    private final SkullBoss skullBoss;
 
     /**
      * Constructor for Maze. Initializes all important elements.
@@ -163,6 +168,15 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
         if (exits.isEmpty()) throw new InvalidMaze("Maze must have at least one exit!");
         if (entry == null) throw new InvalidMaze("Maze must have an entry!");
         if (!hasKey) throw new InvalidMaze("Maze must have a key!");
+
+        // Spaceship pickup spawner (always spawns periodically)
+        spaceshipSpawner = new SpaceshipSpawner(this);
+        // Optional: tweak timing
+        // spaceshipSpawner.spawnInterval = 8f;
+        // spaceshipSpawner.lifetime = 6f;
+
+        // Initialize Skull Boss (will enter from outside the map after a delay)
+        skullBoss = new SkullBoss(this);
     }
 
     /** Calculates the row number of given block. */
@@ -188,15 +202,43 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
         entities.add(player);
     }
 
+    public void setCamera(MazeRunnerCamera camera) {
+        this.camera = camera;
+    }
+
+    public MazeRunnerCamera getCamera() {
+        return camera;
+    }
+
     @Override
     public void render() {
         for (MazeObject obj : this) {
             obj.render();
         }
+
+        // Render Skull Boss on top of other elements
+        skullBoss.render(game.getSpriteBatch());
     }
 
     public float getBlockSize() {
         return blockSize;
+    }
+
+    /** Returns grid width in blocks (including border). */
+    public int getWidth() {
+        return width;
+    }
+
+    /** Returns grid height in blocks (including border). */
+    public int getHeight() {
+        return height;
+    }
+
+    /** True if grid cell is a wall/obstacle (out of bounds counts as wall). */
+    public boolean isWall(int x, int y) {
+        if (x < 0 || x >= width || y < 0 || y >= height) return true;
+        Block b = maze[x][y];
+        return b != null && b.isObstacle();
     }
 
     /**
@@ -256,6 +298,12 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
 
     @Override
     public void onFrame(float deltaTime) {
+        // Update spawner before updating entities so spawned pickup can act immediately
+        spaceshipSpawner.update(deltaTime);
+
+        // Update Skull Boss
+        skullBoss.update(deltaTime);
+
         for (MazeObject obj : this) {
             obj.onFrame(deltaTime);
         }
@@ -322,13 +370,41 @@ public class Maze extends GameObject implements Iterable<MazeObject>, Visible {
     /** Returns the degree to the nearest Exit */
     public float findNearestExitDirection(Vector2 position) {
         Exit target = findNearestExit(position);
-        float deg =
-                (float)
-                        (Math.atan(
-                                        (target.getCenter().y - position.y)
-                                                / (target.getCenter().x - position.x))
-                                * 180
-                                / Math.PI);
-        return target.getCenter().x - position.x < 0 ? deg : deg + 180;
+        float deg = (float) (Math.atan2(target.getCenter().y - position.y, target.getCenter().x - position.x) * 180f / Math.PI);
+        return deg;
+    }
+
+    /** Returns the Key entity that has the minimal Manhattan distance to position, or null if none remain. */
+    public Key findNearestKey(Vector2 position) {
+        Key result = null;
+        // Manhattan distance (good enough + cheap)
+        Function<Key, Float> calcDist =
+                k -> Math.abs(k.getCenter().x - position.x) + Math.abs(k.getCenter().y - position.y);
+
+        for (Entity e : entities) {
+            if (!(e instanceof Key k)) continue;
+            if (result == null || calcDist.apply(result) > calcDist.apply(k)) {
+                result = k;
+            }
+        }
+        return result;
+    }
+
+    /** Returns the degree to the nearest remaining Key. If no key remains, falls back to nearest exit. */
+    public float findNearestKeyDirection(Vector2 position) {
+        Key key = findNearestKey(position);
+        if (key == null) {
+            return findNearestExitDirection(position);
+        }
+        return (float) (Math.atan2(key.getCenter().y - position.y, key.getCenter().x - position.x) * 180f / Math.PI);
+    }
+
+    /** Returns the Skull Boss instance */
+    public SkullBoss getSkullBoss() {
+        return skullBoss;
+    }
+
+    void onSpaceshipPickupCollected() {
+        spaceshipSpawner.onCollected();
     }
 }

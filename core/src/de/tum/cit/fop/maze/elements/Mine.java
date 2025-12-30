@@ -5,11 +5,14 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /** A special type of obstacle that explodes after collides with player. */
 public class Mine extends InteractiveElements {
     private final Animation<TextureRegion> explosionAnimation;
-    private final float explosionRadius = 40f;
+    private final float explosionRadius = 40f; // Reduced range
     private final int damage = 40; //
     private final float delayBeforeExplosion = 1.0f;
     private final float explosionDuration = 2.0f;
@@ -17,6 +20,7 @@ public class Mine extends InteractiveElements {
     private boolean triggered = false;
     private boolean exploded = false;
     private float explosionStartTime = -1f;
+    private final List<ExplosionDebris> debrisList = new ArrayList<>();
 
     public Mine(
             Maze maze,
@@ -47,16 +51,30 @@ public class Mine extends InteractiveElements {
         exploded = true;
         explosion.play();
         System.out.println("Mine exploded!");
+        
+        // Trigger Screen Shake
+        if (maze.getCamera() != null) {
+            maze.getCamera().shake(1.0f, 15f); // 1 sec, 15 intensity
+        }
+
+        // Spawn Debris
+        for (int i = 0; i < 30; i++) {
+            debrisList.add(new ExplosionDebris(getCenter().x, getCenter().y));
+        }
 
         for (MazeObject obj : maze) {
             float distance = getPosition().dst(obj.getPosition());
             if (distance <= explosionRadius) {
+                // Linear damage falloff: 100% at center, 0% at edge
+                float scale = 1.0f - (distance / explosionRadius);
+                int actualDamage = Math.max(0, (int) (damage * scale));
+                
                 if (obj instanceof Player player) {
-                    player.modifyHealth(-damage);
-                    System.out.println("Player took damage: " + damage);
+                    player.modifyHealth(-actualDamage);
+                    System.out.println("Player took damage: " + actualDamage);
                 } else if (obj instanceof Mob mob) {
-                    mob.modifyHealth(-damage);
-                    System.out.println("Mob took damage: " + damage);
+                    mob.modifyHealth(-actualDamage);
+                    System.out.println("Mob took damage: " + actualDamage);
                 }
             }
         }
@@ -65,6 +83,7 @@ public class Mine extends InteractiveElements {
     @Override
     public void render() {
         float currentTime = maze.getGame().getStateTime();
+        float deltaTime = Gdx.graphics.getDeltaTime();
 
         if (triggered && !exploded) {
             if (currentTime - explosionStartTime >= delayBeforeExplosion) {
@@ -75,17 +94,33 @@ public class Mine extends InteractiveElements {
 
         if (exploded) {
             float stateTime = currentTime - explosionStartTime;
-            TextureRegion explosionFrame = explosionAnimation.getKeyFrame(stateTime, false);
-            maze.getGame()
-                    .getSpriteBatch()
-                    .draw(
-                            explosionFrame,
-                            getPosition().x,
-                            getPosition().y,
-                            getSize().x,
-                            getSize().y);
+            
+            // Draw Explosion Animation (Larger)
+            if (!explosionAnimation.isAnimationFinished(stateTime)) {
+                TextureRegion explosionFrame = explosionAnimation.getKeyFrame(stateTime, false);
+                float animSize = 64f; // Reduced size
+                maze.getGame()
+                        .getSpriteBatch()
+                        .draw(
+                                explosionFrame,
+                                getCenter().x - animSize / 2f,
+                                getCenter().y - animSize / 2f,
+                                animSize,
+                                animSize);
+            }
 
-            if (explosionAnimation.isAnimationFinished(stateTime)) {
+            // Update and Render Debris
+            Iterator<ExplosionDebris> iter = debrisList.iterator();
+            while (iter.hasNext()) {
+                ExplosionDebris debris = iter.next();
+                debris.update(deltaTime);
+                debris.render(maze.getGame().getSpriteBatch());
+                if (debris.isFinished()) {
+                    iter.remove();
+                }
+            }
+
+            if (explosionAnimation.isAnimationFinished(stateTime) && debrisList.isEmpty()) {
                 maze.getEntities().removeValue(this, true);
             }
         } else {

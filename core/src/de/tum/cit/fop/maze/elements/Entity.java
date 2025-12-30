@@ -119,4 +119,9 @@ public abstract class Entity extends MazeObject implements Move {
     public int getColumn() {
         return getBlock().getColumn();
     }
+
+    /** Returns the current facing direction of this entity. */
+    public Helper.Direction getDirection() {
+        return direction;
+    }
 }

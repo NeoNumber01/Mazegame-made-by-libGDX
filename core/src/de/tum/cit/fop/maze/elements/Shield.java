@@ -16,7 +16,7 @@ public class Shield extends InteractiveElements {
 
     @Override
     public void render() {
-        renderTextureV2(maze.getGame().getResourcePack().getShieldTexture(), 2f);
+        renderFlashing(maze.getGame().getResourcePack().getShieldTexture(), 2f);
     }
 
     @Override

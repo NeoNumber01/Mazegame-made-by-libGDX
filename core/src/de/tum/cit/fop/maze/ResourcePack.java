@@ -30,6 +30,7 @@ public class ResourcePack { // Character animation
     private TextureRegion exitTexture;
     private TextureRegion entryTexture;
     private TextureRegion mineTexture;
+    private TextureRegion spaceshipTexture;
 
     public ResourcePack() {
         loadPlayerAnimation();
@@ -47,6 +48,7 @@ public class ResourcePack { // Character animation
         loadTrapTexture();
         loadExplodeAnimation();
         loadMineTexture();
+        loadSpaceshipTexture();
     }
 
     public MoveAnimation getPlayerAttackAnimation() {
@@ -292,6 +294,11 @@ public class ResourcePack { // Character animation
         mineTexture = new TextureRegion(mineSheet, 0, 0, 16, 16);
     }
 
+    private void loadSpaceshipTexture() {
+        Texture ship = new Texture(Gdx.files.internal("spaceship.png"));
+        spaceshipTexture = new TextureRegion(ship);
+    }
+
     public TextureRegion getMineTexture() {
         return mineTexture;
     }
@@ -318,6 +325,10 @@ public class ResourcePack { // Character animation
 
     public TextureRegion getPathTexture() {
         return pathTexture;
+    }
+
+    public TextureRegion getSpaceshipTexture() {
+        return spaceshipTexture;
     }
 
     /**
