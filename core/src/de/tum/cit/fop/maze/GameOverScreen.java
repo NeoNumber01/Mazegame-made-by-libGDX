@@ -110,7 +110,7 @@ public class GameOverScreen implements Screen {
         ));
         table.add(subtitleLabel).padBottom(60).row();
 
-        // Restart Button with hover effect
+        // Restart Button with hover effect (restart current level without cutscene)
         TextButton restartButton = new TextButton("Try Again", game.getSkin());
         restartButton.getColor().a = 0;
         restartButton.addAction(Actions.sequence(
@@ -127,11 +127,28 @@ public class GameOverScreen implements Screen {
                     }
                 });
 
+        // Start New Game Button (starts game with cutscene)
+        TextButton startNewGameButton = new TextButton("Start New Game", game.getSkin());
+        startNewGameButton.getColor().a = 0;
+        startNewGameButton.addAction(Actions.sequence(
+            Actions.delay(1.1f),
+            Actions.fadeIn(0.5f)
+        ));
+        table.add(startNewGameButton).width(400).height(60).padBottom(20).row();
+        startNewGameButton.addListener(
+                new ChangeListener() {
+                    @Override
+                    public void changed(ChangeEvent event, Actor actor) {
+                        afterDeath.stop();
+                        game.startNewGameWithCutscene();
+                    }
+                });
+
         // Exit Button with hover effect
         TextButton exitButton = new TextButton("Return to Menu", game.getSkin());
         exitButton.getColor().a = 0;
         exitButton.addAction(Actions.sequence(
-            Actions.delay(1.2f),
+            Actions.delay(1.3f),
             Actions.fadeIn(0.5f)
         ));
         table.add(exitButton).width(400).height(60).padBottom(20).row();

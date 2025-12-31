@@ -17,8 +17,15 @@ import games.spooky.gdx.nativefilechooser.NativeFileChooser;
  */
 public class MazeRunnerGame extends Game {
 
-    // 地图
-    private static final String DEFAULT_MAP_PATH = "maps/level-1.properties";
+    // ===== Video cutscene paths =====
+    private static final String START_STORY_VIDEO = "startstory.webm";
+    private static final String SPACESHIP_VIDEO = "spaceshipboard.webm";
+
+    // ===== Cutscene played flags =====
+    private boolean startStoryCutscenePlayed = false;
+
+    // 地图 - 默认加载最终挑战关卡
+    private static final String DEFAULT_MAP_PATH = "maps/level-6.properties";
     // Screens
     private MenuScreen menuScreen;
     private GameScreen gameScreen;
@@ -175,13 +182,52 @@ public class MazeRunnerGame extends Game {
         pausedTime = 0; // Reset paused time
         timerStarted = false; // Reset the timer flag
         resetBonusScore();
-        startNewGame(DEFAULT_MAP_PATH);
-        playBackgroundMusic("background.ogg");
-        showStorySequence();
+
+        // Play start story cutscene only once
+        if (!startStoryCutscenePlayed) {
+            startStoryCutscenePlayed = true;
+            playStartStoryCutscene(DEFAULT_MAP_PATH);
+        } else {
+            // Skip cutscene, go directly to game
+            actuallyStartNewGame(DEFAULT_MAP_PATH);
+        }
     }
 
-    public void startNewGame(String mapFilePath) {
+    /**
+     * Starts a new game with cutscene always playing (regardless of whether it was played before).
+     * Called from the "Start New Game" button in game over screen or menu.
+     */
+    public void startNewGameWithCutscene() {
+        paused = false;
+        pausedTime = 0;
+        timerStarted = false;
+        resetBonusScore();
 
+        // Reset the flag so cutscene will play
+        startStoryCutscenePlayed = true;
+        playStartStoryCutscene(DEFAULT_MAP_PATH);
+    }
+
+    /**
+     * Plays the start story cutscene, then starts the game.
+     */
+    private void playStartStoryCutscene(String mapFilePath) {
+        // Pause menu music
+        pauseMusic();
+
+        // Play cutscene, then start game
+        setScreen(new CutsceneVideoScreen(
+            this,
+            START_STORY_VIDEO,
+            () -> actuallyStartNewGame(mapFilePath),
+            true // allow skip
+        ));
+    }
+
+    /**
+     * Actually starts the new game (called after cutscene or directly if cutscene already played).
+     */
+    private void actuallyStartNewGame(String mapFilePath) {
         // Record the start time when the game begins
         startTime = System.currentTimeMillis();
 
@@ -203,6 +249,38 @@ public class MazeRunnerGame extends Game {
 
         playBackgroundMusic("background.ogg");
         showStorySequence();
+    }
+
+    /**
+     * Starts a new game with a specific map file (for level selection).
+     * Plays start story cutscene only on first game.
+     */
+    public void startNewGame(String mapFilePath) {
+        paused = false;
+        pausedTime = 0;
+        timerStarted = false;
+        resetBonusScore();
+
+        if (!startStoryCutscenePlayed) {
+            startStoryCutscenePlayed = true;
+            playStartStoryCutscene(mapFilePath);
+        } else {
+            actuallyStartNewGame(mapFilePath);
+        }
+    }
+
+    /**
+     * Returns the spaceship board video path for use in Exit trigger.
+     */
+    public static String getSpaceshipVideoPath() {
+        return SPACESHIP_VIDEO;
+    }
+
+    /**
+     * Resets the start story played flag (call if you want to replay the intro).
+     */
+    public void resetStartStoryCutscene() {
+        startStoryCutscenePlayed = false;
     }
 
     /** Show messages one by one */

@@ -263,6 +263,7 @@ public class Player extends Entity implements Health, Disposable {
     @Override
     public void onEmptyHealth() {
         System.out.println("Player has died!");
+        stopAllSounds(); // Stop looping sounds before switching screen
         game.setScreen(new GameOverScreen(game));
     }
 
@@ -434,6 +435,20 @@ public class Player extends Entity implements Health, Disposable {
     }
 
     private enum Motion { WALK, SPRINT, ATTACK }
+
+    /**
+     * Stops all looping sound effects immediately.
+     * Call this when transitioning screens (e.g., exiting through the exit door).
+     */
+    public void stopAllSounds() {
+        if (lightSaberOrbit != null) {
+            lightSaberOrbit.stopSound();
+        }
+        if (spaceshipSound != null && spaceshipSoundId != -1) {
+            spaceshipSound.stop(spaceshipSoundId);
+            spaceshipSoundId = -1;
+        }
+    }
 
     @Override
     public void dispose() {

@@ -127,10 +127,12 @@ public class LightSaberOrbit {
         particleSpawnAcc = 0f;
         hitEntityCount = 0;
 
-        // Play sound looping
-        if (soundId == -1) {
-            soundId = orbitSound.loop(0.6f); // Play at 60% volume
+        // Stop any lingering sound first, then play new loop
+        if (soundId != -1) {
+            orbitSound.stop(soundId);
+            soundId = -1;
         }
+        soundId = orbitSound.loop(0.6f); // Play at 60% volume
     }
 
     public void update(float dt, Vector2 center) {
@@ -139,12 +141,13 @@ public class LightSaberOrbit {
             cooldownTimer -= dt;
         }
 
+        // Always stop sound if not active
+        if (!active && soundId != -1) {
+            orbitSound.stop(soundId);
+            soundId = -1;
+        }
+
         if (!active) {
-            // Stop sound if it's playing
-            if (soundId != -1) {
-                orbitSound.stop(soundId);
-                soundId = -1;
-            }
             // Continue updating particles so they fade out properly
             if (pCount > 0) {
                 updateParticles(dt);
@@ -155,7 +158,7 @@ public class LightSaberOrbit {
         activeTimer -= dt;
         if (activeTimer <= 0f) {
             active = false;
-            // Sound will be stopped in next update or immediately here
+            // Stop sound immediately when deactivating
             if (soundId != -1) {
                 orbitSound.stop(soundId);
                 soundId = -1;
@@ -502,7 +505,21 @@ public class LightSaberOrbit {
                 false);
     }
 
+    /**
+     * Stops the looping sound effect immediately.
+     * Call this when transitioning screens or when the player exits the level.
+     */
+    public void stopSound() {
+        if (soundId != -1) {
+            orbitSound.stop(soundId);
+            soundId = -1;
+        }
+        active = false;
+        activeTimer = 0f;
+    }
+
     public void dispose() {
+        stopSound();
         if (orbitSound != null) {
             orbitSound.stop();
             orbitSound.dispose();

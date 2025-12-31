@@ -184,10 +184,10 @@ public class SpaceCruisesMiniGameScreen implements Screen, Disposable {
 
     // Enraged mode settings
     private boolean bossEnragedMode = false;
-    private static final float BOSS_ENRAGED_SPEED = 250f; // Slightly slower than player (380f)
-    private static final float BOSS_ENRAGED_FIRE_RATE = 0.09f; // Frequent fire
-    private static final float BOSS_ENRAGED_CHASE_TIME = 1.1f;
-    private static final float BOSS_ENRAGED_COOLDOWN_TIME = 1.5f;
+    private static final float BOSS_ENRAGED_SPEED = 240f; // Slightly slower than player (380f)
+    private static final float BOSS_ENRAGED_FIRE_RATE = 0.075f; // Frequent fire
+    private static final float BOSS_ENRAGED_CHASE_TIME = 0.9f;
+    private static final float BOSS_ENRAGED_COOLDOWN_TIME = 1.8f;
 
     // Randomized delay before charging; sampled once per DRIFTING phase (prevents per-frame re-randomization issues)
     private float bossNextChargeDelay = 2.0f;
@@ -379,17 +379,6 @@ public class SpaceCruisesMiniGameScreen implements Screen, Disposable {
         // Explosion: reuse in-game explosion animation frames
         explosionAnim = game.getResourcePack().getExplosionAnimation();
 
-        // optional: stop current music and play a short loop
-        game.stopMusic();
-        try {
-            miniMusic = Gdx.audio.newMusic(Gdx.files.internal("menu.ogg"));
-            miniMusic.setLooping(true);
-            miniMusic.setVolume(game.getVolume());
-            miniMusic.play();
-        } catch (Exception ignored) {
-            miniMusic = null;
-        }
-
         try {
             laserShotSound = Gdx.audio.newSound(Gdx.files.internal("Laser Shot.wav"));
         } catch (Exception ignored) {
@@ -502,6 +491,21 @@ public class SpaceCruisesMiniGameScreen implements Screen, Disposable {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(null);
+
+        // Start music here
+        game.stopMusic();
+        try {
+            if (miniMusic == null) {
+                miniMusic = Gdx.audio.newMusic(Gdx.files.internal("menu.ogg"));
+                miniMusic.setLooping(true);
+                miniMusic.setVolume(game.getVolume() * 0.5f); // Lower volume
+                miniMusic.play();
+            } else if (!miniMusic.isPlaying()) {
+                miniMusic.play();
+            }
+        } catch (Exception ignored) {
+            miniMusic = null;
+        }
     }
 
     @Override
@@ -2252,6 +2256,10 @@ public class SpaceCruisesMiniGameScreen implements Screen, Disposable {
         if (explosionSound != null) {
             explosionSound.dispose();
             explosionSound = null;
+        }
+        if (miniMusic != null) {
+            miniMusic.dispose();
+            miniMusic = null;
         }
     }
 }

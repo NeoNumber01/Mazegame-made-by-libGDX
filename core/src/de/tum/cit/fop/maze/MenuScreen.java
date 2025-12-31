@@ -180,17 +180,21 @@ public class MenuScreen implements Screen {
                 menuMusic.stop();
                 game.goToGame();
             }, 0.2f);
+            addButton(buttonTable, "Start New Game", () -> {
+                menuMusic.stop();
+                game.startNewGameWithCutscene();
+            }, 0.3f);
         } else {
             addButton(buttonTable, "Start New Game", () -> {
                 menuMusic.stop();
-                game.startNewGame();
+                game.startNewGameWithCutscene();
             }, 0.2f);
         }
 
-        addButton(buttonTable, "Load Map", this::showLoadMapDialog, 0.4f);
-        addButton(buttonTable, "Volume", this::showVolumeDialog, 0.6f);
-        addButton(buttonTable, "Tutorial", this::showTutorialDialog, 0.8f);
-        addButton(buttonTable, "Exit", () -> Gdx.app.exit(), 1.0f);
+        addButton(buttonTable, "Load Map", this::showLoadMapDialog, pauseMode ? 0.5f : 0.4f);
+        addButton(buttonTable, "Volume", this::showVolumeDialog, pauseMode ? 0.7f : 0.6f);
+        addButton(buttonTable, "Tutorial", this::showTutorialDialog, pauseMode ? 0.9f : 0.8f);
+        addButton(buttonTable, "Exit", () -> Gdx.app.exit(), pauseMode ? 1.1f : 1.0f);
     }
 
     private void addButton(Table table, String text, Runnable action, float delay) {
