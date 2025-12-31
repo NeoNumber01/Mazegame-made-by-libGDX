@@ -27,6 +27,7 @@ allprojects {
         aiVersion = '1.8.2'
         gdxControllersVersion = '2.2.1'
         gdxNativefilechooserVersion = '2.3.0'
+        gdxVideoVersion = '1.2.1'
     }
 
     repositories {
@@ -56,6 +57,8 @@ project(":desktop") {
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
         implementation "games.spooky.gdx:gdx-nativefilechooser-desktop-lwjgl:$gdxNativefilechooserVersion"
+        implementation "org.jcodec:jcodec:0.2.5"
+        implementation "org.jcodec:jcodec-javase:0.2.5"
     }
 }
 
@@ -67,5 +70,7 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         implementation "games.spooky.gdx:gdx-nativefilechooser:$gdxNativefilechooserVersion"
+        api "org.jcodec:jcodec:0.2.5"
+        api "org.jcodec:jcodec-javase:0.2.5"
     }
 }

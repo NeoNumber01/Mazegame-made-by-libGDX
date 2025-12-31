@@ -8,6 +8,8 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.Gdx;
 
 /**
  * A timed rotating "light-saber" effect around the player.
@@ -45,6 +47,8 @@ public class LightSaberOrbit {
 
     private final Maze maze;
     private final Texture pixel;
+    private final Sound orbitSound;
+    private long soundId = -1;
 
     private boolean active = false;
     private float activeTimer = 0f;
@@ -93,6 +97,7 @@ public class LightSaberOrbit {
     public LightSaberOrbit(Maze maze, Texture pixel) {
         this.maze = maze;
         this.pixel = pixel;
+        this.orbitSound = Gdx.audio.newSound(Gdx.files.internal("The_sound_of_lightsaberorbit.wav"));
         this.angleDeg = MathUtils.random(0f, 360f);
         for (int i = 0; i < TRAIL_SEGMENTS; i++) {
             trailAnglesDeg[i] = angleDeg;
@@ -104,10 +109,12 @@ public class LightSaberOrbit {
     }
 
     public void tryActivate() {
-        if (!canActivate()) return;
+        if (active) return; // already active
+        if (cooldownTimer > 0f) return; // on cooldown
+
         active = true;
         activeTimer = ACTIVE_DURATION;
-        cooldownTimer = 0f;
+        cooldownTimer = COOLDOWN_DURATION;
         dir = (MathUtils.randomBoolean() ? 1f : -1f);
         angleDeg = MathUtils.random(0f, 360f);
         for (int i = 0; i < TRAIL_SEGMENTS; i++) {
@@ -119,23 +126,44 @@ public class LightSaberOrbit {
         pCount = 0;
         particleSpawnAcc = 0f;
         hitEntityCount = 0;
+
+        // Play sound looping
+        if (soundId == -1) {
+            soundId = orbitSound.loop(0.6f); // Play at 60% volume
+        }
     }
 
-    public void update(float dt, Vector2 playerCenter) {
+    public void update(float dt, Vector2 center) {
+        // Cooldown tick
         if (!active && cooldownTimer > 0f) {
             cooldownTimer -= dt;
         }
 
         if (!active) {
-            // let existing particles fade naturally
-            updateParticles(dt);
+            // Stop sound if it's playing
+            if (soundId != -1) {
+                orbitSound.stop(soundId);
+                soundId = -1;
+            }
+            // Continue updating particles so they fade out properly
+            if (pCount > 0) {
+                updateParticles(dt);
+            }
             return;
         }
 
         activeTimer -= dt;
         if (activeTimer <= 0f) {
             active = false;
-            cooldownTimer = COOLDOWN_DURATION;
+            // Sound will be stopped in next update or immediately here
+            if (soundId != -1) {
+                orbitSound.stop(soundId);
+                soundId = -1;
+            }
+            // Update remaining particles so they fade out, then return
+            if (pCount > 0) {
+                updateParticles(dt);
+            }
             return;
         }
 
@@ -147,10 +175,10 @@ public class LightSaberOrbit {
         trailAnglesDeg[trailIndex] = angleDeg;
 
         // Emit subtle particles from the "tail" of the blade (opposite tangent direction)
-        emitTailParticles(dt, playerCenter);
+        emitTailParticles(dt, center);
         updateParticles(dt);
 
-        computeBladeAabb(playerCenter);
+        computeBladeAabb(center);
         computeParticleDamageAabb();
         tickHitCooldowns(dt);
 
@@ -472,5 +500,12 @@ public class LightSaberOrbit {
                 1,
                 false,
                 false);
+    }
+
+    public void dispose() {
+        if (orbitSound != null) {
+            orbitSound.stop();
+            orbitSound.dispose();
+        }
     }
 }

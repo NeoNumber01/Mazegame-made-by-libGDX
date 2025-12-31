@@ -5,17 +5,21 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Disposable;
 
 /**
  * Energy cannon weapon: press key to launch a projectile that bounces off walls and kills mobs.
  *
  * This replaces the old LaserGun hitscan.
  */
-public class EnergyCannon {
+public class EnergyCannon implements Disposable {
 
     private final Maze maze;
     private final Array<EnergyProjectile> active;
     private final Pool<EnergyProjectile> pool;
+    private final Sound shootSound;
 
     // Tunables
     private float cooldown = 4.0f;
@@ -36,6 +40,7 @@ public class EnergyCannon {
                 return new EnergyProjectile();
             }
         };
+        this.shootSound = Gdx.audio.newSound(Gdx.files.internal("The_sound_of_EnergyCannon.wav"));
     }
 
     public void update(float dt) {
@@ -76,6 +81,14 @@ public class EnergyCannon {
                 maxBounces,
                 maxLifetime);
         active.add(p);
+        shootSound.play(0.5f);
+    }
+
+    @Override
+    public void dispose() {
+        if (shootSound != null) {
+            shootSound.dispose();
+        }
     }
 
     // Optional setters if you want to tweak from Player

@@ -6,9 +6,12 @@ import com.badlogic.gdx.math.Vector2;
 import de.tum.cit.fop.maze.MazeRunnerGame;
 import de.tum.cit.fop.maze.SpaceCruisesMiniGameScreen;
 import de.tum.cit.fop.maze.StoryScreen;
+import de.tum.cit.fop.maze.VideoScreen;
 
 /** Exit of the maze, where the victory may be triggered. */
 public class Exit extends Path {
+    private static final String STORY_VIDEO_PATH = "spaceshipboard.mp4";
+
     public Exit(Maze maze, TextureRegion texture, Vector2 position) {
         super(maze, texture, position);
     }
@@ -28,8 +31,19 @@ public class Exit extends Path {
             long elapsedTime = game.getElapsedTime();
             int score = game.calculateTotalScore(elapsedTime);
 
-            // Gate victory behind the Space-Cruises mini game.
-            game.setScreen(new SpaceCruisesMiniGameScreen(game, score, elapsedTime));
+            // Create the mini game screen that will be shown after the video
+            SpaceCruisesMiniGameScreen miniGameScreen = new SpaceCruisesMiniGameScreen(game, score, elapsedTime);
+
+            try {
+                // First play the story video, then transition to the mini game
+                VideoScreen videoScreen = new VideoScreen(game, STORY_VIDEO_PATH, miniGameScreen);
+                game.setScreen(videoScreen);
+            } catch (Throwable e) {
+                System.err.println("Failed to load video screen: " + e.getMessage());
+                e.printStackTrace();
+                // Fallback: start mini game directly
+                game.setScreen(miniGameScreen);
+            }
         }
     }
 }

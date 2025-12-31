@@ -184,10 +184,10 @@ public class SpaceCruisesMiniGameScreen implements Screen, Disposable {
 
     // Enraged mode settings
     private boolean bossEnragedMode = false;
-    private static final float BOSS_ENRAGED_SPEED = 240f; // Slightly slower than player (380f)
-    private static final float BOSS_ENRAGED_FIRE_RATE = 0.08f; // Frequent fire
-    private static final float BOSS_ENRAGED_CHASE_TIME = 0.8f;
-    private static final float BOSS_ENRAGED_COOLDOWN_TIME = 2.0f;
+    private static final float BOSS_ENRAGED_SPEED = 250f; // Slightly slower than player (380f)
+    private static final float BOSS_ENRAGED_FIRE_RATE = 0.09f; // Frequent fire
+    private static final float BOSS_ENRAGED_CHASE_TIME = 1.1f;
+    private static final float BOSS_ENRAGED_COOLDOWN_TIME = 1.5f;
 
     // Randomized delay before charging; sampled once per DRIFTING phase (prevents per-frame re-randomization issues)
     private float bossNextChargeDelay = 2.0f;

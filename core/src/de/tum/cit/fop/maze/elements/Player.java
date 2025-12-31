@@ -34,6 +34,8 @@ public class Player extends Entity implements Health, Disposable {
     private final Sound playerOnHit;
     private final Sound swing;
     private final Sound monsterHit;
+    private final Sound spaceshipSound;
+    private long spaceshipSoundId = -1;
     private float health;
     private float lastHitTimestamp;
     private boolean hasKey;
@@ -139,6 +141,7 @@ public class Player extends Entity implements Health, Disposable {
         this.playerOnHit = Gdx.audio.newSound(Gdx.files.internal("playeronHit.wav"));
         this.swing = Gdx.audio.newSound(Gdx.files.internal("swing.wav"));
         this.monsterHit = Gdx.audio.newSound(Gdx.files.internal("monster.wav"));
+        this.spaceshipSound = Gdx.audio.newSound(Gdx.files.internal("The_sound_of_the_spaceshippickup.wav"));
 
         // Initialize Energy Cannon
         this.energyCannon = new EnergyCannon(maze);
@@ -287,6 +290,10 @@ public class Player extends Entity implements Health, Disposable {
         shipDir.setToRandomDirection();
         shipVel.set(shipDir).scl(SHIP_SPEED);
         shipSteerTimer = 0f;
+
+        if (spaceshipSoundId == -1) {
+            spaceshipSoundId = spaceshipSound.loop(0.6f);
+        }
     }
 
     @Override
@@ -438,6 +445,18 @@ public class Player extends Entity implements Health, Disposable {
             particleTexture.dispose();
             particleTexture = null;
         }
+        if (lightSaberOrbit != null) {
+            lightSaberOrbit.dispose();
+            lightSaberOrbit = null;
+        }
+        if (spaceshipSound != null) {
+            spaceshipSound.stop();
+            spaceshipSound.dispose();
+        }
+        if (energyCannon != null) {
+            energyCannon.dispose();
+            energyCannon = null;
+        }
     }
 
     private void updateSpaceship(float dt) {
@@ -446,6 +465,12 @@ public class Player extends Entity implements Health, Disposable {
             spaceshipMode = false;
             shipOverheated = false;
             shipHeat = 0f;
+
+            if (spaceshipSoundId != -1) {
+                spaceshipSound.stop(spaceshipSoundId);
+                spaceshipSoundId = -1;
+            }
+
             clampInsideMazeBorder(SHIP_EXIT_MARGIN);
             snapToNearestWalkableTile();
             resolveStuckInWall();

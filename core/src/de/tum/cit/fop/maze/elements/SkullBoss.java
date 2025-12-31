@@ -13,7 +13,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
+
 import com.badlogic.gdx.utils.Disposable;
 
 /**
@@ -154,6 +154,8 @@ public class SkullBoss implements Disposable {
 
     // Explosion sound
     private final Sound explosionSound;
+    private final Sound roarSound;
+    private final Sound lightningSound;
 
     // Entry/exit points
     private float entryX, entryY;
@@ -181,6 +183,8 @@ public class SkullBoss implements Disposable {
 
         // Load explosion sound
         this.explosionSound = Gdx.audio.newSound(Gdx.files.internal("explode.ogg"));
+        this.roarSound = Gdx.audio.newSound(Gdx.files.internal("The_roar_of_the_SkullBoss.wav"));
+        this.lightningSound = Gdx.audio.newSound(Gdx.files.internal("The_sound_of_the_lightning_attack.wav"));
 
         // Load explosion animation (same as Mine)
         this.explosionAnimation = maze.getGame().getResourcePack().getExplosionAnimation();
@@ -234,7 +238,7 @@ public class SkullBoss implements Disposable {
 
         // Player lightning attack (Q key)
         if (state != BossState.INACTIVE && state != BossState.ENTERING && state != BossState.EXITING) {
-            handlePlayerLightningAttack(dt);
+            handlePlayerLightningAttack();
         }
     }
 
@@ -338,6 +342,7 @@ public class SkullBoss implements Disposable {
             fightTimer = 0f;
             velX = 0f;
             velY = 0f;
+            roarSound.play();
         }
     }
 
@@ -667,7 +672,7 @@ public class SkullBoss implements Disposable {
         }
     }
 
-    private void handlePlayerLightningAttack(float dt) {
+    private void handlePlayerLightningAttack() {
         if (lightningCooldown > 0f) return;
         if (!Gdx.input.isKeyJustPressed(Input.Keys.Q)) return;
 
@@ -685,6 +690,7 @@ public class SkullBoss implements Disposable {
 
             // Create lightning effect
             createLightningEffect(px, py, x, y);
+            lightningSound.play();
         }
     }
 
@@ -1112,6 +1118,12 @@ public class SkullBoss implements Disposable {
         }
         if (explosionSound != null) {
             explosionSound.dispose();
+        }
+        if (roarSound != null) {
+            roarSound.dispose();
+        }
+        if (lightningSound != null) {
+            lightningSound.dispose();
         }
     }
 }
