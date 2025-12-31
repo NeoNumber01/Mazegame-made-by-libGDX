@@ -59,6 +59,31 @@ project(":desktop") {
         implementation "games.spooky.gdx:gdx-nativefilechooser-desktop-lwjgl:$gdxNativefilechooserVersion"
         implementation "com.badlogicgames.gdx-video:gdx-video-lwjgl3:$gdxVideoVersion"
     }
+
+
+    tasks.register("fatJar", Jar) {
+        archiveBaseName.set("MazeRunner")
+        archiveClassifier.set("all")
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+        manifest {
+            attributes("Main-Class": "de.tum.cit.fop.maze.DesktopLauncher")
+        }
+
+        // ✅ 把 desktop 自己的 class 打进去
+        from(sourceSets.main.output)
+
+        // ✅ 把 core 的 class 输出直接打进去（关键修复点）
+        from(project(":core").sourceSets.main.output)
+
+        // ✅ 只展开“外部依赖”，不要展开 project(":core") 这种项目依赖
+        from {
+            configurations.runtimeClasspath
+                    .filter { it.exists() && !it.name.endsWith(".jar") ? true : true } // 这行可删，见下
+                    .findAll { it.isFile() && it.name.endsWith(".jar") }
+                    .collect { zipTree(it) }
+        }
+    }
 }
 
 project(":core") {
@@ -71,4 +96,22 @@ project(":core") {
         implementation "games.spooky.gdx:gdx-nativefilechooser:$gdxNativefilechooserVersion"
         implementation "com.badlogicgames.gdx-video:gdx-video:$gdxVideoVersion"
     }
+
+    jar {
+        archiveBaseName.set("MazeRunner") // 输出 jar 名
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+        manifest {
+            attributes "Main-Class": "de.tum.cit.fop.maze.desktop.DesktopLauncher"
+        }
+
+        from {
+            configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+        }
+    }
+    tasks.register("copyAssets", Copy) {
+        from("../assets")
+        into("$buildDir/libs/assets")
+    }
+    jar.dependsOn("copyAssets")
 }
