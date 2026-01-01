@@ -1,15 +1,20 @@
 Press arrow keys to move around
 Press Shift to run faster
 Press Space to attack
+Press R to start light saber orbit
+Press Q to use ligtning against boss
+Press F to fire energy cannon
 
 You can collect hearts to restore your health.
 You can collect lightning bolts to run faster.
 You can collect shields to reduce damage taken from a single hit.
+You can get on a spaceship and fly.
 Watch out for various traps. Don’t step on them out of curiosity.
 
-The red arrow of compass
-always points to the direction of
-the closest exit! 
+The compass pointer always shows your next objective:
+It points to the nearest key at the beginning.
+After the key is collected,
+it automatically points to the nearest exit.
 
 You wake up from a nightmare, 
 only to find yourself in an even deeper dream,
