@@ -433,6 +433,7 @@ public class MenuScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
+        if (width <= 0 || height <= 0) return;
         stage.getViewport().update(width, height, true);
     }
 

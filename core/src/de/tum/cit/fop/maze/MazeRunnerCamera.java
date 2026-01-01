@@ -25,14 +25,15 @@ public class MazeRunnerCamera {
     }
 
     private float getViewPointHeight() {
-        return viewPointWidth * Gdx.graphics.getHeight() / Gdx.graphics.getWidth();
+        float w = Gdx.graphics.getWidth();
+        float h = Gdx.graphics.getHeight();
+        if (w <= 0 || h <= 0) return viewPointWidth * 9f / 16f; // Fallback to 16:9
+        return viewPointWidth * h / w;
     }
 
     public void moveTowards(Vector2 targetPosition) {
         Vector2 currentPos = new Vector2(camera.position.x, camera.position.y);
         Vector2 delta = targetPosition.sub(currentPos);
-        // currently always centers the player, but more complex mechanics can be implemented here
-        // if needed
         camera.translate(delta);
     }
 
@@ -49,16 +50,16 @@ public class MazeRunnerCamera {
     }
 
     public void refresh() {
-        camera.update(); // Update the camera
+        camera.update(); // Update the camera base state
+
+        float shakeX = 0;
+        float shakeY = 0;
 
         // Apply shake
         if (shakeDuration > 0) {
-            float currentIntensity = shakeIntensity * (shakeDuration > 0 ? 1 : 0); // Simple check
-            // Or fade out intensity: float currentIntensity = shakeIntensity * (shakeDuration / initialDuration);
-            // For simplicity, constant intensity until end or simple linear fade if we tracked initial duration
-            
-            float shakeX = (float) (Math.random() * 2 - 1) * currentIntensity;
-            float shakeY = (float) (Math.random() * 2 - 1) * currentIntensity;
+            float currentIntensity = shakeIntensity; 
+            shakeX = (float) (Math.random() * 2 - 1) * currentIntensity;
+            shakeY = (float) (Math.random() * 2 - 1) * currentIntensity;
             camera.translate(shakeX, shakeY);
             camera.update();
         }
@@ -66,49 +67,38 @@ public class MazeRunnerCamera {
         // Set up and begin drawing with the sprite batch
         game.getSpriteBatch().setProjectionMatrix(camera.combined);
         
-        // Revert shake for next frame logic (so we don't drift)
-        // Actually, since we call moveTowards every frame based on player, drifting might be corrected.
-        // But to be safe and avoid accumulation, we should probably not permanently modify position here 
-        // if we didn't save the original position.
-        // However, moveTowards() resets position based on target. 
-        // Wait, moveTowards calls translate(). If we translate here, next frame moveTowards will 
-        // see the shaken position as current.
-        // It's better to NOT modify camera.position permanently.
-        // But camera.update() updates the matrices based on position.
-        // Correct approach:
-        // 1. Save original position.
-        // 2. Translate.
-        // 3. Update.
-        // 4. Set Matrix.
-        // 5. Restore position.
-        
+        // Restore position so the shake doesn't accumulate/drift the camera permanently
         if (shakeDuration > 0) {
-            // We already translated. 
-            // Let's reverse the translation after setting the matrix?
-            // No, camera.combined is already calculated.
-            // We just need to ensure next frame starts from the "real" position.
-            // But next frame 'moveTowards' calculates delta from current position.
-            // So if we leave it shaken, 'moveTowards' will try to correct it, which might be fine 
-            // or might cause jitter fighting.
-            // Let's try to restore it.
-             float shakeX = camera.position.x - (camera.position.x - ((float) (Math.random() * 2 - 1) * shakeIntensity)); 
-             // Wait, the logic above was:
-             // float shakeX = ...
-             // camera.translate(shakeX, shakeY);
-             // To restore: camera.translate(-shakeX, -shakeY);
-             
-             // BUT, I can't easily access the random values I just generated unless I store them.
-             // Let's refactor the refresh method slightly in the replacement string.
+            camera.translate(-shakeX, -shakeY);
+            // We don't call update() here, so 'camera' object technically remains at base position
+            // for next logic operations (like unproject), but the Matrix passed to SpriteBatch
+            // was the shaken one.
+            // Wait, if we translate back but don't update, the internal matrices are still shaken?
+            // No, translate() updates the position vector. update() recalculates the matrices from the position vector.
+            // So:
+            // 1. translate(shake) -> pos modified
+            // 2. update() -> combined matrix updated with shake
+            // 3. setProjectionMatrix(combined) -> renderer gets shaken view
+            // 4. translate(-shake) -> pos restored to original
+            // 5. update() -> combined matrix restored to original (ready for logic)
+            camera.update();
         }
     }
 
 
     public void resize() {
+        // Avoid resizing if dimensions are invalid (minimized)
+        if (Gdx.graphics.getWidth() <= 0 || Gdx.graphics.getHeight() <= 0) return;
+
         // setToOrtho() will cause viewpoint center tp deviate from player, hence we move it back
         // manually
         Vector2 originalPos = new Vector2(camera.position.x, camera.position.y);
         camera.setToOrtho(false, viewPointWidth, getViewPointHeight());
-        moveTowards(originalPos);
+        
+        // Only move back if the original position was valid (not NaN/Inf)
+        if (!Float.isNaN(originalPos.x) && !Float.isNaN(originalPos.y)) {
+            moveTowards(originalPos);
+        }
     }
 
     public void zoom(float deltaTime, float scaleMultiplier) {

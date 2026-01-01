@@ -179,6 +179,8 @@ public class GameScreen implements Screen {
      */
     @Override
     public void resize(int width, int height) {
+        if (width <= 0 || height <= 0) return;
+
         // Resize the HUD
         hud.resize(width, height);
 

@@ -370,6 +370,14 @@ public class MazeRunnerGame extends Game {
         return paused;
     }
 
+    @Override
+    public void pause() {
+        super.pause();
+        if (gameScreen != null && getScreen() == gameScreen) {
+            goToMenu(true);
+        }
+    }
+
     /** Cleans up resources when the game is disposed. */
     @Override
     public void dispose() {
